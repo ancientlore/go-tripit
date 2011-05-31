@@ -47,12 +47,8 @@ const (
 )
 
 
-
-
-
 type TripIt struct {
 	httpClient *http.Client
-
 }
 
 func New(client *http.Client) *TripIt {
@@ -78,4 +74,3 @@ func (t *TripIt) Replace(objectType string, objectId uint, req *Request) *Respon
 func (t *TripIt) Delete(objectType string, objectId uint) *Response {
 	return nil
 }
-

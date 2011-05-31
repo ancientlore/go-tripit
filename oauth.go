@@ -15,15 +15,15 @@ const (
 
 const (
 	OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
-	OAUTH_VERSION = "1.0"
+	OAUTH_VERSION          = "1.0"
 )
 
 type OAuthConsumerCredential struct {
-	oauthConsumerKey string
+	oauthConsumerKey    string
 	oauthConsumerSecret string
-	oauthOauthToken string
-	oauthTokenSecret string
-	oauthRequestorId string
+	oauthOauthToken     string
+	oauthTokenSecret    string
+	oauthRequestorId    string
 }
 
 // Get a credential with no token (to get a request token)
@@ -74,14 +74,14 @@ func (a *OAuthConsumerCredential) OAuthRequestorId() string {
 }
 
 func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[string]string) {
-
+	request.Header.Add("Authorization", a.generateAuthorizationHeader(request, args))
 }
 
 func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
 	return true
 }
 
-func (a* OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
+func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
 	return ""
 }
 
@@ -96,5 +96,3 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
 	return ""
 }
-
-
