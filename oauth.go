@@ -2,7 +2,8 @@ package tripit
 
 import (
 	"http"
-	//"fmt"
+	"json"
+	"time"
 )
 
 // TripIt API URLs for OAuth
@@ -78,11 +79,25 @@ func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[stri
 }
 
 func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
-	return true
+	u, err := http.ParseURL(url)
+	if err != nil {
+		return false
+	}
+	q, err := http.ParseQuery(u.RawQuery)
+	if err != nil {
+		return false
+	}
+	u.RawQuery = ""
+	u.Fragment = ""
+	return q["oauth_signature"][0] == a.generateSignature("GET", u.String(), q)
 }
 
 func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
-	return ""
+	params := a.generateOAuthParameters("GET", action, map[string]string{"redirect_url": redirectUrl})
+	params["redirect_url"] = redirectUrl
+	params["action"] = action
+	b, _ := json.Marshal(params)
+	return string(b)
 }
 
 func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Request, args map[string]string) string {
@@ -90,9 +105,23 @@ func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Requ
 }
 
 func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, httpUrl string, args map[string]string) map[string]string {
+	p := map[string]string{
+		"oauth_consumer_key": a.oauthConsumerKey,
+		"oauth_nonce": "xyz", // a.generateNonce(),
+		"oauth_timestamp": time.LocalTime().Format(time.RFC3339),
+		"oauth_signature_method": OAUTH_SIGNATURE_METHOD,
+		"oauth_version": OAUTH_VERSION,
+	}
+	if a.oauthOauthToken != "" {
+		p["oauth_token"] = a.oauthOauthToken
+	}
+	if a.oauthRequestorId != "" {
+		p["xoauth_requestor_id"] = a.oauthRequestorId
+	}
+	/* TODO: finish up this func */
 	return make(map[string]string)
 }
 
-func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
+func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string][]string) string {
 	return ""
 }
