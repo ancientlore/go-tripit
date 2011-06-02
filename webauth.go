@@ -21,8 +21,9 @@ func (a *WebAuthCredential) Password() string {
 
 func (a *WebAuthCredential) Authorize(request *http.Request, args map[string]string) {
 	pair := fmt.Sprintf("%s:%s", a.username, a.password)
-	dst := make([]byte, len(pair)+4)
-	base64.StdEncoding.Encode(dst, []byte(pair))
+	b := []byte(pair)
+	dst := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
+	base64.StdEncoding.Encode(dst, b)
 	token := string(dst)
 	request.Header.Add("Authorization", fmt.Sprintf("Basic %s", token))
 }

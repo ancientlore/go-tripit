@@ -4,6 +4,14 @@ import (
 	"http"
 	"json"
 	"time"
+	"strings"
+	"rand"
+	"fmt"
+	"sort"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
+	"crypto/hmac"
 )
 
 // TripIt API URLs for OAuth
@@ -89,7 +97,11 @@ func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
 	}
 	u.RawQuery = ""
 	u.Fragment = ""
-	return q["oauth_signature"][0] == a.generateSignature("GET", u.String(), q)
+	args := make(map[string]string)
+	for k, v := range q {
+		args[k] = v[0]
+	}
+	return q["oauth_signature"][0] == a.generateSignature("GET", u.String(), args)
 }
 
 func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
@@ -101,13 +113,25 @@ func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, actio
 }
 
 func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Request, args map[string]string) string {
-	return ""
+	httpMethod := strings.ToUpper(request.Method)
+	realm := request.URL.Scheme + "://" + request.URL.Host
+	httpUrl := request.URL.Scheme + "://" + request.URL.Host + request.URL.Path
+	s := fmt.Sprintf("OAuth realm=\"%s\",", realm)
+	p := a.generateOAuthParameters(httpMethod, httpUrl, args)
+	arr := make([]string, len(p))
+	i := 0
+	for k, v := range p {
+		arr[i] = fmt.Sprintf("%s=%s", http.URLEscape(k), http.URLEscape(v))
+		i++
+	}
+	s += strings.Join(arr, ",")
+	return s
 }
 
 func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, httpUrl string, args map[string]string) map[string]string {
 	p := map[string]string{
 		"oauth_consumer_key": a.oauthConsumerKey,
-		"oauth_nonce": "xyz", // a.generateNonce(),
+		"oauth_nonce": generateNonce(),
 		"oauth_timestamp": time.LocalTime().Format(time.RFC3339),
 		"oauth_signature_method": OAUTH_SIGNATURE_METHOD,
 		"oauth_version": OAUTH_VERSION,
@@ -118,10 +142,46 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 	if a.oauthRequestorId != "" {
 		p["xoauth_requestor_id"] = a.oauthRequestorId
 	}
-	/* TODO: finish up this func */
-	return make(map[string]string)
+	oauthParmsForBaseString := make(map[string]string)
+	for k, v := range(p) {
+		oauthParmsForBaseString[k] = v
+	}
+	if args != nil {
+		for k, v := range args {
+			oauthParmsForBaseString[k] = v
+		}
+	}
+	p["oauth_signature"] = a.generateSignature(httpMethod, httpUrl, oauthParmsForBaseString)
+	return p
 }
 
-func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string][]string) string {
-	return ""
+func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
+	params["oauth_signature"] = "", false
+	arr := sort.StringArray(make([]string, len(params)))
+	i := 0
+	for k, v := range params {
+		arr[i] = fmt.Sprintf("%s=%s", http.URLEscape(k), http.URLEscape(v))
+		i++
+	}
+	arr.Sort()
+	sigBaseString := strings.Join([]string{httpMethod, baseUrl, strings.Join(arr, "&")}, "&")
+	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
+	h := hmac.NewSHA1([]byte(key))
+	fmt.Fprintf(h, "%s", sigBaseString)
+	b := h.Sum()
+	dst := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
+	base64.StdEncoding.Encode(dst, b)
+	return string(dst)
 }
+
+func generateNonce() string {
+	arr := make([]string, 40)
+	for i := 0; i < 40; i++ {
+		arr[i] = string(rand.Int31n(10))
+	}
+	s := string(time.Nanoseconds()) + strings.Join(arr, "")
+	h := md5.New()
+	fmt.Fprintf(h, "%s", s)
+	return hex.EncodeToString(h.Sum())
+}
+
