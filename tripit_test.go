@@ -12,12 +12,12 @@ import (
 
 func TestWarning(t *testing.T) {
 	x := func() os.Error { return &Warning{"Something went wrong", "trip", "2011-05-27T13:38:33"} }()
-	log.Print(x)
+	t.Log(x)
 }
 
 func TestError(t *testing.T) {
 	x := func() os.Error { return &Error{500, nil, "Something else went wrong", "trip", "2011-05-27T13:38:34"} }()
-	log.Print(x)
+	t.Log(x)
 }
 
 func TestJsonWrite(t *testing.T) {

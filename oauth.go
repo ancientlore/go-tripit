@@ -36,7 +36,7 @@ type OAuthConsumerCredential struct {
 }
 
 // Get a credential with no token (to get a request token)
-func newOAuthRequestCredential(consumerKey string, consumerSecret string) *OAuthConsumerCredential {
+func NewOAuthRequestCredential(consumerKey string, consumerSecret string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
 	a.oauthConsumerSecret = consumerSecret
@@ -44,7 +44,7 @@ func newOAuthRequestCredential(consumerKey string, consumerSecret string) *OAuth
 }
 
 // Get a 3 legged OAuth credential (request or authorized token)
-func newOAuth3LeggedCredential(consumerKey string, consumerSecret string, token string, tokenSecret string) *OAuthConsumerCredential {
+func NewOAuth3LeggedCredential(consumerKey string, consumerSecret string, token string, tokenSecret string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
 	a.oauthConsumerSecret = consumerSecret
@@ -54,7 +54,7 @@ func newOAuth3LeggedCredential(consumerKey string, consumerSecret string, token 
 }
 
 // Get a 2 legged OAuth credential
-func newOAuth2LeggedCredential(consumerKey string, consumerSecret string, requestorId string) *OAuthConsumerCredential {
+func NewOAuth2LeggedCredential(consumerKey string, consumerSecret string, requestorId string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
 	a.oauthConsumerSecret = consumerSecret
@@ -130,11 +130,11 @@ func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Requ
 
 func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, httpUrl string, args map[string]string) map[string]string {
 	p := map[string]string{
-		"oauth_consumer_key": a.oauthConsumerKey,
-		"oauth_nonce": generateNonce(),
-		"oauth_timestamp": time.LocalTime().Format(time.RFC3339),
+		"oauth_consumer_key":     a.oauthConsumerKey,
+		"oauth_nonce":            generateNonce(),
+		"oauth_timestamp":        time.LocalTime().Format(time.RFC3339),
 		"oauth_signature_method": OAUTH_SIGNATURE_METHOD,
-		"oauth_version": OAUTH_VERSION,
+		"oauth_version":          OAUTH_VERSION,
 	}
 	if a.oauthOauthToken != "" {
 		p["oauth_token"] = a.oauthOauthToken
@@ -143,7 +143,7 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 		p["xoauth_requestor_id"] = a.oauthRequestorId
 	}
 	oauthParmsForBaseString := make(map[string]string)
-	for k, v := range(p) {
+	for k, v := range p {
 		oauthParmsForBaseString[k] = v
 	}
 	if args != nil {
@@ -184,4 +184,3 @@ func generateNonce() string {
 	fmt.Fprintf(h, "%s", s)
 	return hex.EncodeToString(h.Sum())
 }
-
