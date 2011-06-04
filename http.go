@@ -2,30 +2,17 @@ package tripit
 
 import (
 	"http"
+	"os"
+	"fmt"
+	"json"
+	"io"
+	"bytes"
 )
 
-// TripIt API URLs for methods. All return tripit.Response. All POSTs use tripit.Request
+// TripIt API information
 const (
-	// GET object_type, object_id
-	UrlGet = "https://api.tripit.com/v1/get/%s/id/%s/format/json"
-
-	// GET object_type, filter_parameters*
-	// supports: trip, object, points_program
-	UrlList = "https://api.tripit.com/v1/list/%s%s/format/json"
-
-	// filter_parameter, filter_value (you can have multiple)
-	UrlListFilter = "/%s/%s"
-
-	// POST
-	UrlCreate = "https://api.tripit.com/v1/create/format/json"
-
-	// POST object_type, object_id
-	// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-	UrlReplace = "https://api.tripit.com/v1/replace/%s/id/%s/format/json"
-
-	// GET object_type, object_id
-	// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-	UrlDelete = "https://api.tripit.com/v1/delete/%s/id/%s/format/json"
+	ApiUrl = "https://api.tripit.com"
+	ApiVersion = "v1"
 )
 
 // List objects
@@ -46,31 +33,155 @@ const (
 	FilterType           = "type"            // valid on object. Values: all object types
 )
 
+// Interface for authorization objects
+type Authorizable interface {
+	Authorize(request *http.Request, args map[string]string)
+}
 
+// TripIt class to used to communicate with the API
 type TripIt struct {
+	baseUrl string
+	version string
 	httpClient *http.Client
+	credentials Authorizable
 }
 
-func New(client *http.Client) *TripIt {
-	return &TripIt{client}
+// Creates a new TripIt object using the given HTTP client and authorization object
+func New(client *http.Client, creds Authorizable) *TripIt {
+	return &TripIt{ApiUrl, ApiVersion, client, creds}
 }
 
-func (t *TripIt) Get(objectType string, objectId uint) *Response {
-	return nil
+// makes request
+func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
+	t.credentials.Authorize(req, nil)
+	resp, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil, os.NewError(resp.Status)
+	}
+	json := json.NewDecoder(resp.Body)
+	result := new(Response)
+	err = json.Decode(result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
-func (t *TripIt) List(objectType string, filterParms map[string]string) *Response {
-	return nil
+// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
+func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), nil)
+	if err != nil {
+		return nil, err
+	}
+	return t.makeRequest(req)
 }
 
-func (t *TripIt) Create(req *Request) *Response {
-	return nil
+// supports: trip, object, points_program
+func (t *TripIt) List(objectType string, filterParms map[string]string) (*Response, os.Error) {
+	var x string
+	for p, v := range filterParms {
+		x += fmt.Sprintf("/%s/%s", p, v)
+	}
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/list/%s%s/format/json", t.baseUrl, t.version, objectType, x), nil)
+	if err != nil {
+		return nil, err
+	}
+	return t.makeRequest(req)
 }
 
-func (t *TripIt) Replace(objectType string, objectId uint, req *Request) *Response {
-	return nil
+// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
+func (t *TripIt) Create(r *Request) (*Response, os.Error) {
+	b := new(bytes.Buffer)
+	json := json.NewEncoder(b)
+	err := json.Encode(r)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/create/format/json", t.baseUrl, t.version), b)
+	if err != nil {
+		return nil, err
+	}
+	return t.makeRequest(req)
 }
 
-func (t *TripIt) Delete(objectType string, objectId uint) *Response {
-	return nil
+// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
+func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Response, os.Error) {
+	b := new(bytes.Buffer)
+	json := json.NewEncoder(b)
+	err := json.Encode(r)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/replace/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), b)
+	if err != nil {
+		return nil, err
+	}
+	return t.makeRequest(req)
 }
+
+// supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
+func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/delete/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), nil)
+	if err != nil {
+		return nil, err
+	}
+	return t.makeRequest(req)
+}
+
+func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
+	req, err := http.NewRequest("GET", UrlObtainRequestToken, nil)
+	if err != nil {
+		return nil, err
+	}
+	t.credentials.Authorize(req, nil)
+	resp, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil, os.NewError(resp.Status)
+	}
+	return parseQS(resp.Body)
+}
+
+func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
+	req, err := http.NewRequest("GET", UrlObtainAccessToken, nil)
+	if err != nil {
+		return nil, err
+	}
+	t.credentials.Authorize(req, nil)
+	resp, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil, os.NewError(resp.Status)
+	}
+	return parseQS(resp.Body)
+}
+
+func parseQS(body io.Reader) (map[string]string, os.Error) {
+	buf := make([]byte, 1024)	// assume oauth token response won't be larger
+	_, err := body.Read(buf)
+	if err != nil {
+		return nil, err
+	}
+	qm, err := http.ParseQuery(string(buf))
+	if err != nil {
+		return nil, err
+	}
+	result := make(map[string]string)
+	for k, v := range qm {
+		result[k] = v[0]
+	}
+	return result, nil
+}
+
+// @TODO Add CRS elements
+

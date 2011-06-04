@@ -22,11 +22,13 @@ const (
 	UrlObtainAccessToken             = "https://api.tripit.com/oauth/access_token"                               // POST
 )
 
+// Signature method and version
 const (
 	OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
 	OAUTH_VERSION          = "1.0"
 )
 
+// OAuth consumer credential for use with TripIt API
 type OAuthConsumerCredential struct {
 	oauthConsumerKey    string
 	oauthConsumerSecret string
@@ -62,30 +64,37 @@ func NewOAuth2LeggedCredential(consumerKey string, consumerSecret string, reques
 	return a
 }
 
+// Returns the consumer key
 func (a *OAuthConsumerCredential) OAuthConsumerKey() string {
 	return a.oauthConsumerKey
 }
 
+// Returns the consumer secret
 func (a *OAuthConsumerCredential) OAuthConsumerSecret() string {
 	return a.oauthConsumerSecret
 }
 
+// Returns the OAuth token
 func (a *OAuthConsumerCredential) OAuthOAuthToken() string {
 	return a.oauthOauthToken
 }
 
+// Returns the consumer credential
 func (a *OAuthConsumerCredential) OAuthTokenSecret() string {
 	return a.oauthTokenSecret
 }
 
+// Returns the requestor ID
 func (a *OAuthConsumerCredential) OAuthRequestorId() string {
 	return a.oauthRequestorId
 }
 
+// Adds the authorization header for OAuth to the request, including any additional arguments
 func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[string]string) {
-	request.Header.Add("Authorization", a.generateAuthorizationHeader(request, args))
+	request.Header.Set("Authorization", a.generateAuthorizationHeader(request, args))
 }
 
+// Validates the URL's OAuth signature
 func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
 	u, err := http.ParseURL(url)
 	if err != nil {
@@ -104,6 +113,7 @@ func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
 	return q["oauth_signature"][0] == a.generateSignature("GET", u.String(), args)
 }
 
+// Returns the OAuth parameters for a given session
 func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
 	params := a.generateOAuthParameters("GET", action, map[string]string{"redirect_url": redirectUrl})
 	params["redirect_url"] = redirectUrl
@@ -112,6 +122,7 @@ func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, actio
 	return string(b)
 }
 
+// Generates the authorization header string
 func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Request, args map[string]string) string {
 	httpMethod := strings.ToUpper(request.Method)
 	realm := request.URL.Scheme + "://" + request.URL.Host
@@ -128,6 +139,7 @@ func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Requ
 	return s
 }
 
+// Generates the OAuth parameters and stores them in a map
 func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, httpUrl string, args map[string]string) map[string]string {
 	p := map[string]string{
 		"oauth_consumer_key":     a.oauthConsumerKey,
@@ -155,6 +167,7 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 	return p
 }
 
+// Generates the OAuth signature for a given URL
 func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
 	params["oauth_signature"] = "", false
 	arr := sort.StringArray(make([]string, len(params)))
@@ -174,6 +187,7 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 	return string(dst)
 }
 
+// Generates a unique one-time-use value
 func generateNonce() string {
 	arr := make([]string, 40)
 	for i := 0; i < 40; i++ {

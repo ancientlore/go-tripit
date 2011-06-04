@@ -75,6 +75,7 @@ func (w *Warning) String() string {
 	return fmt.Sprintf("TripIt Warning: %s", w.Description)
 }
 
+// Represents a TripIt API Response
 type Response struct {
 	Timestamp        int                "timestamp"
 	NumBytes         int                "num_bytes"
@@ -122,6 +123,7 @@ type Address struct {
 	Longitude *float64 "longitude" // optional, read-only
 }
 
+// Information about a traveler
 type Traveler struct {
 	FirstName                string "first_name"                 // optional
 	MiddleName               string "middle_name"                // optional
