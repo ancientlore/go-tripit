@@ -18,7 +18,7 @@ func TestOAuth(t *testing.T) {
 		kva := strings.Split(arr[i], "=", -1)
 		if kva[0] != "OAuth realm" {
 			t.Log(kva)
-			p[j] = kva[0] + "=" + kva[1]
+			p[j] = kva[0] + "=" + strings.Trim(kva[1], "\"")
 			j++
 		}
 	}
