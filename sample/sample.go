@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"os"
+	"json"
 	"container/vector"
 	"../_obj/tripit"
 )
@@ -128,6 +129,11 @@ func CheckAuth(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, aurl, http.StatusFound)
 }
 
+type jsonresult struct {
+	Result *tripit.Response
+	JSON string
+}
+
 func Trips(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
@@ -143,5 +149,9 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 		apierrorT.Execute(w, resp)
 		return
 	}
-	tripsT.Execute(w, resp)
+	var r jsonresult
+	r.Result = resp
+	b, _ := json.MarshalIndent(resp, "", "\t")
+	r.JSON = string(b)
+	tripsT.Execute(w, r)
 }

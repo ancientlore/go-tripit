@@ -4,6 +4,8 @@ import (
 	"time"
 	"fmt"
 	"os"
+	"strconv"
+	"json"
 )
 
 // TripIt Object Types
@@ -41,21 +43,34 @@ type Request struct {
 
 // Error is returned from TripIt on error conditions
 type Error struct {
-	Code              int      "code"                // read-only
-	DetailedErrorCode *float64 "detailed_error_code" // optional, read-only
-	Description       string   "description"         // read-only
-	EntityType        string   "entity_type"         // read-only
-	Timestamp         string   "timestamp"           // read-only, xs:datetime
+	Code_              string  "code"                // read-only
+	DetailedErrorCode_ *string "detailed_error_code" // optional, read-only
+	Description        string  "description"         // read-only
+	EntityType         string  "entity_type"         // read-only
+	Timestamp_         string  "timestamp"           // read-only, xs:datetime
+}
+
+// Returns error code
+func (e *Error) Code() (int, os.Error) {
+	return strconv.Atoi(e.Code_)
+}
+
+// Returns detailed error code
+func (e *Error) DetailedErrorCode() (float64, os.Error) {
+	if e.DetailedErrorCode_ == nil {
+		return 0.0, nil
+	}
+	return strconv.Atof64(*e.DetailedErrorCode_)
 }
 
 // returns a time.Time object for the Timestamp
-func (e *Error) Time() (*time.Time, os.Error) {
-	return time.Parse(time.RFC3339, e.Timestamp)
+func (e *Error) Timestamp() (*time.Time, os.Error) {
+	return time.Parse(time.RFC3339, e.Timestamp_)
 }
 
 // Returns a string containing the error information
 func (e *Error) String() string {
-	return fmt.Sprintf("TripIt Error %d: %s", e.Code, e.Description)
+	return fmt.Sprintf("TripIt Error %s: %s", e.Code_, e.Description)
 }
 
 // Warning is returned from TripIt to indicate warning conditions
@@ -77,8 +92,8 @@ func (w *Warning) String() string {
 
 // Represents a TripIt API Response
 type Response struct {
-	Timestamp        int                "timestamp"
-	NumBytes         int                "num_bytes"
+	Timestamp_       string             "timestamp"
+	NumBytes_        string             "num_bytes"
 	Error            []Error            "Error"            // optional
 	Warning          []Warning          "Warning"          // optional
 	Trip             []Trip             "Trip"             // optional
@@ -100,8 +115,17 @@ type Response struct {
 }
 
 // returns a time.Time object for the Timestamp
-func (r *Response) Time() (*time.Time, os.Error) {
-	return time.SecondsToUTC(int64(r.Timestamp)), nil
+func (r *Response) Timestamp() (*time.Time, os.Error) {
+	t, err := strconv.Atoi64(r.Timestamp_)
+	if err != nil {
+		return nil, err
+	}
+	return time.SecondsToUTC(t), nil
+}
+
+// Returns number of bytes in response
+func (r *Response) NumBytes() (int, os.Error) {
+	return strconv.Atoi(r.NumBytes_)
 }
 
 /*
@@ -112,15 +136,31 @@ func (r *Response) Time() (*time.Time, os.Error) {
 	See documentation for more information.
 */
 type Address struct {
-	Address   string   "address"   // optional
-	Addr1     string   "addr1"     // optional
-	Addr2     string   "addr2"     // optional
-	City      string   "city"      // optional
-	State     string   "state"     // optional
-	Zip       string   "zip"       // optional
-	Country   string   "country"   // optional
-	Latitude  *float64 "latitude"  // optional, read-only
-	Longitude *float64 "longitude" // optional, read-only
+	Address    string  "address"   // optional
+	Addr1      string  "addr1"     // optional
+	Addr2      string  "addr2"     // optional
+	City       string  "city"      // optional
+	State      string  "state"     // optional
+	Zip        string  "zip"       // optional
+	Country    string  "country"   // optional
+	Latitude_  *string "latitude"  // optional, read-only
+	Longitude_ *string "longitude" // optional, read-only
+}
+
+// Return the latitude of the address
+func (a *Address) Latitude() (float64, os.Error) {
+	if a.Latitude_ == nil {
+		return 0.0, os.NewError("Latitude not provided")
+	}
+	return strconv.Atof64(*a.Latitude_)
+}
+
+// Return the longitude of the address
+func (a *Address) Longitude() (float64, os.Error) {
+	if a.Longitude_ == nil {
+		return 0.0, os.NewError("Longitude not provided")
+	}
+	return strconv.Atof64(*a.Longitude_)
 }
 
 // Information about a traveler
@@ -156,8 +196,8 @@ type FlightStatus struct {
 	EstimatedDepartureDateTime *DateTime "EstimatedDepartureDateTime" // optional, read-only
 	ScheduledArrivalDateTime   *DateTime "ScheduledArrivalDateTime"   // optional, read-only
 	EstimatedArrivalDateTime   *DateTime "EstimatedArrivalDateTime"   // optional, read-only
-	FlightStatus               *int      "flight_status"              // optional, read-only
-	IsConnectionAtRisk         *bool     "is_connection_at_risk"      // optional, read-only
+	FlightStatus_              *string   "flight_status"              // optional, read-only
+	IsConnectionAtRisk_        *string   "is_connection_at_risk"      // optional, read-only
 	DepartureTerminal          string    "departure_terminal"         // optional, read-only
 	DepartureGate              string    "departure_gate"             // optional, read-only
 	ArrivalTerminal            string    "arrival_terminal"           // optional, read-only
@@ -165,12 +205,30 @@ type FlightStatus struct {
 	LayoverMinutes             string    "layover_minutes"            // optional, read-only
 	BaggageClaim               string    "baggage_claim"              // optional, read-only
 	DivertedAirportCode        string    "diverted_airport_code"      // optional, read-only
-	LastModified               int       "last_modified"              // read-only
+	LastModified_              string    "last_modified"              // read-only
+}
+
+func (fs *FlightStatus) FlightStatus() (int, os.Error) {
+	if fs.FlightStatus_ == nil {
+		return 0, os.NewError("Flight status not specified")
+	}
+	return strconv.Atoi(*fs.FlightStatus_)
+}
+
+func (fs *FlightStatus) IsConnectionAtRisk() (bool, os.Error) {
+	if fs.IsConnectionAtRisk_ == nil {
+		return false, os.NewError("Is connection at risk not specified")
+	}
+	return strconv.Atob(*fs.IsConnectionAtRisk_)
 }
 
 // returns a time.Time object for LastModified
-func (fs *FlightStatus) Time() (*time.Time, os.Error) {
-	return time.SecondsToUTC(int64(fs.LastModified)), nil
+func (fs *FlightStatus) LastModified() (*time.Time, os.Error) {
+	l, err := strconv.Atoi64(fs.LastModified_)
+	if err != nil {
+		return nil, err
+	}
+	return time.SecondsToUTC(l), nil
 }
 
 type Image struct {
@@ -186,29 +244,29 @@ type Image struct {
 //    "utc_offset":"-08:00"
 // }
 type DateTime struct {
-	DateFld   string "date"       // optional, xs:date
-	TimeFld   string "time"       // optional, xs:time
+	Date_     string "date"       // optional, xs:date
+	Time_     string "time"       // optional, xs:time
 	Timezone  string "timezone"   // optional, read-only
 	UtcOffset string "utc_offset" // optional, read-only
 }
 
-func (dt DateTime) Time() (*time.Time, os.Error) {
+func (dt DateTime) DateTime() (*time.Time, os.Error) {
 	if dt.UtcOffset == "" {
-		return time.Parse(time.RFC3339, fmt.Sprintf("%sT%sZ", dt.DateFld, dt.TimeFld))
+		return time.Parse(time.RFC3339, fmt.Sprintf("%sT%sZ", dt.Date_, dt.Time_))
 	}
-	return time.Parse(time.RFC3339, fmt.Sprintf("%sT%s%s", dt.DateFld, dt.TimeFld, dt.UtcOffset))
+	return time.Parse(time.RFC3339, fmt.Sprintf("%sT%s%s", dt.Date_, dt.Time_, dt.UtcOffset))
 }
 
-func (dt *DateTime) SetTime(t *time.Time) {
-	dt.DateFld = t.Format("2006-01-02")
-	dt.TimeFld = t.Format("15:04:05")
+func (dt *DateTime) SetDateTime(t *time.Time) {
+	dt.Date_ = t.Format("2006-01-02")
+	dt.Time_ = t.Format("15:04:05")
 	dt.UtcOffset = t.Format("-07:00")
 	dt.Timezone = t.Format("MST")
 }
 
 // All PointsProgram elements are read-only
 type PointsProgram struct {
-	Id                  uint                      "id"                    // read-only
+	Id_                  string                      "id"                    // read-only
 	Name                string                    "name optional"         // read-only
 	AccountNumber       string                    "account_number"        // optional, read-only
 	AccountLogin        string                    "account_login"         // optional, read-only
@@ -217,22 +275,38 @@ type PointsProgram struct {
 	EliteNextStatus     string                    "elite_next_status"     // optional, read-only
 	EliteYtdQualify     string                    "elite_ytd_qualify"     // optional, read-only
 	EliteNeedToEarn     string                    "elite_need_to_earn"    // optional, read-only
-	LastModified        int                       "last_modified"         // read-only
-	TotalNumActivities  int                       "total_num_activities"  // read-only
-	TotalNumExpirations int                       "total_num_expirations" // read-only
+	LastModified_        string                       "last_modified"         // read-only
+	TotalNumActivities_  string                       "total_num_activities"  // read-only
+	TotalNumExpirations_ string                       "total_num_expirations" // read-only
 	ErrorMessage        string                    "error_message"         // optional, read-only
 	Activity            []PointsProgramActivity   "Activity"              // optional, read-only
 	Expiration          []PointsProgramExpiration "Expiration"            // optional, read-only
 }
 
+func (pp *PointsProgram) Id() (uint, os.Error) {
+	return strconv.Atoui(pp.Id_)
+}
+
+func (pp *PointsProgram) TotalNumActivities() (int, os.Error) {
+	return strconv.Atoi(pp.TotalNumActivities_)
+}
+
+func (pp *PointsProgram) TotalNumExpirations() (int, os.Error) {
+	return strconv.Atoi(pp.TotalNumExpirations_)
+}
+
 // returns a time.Time object for LastModified
-func (pp *PointsProgram) Time() (*time.Time, os.Error) {
-	return time.SecondsToUTC(int64(pp.LastModified)), nil
+func (pp *PointsProgram) LastModified() (*time.Time, os.Error) {
+	v, err := strconv.Atoi64(pp.LastModified_)
+	if err != nil {
+		return nil, err
+	}
+	return time.SecondsToUTC(v), nil
 }
 
 // All PointsProgramActivity elements are read-only
 type PointsProgramActivity struct {
-	Date        string "date"        // read-only, xs:date
+	Date_        string "date"        // read-only, xs:date
 	Description string "description" // optional, read-only
 	Base        string "base"        // optional, read-only
 	Bonus       string "bonus"       // optional, read-only
@@ -241,27 +315,43 @@ type PointsProgramActivity struct {
 
 // returns a time.Time object for Date
 // Note: This won't have proper time zone information
-func (pa *PointsProgramActivity) Time() (*time.Time, os.Error) {
-	return time.Parse("2006-01-02", pa.Date)
+func (pa *PointsProgramActivity) Date() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", pa.Date_)
 }
 
 // All PointsProgramExpiration elements are read-only
 type PointsProgramExpiration struct {
-	Date   string "date"   // read-only, xs:date
+	Date_   string "date"   // read-only, xs:date
 	Amount string "amount" // optional, read-only
 }
 
 // returns a time.Time object for Date
 // Note: This won't have proper time zone information
-func (pe *PointsProgramExpiration) Time() (*time.Time, os.Error) {
-	return time.Parse("2006-01-02", pe.Date)
+func (pe *PointsProgramExpiration) Date() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", pe.Date_)
 }
 
 type TripShare struct {
-	TripId            uint "trip_id"
-	IsTraveler        bool "is_traveler"
-	IsReadOnly        bool "is_read_only"
-	IsSentWithDetails bool "is_sent_with_details"
+	TripId_           string "trip_id"
+	IsTraveler_        string "is_traveler"
+	IsReadOnly_        string "is_read_only"
+	IsSentWithDetails_ string "is_sent_with_details"
+}
+
+func (ts *TripShare) TripId() (uint, os.Error) {
+	return strconv.Atoui(ts.TripId_)
+}
+
+func (ts *TripShare) IsTraveler() (bool, os.Error) {
+	return strconv.Atob(ts.IsTraveler_)
+}
+
+func (ts *TripShare) IsReadOnly() (bool, os.Error) {
+	return strconv.Atob(ts.IsReadOnly_)
+}
+
+func (ts *TripShare) IsSentWithDetails() (bool, os.Error) {
+	return strconv.Atob(ts.IsSentWithDetails_)
 }
 
 type ConnectionRequest struct {
@@ -277,12 +367,12 @@ type Invitation struct {
 
 // All Profile elements are read-only
 type Profile struct {
-	Ref                   string                "ref"                   // read-only
-	ProfileEmailAddresses []ProfileEmailAddress "ProfileEmailAddresses" // optional, read-only
-	GroupMemberships      []Group               "GroupMemberships"      // optional, read-only
-	IsClient              bool                  "is_client"             // read-only
-	IsPro                 bool                  "is_pro"                // read-only
-	ScreenNanem           string                "screen_name"           // read-only
+	Attributes            ProfileAttributes     "_attributes"           // read-only
+	ProfileEmailAddresses *ProfileEmailAddresses "ProfileEmailAddresses" // optional, read-only
+	GroupMemberships      *GroupMemberships               "GroupMemberships"      // optional, read-only
+	IsClient_             string                "is_client"             // read-only
+	IsPro_                string                "is_pro"                // read-only
+	ScreenName            string                "screen_name"           // read-only
 	PublicDisplayName     string                "public_display_name"   // read-only
 	ProfileUrl            string                "profile_url"           // read-only
 	HomeCity              string                "home_city"             // optional, read-only
@@ -294,12 +384,101 @@ type Profile struct {
 	IcalUrl               string                "ical_url"              // optional, read-only
 }
 
+type ProfileEmailAddresses struct {
+	ProfileEmailAddress []ProfileEmailAddress "ProfileEmailAddress"
+}
+
+type profileEmailAddressesD struct {
+	ProfileEmailAddress []ProfileEmailAddress "ProfileEmailAddress"
+}
+
+type profileEmailAddressesS struct {
+	ProfileEmailAddress ProfileEmailAddress "ProfileEmailAddress"
+}
+
+// Unmarshal JSON to handle array vs. no array
+func (ea *ProfileEmailAddresses) UnmarshalJSON(ba []byte) os.Error {
+	var d profileEmailAddressesD
+	err := json.Unmarshal(ba, &d)
+	if err != nil {
+		var s profileEmailAddressesS
+		err = json.Unmarshal(ba, &s)
+		if err != nil {
+			return err
+		}
+		ea.ProfileEmailAddress = make([]ProfileEmailAddress, 1)
+		ea.ProfileEmailAddress [0] = s.ProfileEmailAddress
+	} else {
+		ea.ProfileEmailAddress  = d.ProfileEmailAddress
+	}
+	return nil
+}
+
+type GroupMemberships struct {
+	Group      []Group               "Group"      // optional, read-only
+}
+
+type groupMembershipsD struct {
+	Group      []Group               "Group"      // optional, read-only
+}
+
+type groupMembershipsS struct {
+	Group      Group               "Group"      // optional, read-only
+}
+
+// Unmarshal JSON to handle array vs. no array
+func (gm *GroupMemberships) UnmarshalJSON(ba []byte) os.Error {
+	var d groupMembershipsD
+	err := json.Unmarshal(ba, &d)
+	if err != nil {
+		var s groupMembershipsS
+		err = json.Unmarshal(ba, &s)
+		if err != nil {
+			return err
+		}
+		gm.Group = make([]Group, 1)
+		gm.Group[0] = s.Group
+	} else {
+		gm.Group = d.Group
+	}
+	return nil
+}
+
+type ProfileAttributes struct {
+	Ref string "ref" // read-only
+}
+
+// Returns whether the profile is a client
+func (p *Profile) IsClient() (bool, os.Error) {
+	return strconv.Atob(p.IsClient_)
+}
+
+// Returns whether the profile has TripIt pro
+func (p *Profile) IsPro() (bool, os.Error) {
+	return strconv.Atob(p.IsPro_)
+}
+
 // All ProfileEmailAddress elements are read-only
 type ProfileEmailAddress struct {
-	Address      string "address"        // read-only
-	IsAutoImport bool   "is_auto_import" // read-only
-	IsConfirmed  bool   "is_confirmed"   // read-only
-	IsPrimary    bool   "is_primary"     // read-only
+	Address       string "address"        // read-only
+	IsAutoImport_ string "is_auto_import" // read-only
+	IsConfirmed_  string "is_confirmed"   // read-only
+	IsPrimary_    string "is_primary"     // read-only
+}
+
+// Returns whether the email address 
+func (e *ProfileEmailAddress) IsAutoImport() (bool, os.Error) {
+	return strconv.Atob(e.IsAutoImport_)
+}
+
+// Returns whether the email address 
+func (e *ProfileEmailAddress) IsConfirmed() (bool, os.Error) {
+	return strconv.Atob(e.IsConfirmed_)
+}
+
+// Returns whether the email address 
+func (e *ProfileEmailAddress) IsPrimary() (bool, os.Error) {
+	return strconv.Atob(e.IsPrimary_)
 }
 
 // All Group elements are read-only
@@ -310,9 +489,21 @@ type Group struct {
 
 // All Invitee elements are read-only
 type Invitee struct {
-	IsReadOnly bool   "is_read_only" // read-only
-	IsTraveler bool   "is_traveler"  // read-only
-	ProfileRef string "profile_ref"  // read-only, Use the profile_ref attribute to reference a Profile
+	IsReadOnly_ string            "is_read_only" // read-only
+	IsTraveler_ string            "is_traveler"  // read-only
+	Attributes  InviteeAttributes "_attributes"  // read-only, Use the profile_ref attribute to reference a Profile
+}
+
+func (i *Invitee) IsReadOnly() (bool, os.Error) {
+	return strconv.Atob(i.IsReadOnly_)
+}
+
+func (i *Invitee) IsTraveler() (bool, os.Error) {
+	return strconv.Atob(i.IsTraveler_)
+}
+
+type InviteeAttributes struct {
+	ProfileRef string "profile_ref" // read-only, used to reference a profile
 }
 
 // All TripCrsRemark elements are read-only
@@ -323,50 +514,179 @@ type TripCrsRemark struct {
 
 // All ClosenessMatch elements are read-only
 type ClosenessMatch struct {
+	Attributes ClosenessMatchAttributes "_attributes" // read-only, Use the profile_ref attribute to reference a Profile
+}
+
+type ClosenessMatchAttributes struct {
 	ProfileRef string "profile_ref" // read-only, Use the profile_ref attribute to reference a Profile
 }
 
 type Trip struct {
-	ClosenessMatches       []ClosenessMatch "ClosenessMatches"         // optional, ClosenessMatches are read-only
-	Invitees               []Invitee        "Invitees"                 // optional, TripInvitees are read-only
-	TripCrsRemarks         []TripCrsRemark  "TripCrsRemarks"           // optional, TripCrsRemarks are read-only
-	Id                     *uint            "id"                       // optional, id is a read-only field
+	ClosenessMatches       *ClosenessMatches "ClosenessMatches"         // optional, ClosenessMatches are read-only
+	TripInvitees           *TripInvitees    "TripInvitees"                 // optional, TripInvitees are read-only
+	TripCrsRemarks         *TripCrsRemarks  "TripCrsRemarks"           // optional, TripCrsRemarks are read-only
+	Id_                    *string          "id"                       // optional, id is a read-only field
 	RelativeUrl            string           "relative_url"             // optional, relative_url is a read-only field
-	StartDate              string           "start_date"               // optional, xs:date
-	EndDate                string           "end_date"                 // optional, xs:date
+	StartDate_             string           "start_date"               // optional, xs:date
+	EndDate_               string           "end_date"                 // optional, xs:date
 	Description            string           "description"              // optional
 	DisplayName            string           "display_name"             // optional
 	ImageUrl               string           "image_url"                // optional
-	IsPrivate              *bool            "is_private"               // optional
+	IsPrivate_             *string          "is_private"               // optional
 	PrimaryLocation        string           "primary_location"         // optional
 	PrimaryLocationAddress *Address         "primary_location_address" // optional, PrimaryLocationAddress is a read-only field
 }
 
+type TripInvitees struct {
+	Invitee               []Invitee        "Invitee"                 // optional, TripInvitees are read-only
+}
+
+type tripInviteesD struct {
+	Invitee               []Invitee        "Invitee"                 // optional, TripInvitees are read-only
+}
+
+type tripInviteesS struct {
+	Invitee               Invitee        "Invitee"                 // optional, TripInvitees are read-only
+}
+
+// Unmarshal JSON to handle array vs. no array
+func (ti *TripInvitees) UnmarshalJSON(ba []byte) os.Error {
+	var d tripInviteesD
+	err := json.Unmarshal(ba, &d)
+	if err != nil {
+		var s tripInviteesS
+		err = json.Unmarshal(ba, &s)
+		if err != nil {
+			return err
+		}
+		ti.Invitee = make([]Invitee, 1)
+		ti.Invitee[0] = s.Invitee
+	} else {
+		ti.Invitee = d.Invitee
+	}
+	return nil
+}
+
+type ClosenessMatches struct {
+	ClosenessMatch               []ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+}
+
+type closenessMatchesD struct {
+	ClosenessMatch               []ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+}
+
+type closenessMatchesS struct {
+	ClosenessMatch               ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+}
+
+// Unmarshal JSON to handle array vs. no array
+func (cm *ClosenessMatches) UnmarshalJSON(ba []byte) os.Error {
+	var d closenessMatchesD
+	err := json.Unmarshal(ba, &d)
+	if err != nil {
+		var s closenessMatchesS
+		err = json.Unmarshal(ba, &s)
+		if err != nil {
+			return err
+		}
+		cm.ClosenessMatch = make([]ClosenessMatch, 1)
+		cm.ClosenessMatch[0] = s.ClosenessMatch
+	} else {
+		cm.ClosenessMatch = d.ClosenessMatch
+	}
+	return nil
+}
+
+type TripCrsRemarks struct {
+	TripCrsRemark               []TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+}
+
+type tripCrsRemarksD struct {
+	TripCrsRemark               []TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+}
+
+type tripCrsRemarksS struct {
+	TripCrsRemark               TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+}
+
+// Unmarshal JSON to handle array vs. no array
+func (tr *TripCrsRemarks) UnmarshalJSON(ba []byte) os.Error {
+	var d tripCrsRemarksD
+	err := json.Unmarshal(ba, &d)
+	if err != nil {
+		var s tripCrsRemarksS
+		err = json.Unmarshal(ba, &s)
+		if err != nil {
+			return err
+		}
+		tr.TripCrsRemark = make([]TripCrsRemark, 1)
+		tr.TripCrsRemark[0] = s.TripCrsRemark
+	} else {
+		tr.TripCrsRemark = d.TripCrsRemark
+	}
+	return nil
+}
+
+func (t *Trip) Id() (uint, os.Error) {
+	if t.Id_ == nil {
+		return 0, os.NewError("Id field is not specified")
+	}
+	return strconv.Atoui(*t.Id_)
+}
+
+func (t *Trip) IsPrivate() (bool, os.Error) {
+	if t.IsPrivate_ == nil {
+		return false, os.NewError("IsPrivate field is not specified")
+	}
+	return strconv.Atob(*t.IsPrivate_)
+}
+
 // returns a time.Time object for StartDate
 // Note: This won't have proper time zone information
-func (t *Trip) StartTime() (*time.Time, os.Error) {
-	return time.Parse("2006-01-02", t.StartDate)
+func (t *Trip) StartDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", t.StartDate_)
 }
 
 // returns a time.Time object for EndDate
 // Note: This won't have proper time zone information
-func (t *Trip) EndTime() (*time.Time, os.Error) {
-	return time.Parse("2006-01-02", t.EndDate)
+func (t *Trip) EndDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", t.EndDate_)
 }
 
 type Object struct {
-	Id               *uint   "id"                 // optional, read-only
-	TripId           *uint   "trip_id"            // optional
-	IsClientTraveler *bool   "is_client_traveler" // optional, read-only
+	Id_               *string   "id"                 // optional, read-only
+	TripId_           *string   "trip_id"            // optional
+	IsClientTraveler_ *string   "is_client_traveler" // optional, read-only
 	RelativeUrl      string  "relative_url"       // optional, read-only
 	DisplayName      string  "display_name"       // optional
 	Image            []Image "Image"              // optional
 }
 
+func (o *Object) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *Object) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *Object) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
 type ReservationObject struct {
 	Object
 	CancellationDateTime *DateTime "CancellationDateTime"   // optional
-	BookingDate          string    "booking_date"           // optional, xs:date
+	BookingDate_          string    "booking_date"           // optional, xs:date
 	BookingRate          string    "booking_rate"           // optional
 	BookingSiteConfNum   string    "booking_site_conf_num"  // optional
 	BookingSiteName      string    "booking_site_name"      // optional
@@ -379,7 +699,7 @@ type ReservationObject struct {
 	SupplierName         string    "supplier_name"          // optional
 	SupplierPhone        string    "supplier_phone"         // optional
 	SupplierUrl          string    "supplier_url"           // optional
-	IsPurchased          *bool     "is_purchased"           // optional
+	IsPurchased_          *string     "is_purchased"           // optional
 	Notes                string    "notes"                  // optional
 	Restrictions         string    "restrictions"           // optional
 	TotalCost            string    "total_cost"             // optional
@@ -387,8 +707,15 @@ type ReservationObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *ReservationObject) BookingTime() (*time.Time, os.Error) {
-	return time.Parse("2006-01-02", r.BookingDate)
+func (r *ReservationObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *ReservationObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 type AirObject struct {
@@ -398,18 +725,18 @@ type AirObject struct {
 }
 
 type AirSegment struct {
-	Status                *int      "Status"                  // optional
+	Status_                *string      "Status"                  // optional
 	StartDateTime         *DateTime "StartDateTime"           // optional
 	EndDateTime           *DateTime "EndDateTime"             // optional
 	StartAirportCode      string    "start_airport_code"      // optional
-	StartAirportLatitude  *float64  "start_airport_latitude"  // optional, read-only
-	StartAirportLongitude *float64  "start_airport_longitude" // optional, read-only
+	StartAirportLatitude_  *string  "start_airport_latitude"  // optional, read-only
+	StartAirportLongitude_ *string  "start_airport_longitude" // optional, read-only
 	StartCityName         string    "start_city_name"         // optional
 	StartGate             string    "start_gate"              // optional
 	StartTerminal         string    "start_terminal"          // optional
 	EndAirportCode        string    "end_airport_code"        // optional
-	EndAirportLatitude    *float64  "end_airport_latitude"    // optional, read-only
-	EndAirportLongitude   *float64  "end_airport_longitude"   // optional, read-only
+	EndAirportLatitude_    *string  "end_airport_latitude"    // optional, read-only
+	EndAirportLongitude_   *string  "end_airport_longitude"   // optional, read-only
 	EndCityName           string    "end_city_name"           // optional
 	EndGate               string    "end_gate"                // optional
 	EndTerminal           string    "end_terminal"            // optional
@@ -434,8 +761,57 @@ type AirSegment struct {
 	BaggageClaim          string    "baggage_claim"           // optional
 	CheckInUrl            string    "check_in_url"            // optional
 	ConflictResolutionUrl string    "conflict_resolution_url" // optional, read-only
-	IsHidden              *bool     "is_hidden"               // optional, read-only
-	Id                    *uint     "id"                      // optional, read-only
+	IsHidden_              *string     "is_hidden"               // optional, read-only
+	Id_                    *string     "id"                      // optional, read-only
+}
+
+func (s *AirSegment) Status() (int, os.Error) {
+	if s.Status_ == nil {
+		return 0, os.NewError("Status not specified")
+	}
+	return strconv.Atoi(*s.Status_)
+}
+
+func (s *AirSegment) StartAirportLatitude() (float64, os.Error) {
+	if s.StartAirportLatitude_ == nil {
+		return 0.0, os.NewError("StartAirportLatitude not specified")
+	}
+	return strconv.Atof64(*s.StartAirportLatitude_)
+}
+
+func (s *AirSegment) StartAirportLongitude() (float64, os.Error) {
+	if s.StartAirportLongitude_ == nil {
+		return 0.0, os.NewError("StartAirportLongitude not specified")
+	}
+	return strconv.Atof64(*s.StartAirportLongitude_)
+}
+
+func (s *AirSegment) EndAirportLatitude() (float64, os.Error) {
+	if s.EndAirportLatitude_ == nil {
+		return 0.0, os.NewError("EndAirportLatitude not specified")
+	}
+	return strconv.Atof64(*s.EndAirportLatitude_)
+}
+
+func (s *AirSegment) EndAirportLongitude() (float64, os.Error) {
+	if s.EndAirportLongitude_ == nil {
+		return 0.0, os.NewError("EndAirportLongitude not specified")
+	}
+	return strconv.Atof64(*s.EndAirportLongitude_)
+}
+
+func (s *AirSegment) Id() (uint, os.Error) {
+	if s.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*s.Id_)
+}
+
+func (s *AirSegment) IsHidden() (bool, os.Error) {
+	if s.IsHidden_ == nil {
+		return false, os.NewError("IsHidden not specified")
+	}
+	return strconv.Atob(*s.IsHidden_)
 }
 
 // hotel cancellation remarks should be in restrictions
@@ -493,7 +869,14 @@ type RailSegment struct {
 	ServiceClass        string    "service_class"       // optional
 	TrainNumber         string    "train_number"        // optional
 	TrainType           string    "train_type"          // optional
-	Id                  *uint     "id"                  // optional, read-only
+	Id_                  *string     "id"                  // optional, read-only
+}
+
+func (r *RailSegment) Id() (uint, os.Error) {
+	if r.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*r.Id_)
 }
 
 // Transport Detail Types
@@ -520,7 +903,14 @@ type TransportSegment struct {
 	ConfirmationNum      string    "confirmation_num"     // optional
 	NumberPassengers     string    "number_passengers"    // optional
 	VehicleDescription   string    "vehicle_description"  // optional
-	Id                   *uint     "id"                   // optional, read-only
+	Id_                   *string     "id"                   // optional, read-only
+}
+
+func (r *TransportSegment) Id() (uint, os.Error) {
+	if r.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*r.Id_)
 }
 
 // Cruise Detail Types
@@ -544,7 +934,14 @@ type CruiseSegment struct {
 	LocationAddress *Address  "LocationAddress"  // optional
 	LocationName    string    "location_name"    // optional
 	DetailTypeCode  string    "detail_type_code" // optional
-	Id              *uint     "id"               // optional, read-only
+	Id_              *string     "id"               // optional, read-only
+}
+
+func (r *CruiseSegment) Id() (uint, os.Error) {
+	if r.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*r.Id_)
 }
 
 // restaurant name should be in supplier_name
@@ -607,17 +1004,58 @@ type DirectionsObject struct {
 	DateTime     *DateTime "DateTime"     // optional
 	StartAddress *Address  "StartAddress" // optional
 	EndAddress   *Address  "EndAddress"   // optional
-
 }
 
 // Weather is read-only
 type WeatherObject struct {
 	Object
-	Date               string   "date"                 // optional, read-only, xs:date
+	Date_               string   "date"                 // optional, read-only, xs:date
 	Location           string   "location"             // optional, read-only
-	AvgHighTempC       *float64 "avg_high_temp_c"      // optional, read-only
-	AvgLowTempC        *float64 "avg_low_temp_c"       // optional, read-only
-	AvgWindSpeedKn     *float64 "avg_wind_speed_kn"    // optional, read-only
-	AvgPrecipitationCm *float64 "avg_precipitation_cm" // optional, read-only
-	AvgSnowDepthCm     *float64 "avg_snow_depth_cm"    // optional, read-only
+	AvgHighTempC_       *string "avg_high_temp_c"      // optional, read-only
+	AvgLowTempC_        *string "avg_low_temp_c"       // optional, read-only
+	AvgWindSpeedKn_     *string "avg_wind_speed_kn"    // optional, read-only
+	AvgPrecipitationCm_ *string "avg_precipitation_cm" // optional, read-only
+	AvgSnowDepthCm_     *string "avg_snow_depth_cm"    // optional, read-only
 }
+
+// returns a time.Time object for StartDate
+// Note: This won't have proper time zone information
+func (w *WeatherObject) Date() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", w.Date_)
+}
+
+func (w *WeatherObject) AvgHighTempC() (float64, os.Error) {
+	if w.AvgHighTempC_ == nil {
+		return 0.0, os.NewError("AvgHighTempC not specified")
+	}
+	return strconv.Atof64(*w.AvgHighTempC_)
+}
+
+func (w *WeatherObject) AvgLowTempC() (float64, os.Error) {
+	if w.AvgLowTempC_ == nil {
+		return 0.0, os.NewError("AvgLowTempC not specified")
+	}
+	return strconv.Atof64(*w.AvgLowTempC_)
+}
+
+func (w *WeatherObject) AvgWindSpeedKn() (float64, os.Error) {
+	if w.AvgWindSpeedKn_ == nil {
+		return 0.0, os.NewError("AvgWindSpeedKn not specified")
+	}
+	return strconv.Atof64(*w.AvgWindSpeedKn_)
+}
+
+func (w *WeatherObject) AvgPrecipitationCm() (float64, os.Error) {
+	if w.AvgPrecipitationCm_ == nil {
+		return 0.0, os.NewError("AvgPrecipitationCm not specified")
+	}
+	return strconv.Atof64(*w.AvgPrecipitationCm_)
+}
+
+func (w *WeatherObject) AvgSnowDepthCm() (float64, os.Error) {
+	if w.AvgSnowDepthCm_ == nil {
+		return 0.0, os.NewError("AvgSnowDepthCm not specified")
+	}
+	return strconv.Atof64(*w.AvgSnowDepthCm_)
+}
+

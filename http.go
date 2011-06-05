@@ -68,9 +68,13 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	//io.Copy(f, resp.Body)
 	//f.Seek(0, 0)
 	// json := json.NewDecoder(f)
-	json := json.NewDecoder(resp.Body)
+
+	// Copy buffer and change @attributes to _attributes since json package doesn't support @
+	buf := new(bytes.Buffer)
+	io.Copy(buf, resp.Body)
+	b := bytes.Replace(buf.Bytes(), []byte("\"@attributes\""), []byte("\"_attributes\""), -1)
 	result := new(Response)
-	err = json.Decode(result)
+	err = json.Unmarshal(b, result)
 	if err != nil {
 		return nil, err
 	}
