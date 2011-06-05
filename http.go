@@ -63,16 +63,17 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	if resp.StatusCode != 200 {
 		return nil, os.NewError(resp.Status)
 	}
-	//f, _ := os.Create("output.json")
-	//defer f.Close()
-	//io.Copy(f, resp.Body)
-	//f.Seek(0, 0)
-	// json := json.NewDecoder(f)
 
 	// Copy buffer and change @attributes to _attributes since json package doesn't support @
 	buf := new(bytes.Buffer)
 	io.Copy(buf, resp.Body)
 	b := bytes.Replace(buf.Bytes(), []byte("\"@attributes\""), []byte("\"_attributes\""), -1)
+
+	// debug logging
+	f, _ := os.Create("output.json")
+	defer f.Close()
+	f.Write(b)
+
 	result := new(Response)
 	err = json.Unmarshal(b, result)
 	if err != nil {
@@ -83,7 +84,7 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
 	if err != nil {
 		return nil, err
 	}

@@ -20,6 +20,7 @@ var url = flag.String("url", tripit.ApiUrl, "TripIt API URL")
 
 var indexT = template.MustParseFile("index.html", nil)
 var tripsT = template.MustParseFile("trips.html", nil)
+var detailsT = template.MustParseFile("details.html", nil)
 var errorT = template.MustParseFile("error.html", nil)
 var apierrorT = template.MustParseFile("apierror.html", nil)
 
@@ -82,6 +83,7 @@ func main() {
 	http.Handle("/auth", http.HandlerFunc(Auth))
 	http.Handle("/auth2", http.HandlerFunc(CheckAuth))
 	http.Handle("/trips", http.HandlerFunc(Trips))
+	http.Handle("/details", http.HandlerFunc(Details))
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
@@ -131,7 +133,7 @@ func CheckAuth(w http.ResponseWriter, req *http.Request) {
 
 type jsonresult struct {
 	Result *tripit.Response
-	JSON string
+	JSON   string
 }
 
 func Trips(w http.ResponseWriter, req *http.Request) {
@@ -139,7 +141,7 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
 	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
-	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "true", tripit.FilterPast: "true"})
+	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "true", tripit.FilterPast: "false"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -154,4 +156,39 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	b, _ := json.MarshalIndent(resp, "", "\t")
 	r.JSON = string(b)
 	tripsT.Execute(w, r)
+}
+
+func Details(w http.ResponseWriter, req *http.Request) {
+	sess := getSession(w, req)
+	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
+	var client http.Client
+	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	m, err := http.ParseQuery(req.URL.RawQuery)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	objType := m["t"][0]
+	objId, err := strconv.Atoui(m["id"][0])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	resp, err := t.Get(objType, objId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
+		apierrorT.Execute(w, resp)
+		return
+	}
+	var r jsonresult
+	r.Result = resp
+	b, _ := json.MarshalIndent(resp, "", "\t")
+	r.JSON = string(b)
+	detailsT.Execute(w, r)
 }

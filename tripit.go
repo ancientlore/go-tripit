@@ -266,21 +266,21 @@ func (dt *DateTime) SetDateTime(t *time.Time) {
 
 // All PointsProgram elements are read-only
 type PointsProgram struct {
-	Id_                  string                      "id"                    // read-only
-	Name                string                    "name optional"         // read-only
-	AccountNumber       string                    "account_number"        // optional, read-only
-	AccountLogin        string                    "account_login"         // optional, read-only
-	Balance             string                    "balance"               // optional, read-only
-	EliteStatus         string                    "elite_status"          // optional, read-only
-	EliteNextStatus     string                    "elite_next_status"     // optional, read-only
-	EliteYtdQualify     string                    "elite_ytd_qualify"     // optional, read-only
-	EliteNeedToEarn     string                    "elite_need_to_earn"    // optional, read-only
-	LastModified_        string                       "last_modified"         // read-only
-	TotalNumActivities_  string                       "total_num_activities"  // read-only
-	TotalNumExpirations_ string                       "total_num_expirations" // read-only
-	ErrorMessage        string                    "error_message"         // optional, read-only
-	Activity            []PointsProgramActivity   "Activity"              // optional, read-only
-	Expiration          []PointsProgramExpiration "Expiration"            // optional, read-only
+	Id_                  string                    "id"                    // read-only
+	Name                 string                    "name optional"         // read-only
+	AccountNumber        string                    "account_number"        // optional, read-only
+	AccountLogin         string                    "account_login"         // optional, read-only
+	Balance              string                    "balance"               // optional, read-only
+	EliteStatus          string                    "elite_status"          // optional, read-only
+	EliteNextStatus      string                    "elite_next_status"     // optional, read-only
+	EliteYtdQualify      string                    "elite_ytd_qualify"     // optional, read-only
+	EliteNeedToEarn      string                    "elite_need_to_earn"    // optional, read-only
+	LastModified_        string                    "last_modified"         // read-only
+	TotalNumActivities_  string                    "total_num_activities"  // read-only
+	TotalNumExpirations_ string                    "total_num_expirations" // read-only
+	ErrorMessage         string                    "error_message"         // optional, read-only
+	Activity             []PointsProgramActivity   "Activity"              // optional, read-only
+	Expiration           []PointsProgramExpiration "Expiration"            // optional, read-only
 }
 
 func (pp *PointsProgram) Id() (uint, os.Error) {
@@ -306,7 +306,7 @@ func (pp *PointsProgram) LastModified() (*time.Time, os.Error) {
 
 // All PointsProgramActivity elements are read-only
 type PointsProgramActivity struct {
-	Date_        string "date"        // read-only, xs:date
+	Date_       string "date"        // read-only, xs:date
 	Description string "description" // optional, read-only
 	Base        string "base"        // optional, read-only
 	Bonus       string "bonus"       // optional, read-only
@@ -321,7 +321,7 @@ func (pa *PointsProgramActivity) Date() (*time.Time, os.Error) {
 
 // All PointsProgramExpiration elements are read-only
 type PointsProgramExpiration struct {
-	Date_   string "date"   // read-only, xs:date
+	Date_  string "date"   // read-only, xs:date
 	Amount string "amount" // optional, read-only
 }
 
@@ -332,7 +332,7 @@ func (pe *PointsProgramExpiration) Date() (*time.Time, os.Error) {
 }
 
 type TripShare struct {
-	TripId_           string "trip_id"
+	TripId_            string "trip_id"
 	IsTraveler_        string "is_traveler"
 	IsReadOnly_        string "is_read_only"
 	IsSentWithDetails_ string "is_sent_with_details"
@@ -367,21 +367,21 @@ type Invitation struct {
 
 // All Profile elements are read-only
 type Profile struct {
-	Attributes            ProfileAttributes     "_attributes"           // read-only
+	Attributes            ProfileAttributes      "_attributes"           // read-only
 	ProfileEmailAddresses *ProfileEmailAddresses "ProfileEmailAddresses" // optional, read-only
-	GroupMemberships      *GroupMemberships               "GroupMemberships"      // optional, read-only
-	IsClient_             string                "is_client"             // read-only
-	IsPro_                string                "is_pro"                // read-only
-	ScreenName            string                "screen_name"           // read-only
-	PublicDisplayName     string                "public_display_name"   // read-only
-	ProfileUrl            string                "profile_url"           // read-only
-	HomeCity              string                "home_city"             // optional, read-only
-	Company               string                "company"               // optional, read-only
-	AboutMeInfo           string                "about_me_info"         // optional, read-only
-	PhotoUrl              string                "photo_url"             // optional, read-only
-	ActivityFeedUrl       string                "activity_feed_url"     // optional, read-only
-	AlertsFeedUrl         string                "alerts_feed_url"       // optional, read-only
-	IcalUrl               string                "ical_url"              // optional, read-only
+	GroupMemberships      *GroupMemberships      "GroupMemberships"      // optional, read-only
+	IsClient_             string                 "is_client"             // read-only
+	IsPro_                string                 "is_pro"                // read-only
+	ScreenName            string                 "screen_name"           // read-only
+	PublicDisplayName     string                 "public_display_name"   // read-only
+	ProfileUrl            string                 "profile_url"           // read-only
+	HomeCity              string                 "home_city"             // optional, read-only
+	Company               string                 "company"               // optional, read-only
+	AboutMeInfo           string                 "about_me_info"         // optional, read-only
+	PhotoUrl              string                 "photo_url"             // optional, read-only
+	ActivityFeedUrl       string                 "activity_feed_url"     // optional, read-only
+	AlertsFeedUrl         string                 "alerts_feed_url"       // optional, read-only
+	IcalUrl               string                 "ical_url"              // optional, read-only
 }
 
 type ProfileEmailAddresses struct {
@@ -407,23 +407,23 @@ func (ea *ProfileEmailAddresses) UnmarshalJSON(ba []byte) os.Error {
 			return err
 		}
 		ea.ProfileEmailAddress = make([]ProfileEmailAddress, 1)
-		ea.ProfileEmailAddress [0] = s.ProfileEmailAddress
+		ea.ProfileEmailAddress[0] = s.ProfileEmailAddress
 	} else {
-		ea.ProfileEmailAddress  = d.ProfileEmailAddress
+		ea.ProfileEmailAddress = d.ProfileEmailAddress
 	}
 	return nil
 }
 
 type GroupMemberships struct {
-	Group      []Group               "Group"      // optional, read-only
+	Group []Group "Group" // optional, read-only
 }
 
 type groupMembershipsD struct {
-	Group      []Group               "Group"      // optional, read-only
+	Group []Group "Group" // optional, read-only
 }
 
 type groupMembershipsS struct {
-	Group      Group               "Group"      // optional, read-only
+	Group Group "Group" // optional, read-only
 }
 
 // Unmarshal JSON to handle array vs. no array
@@ -523,30 +523,30 @@ type ClosenessMatchAttributes struct {
 
 type Trip struct {
 	ClosenessMatches       *ClosenessMatches "ClosenessMatches"         // optional, ClosenessMatches are read-only
-	TripInvitees           *TripInvitees    "TripInvitees"                 // optional, TripInvitees are read-only
-	TripCrsRemarks         *TripCrsRemarks  "TripCrsRemarks"           // optional, TripCrsRemarks are read-only
-	Id_                    *string          "id"                       // optional, id is a read-only field
-	RelativeUrl            string           "relative_url"             // optional, relative_url is a read-only field
-	StartDate_             string           "start_date"               // optional, xs:date
-	EndDate_               string           "end_date"                 // optional, xs:date
-	Description            string           "description"              // optional
-	DisplayName            string           "display_name"             // optional
-	ImageUrl               string           "image_url"                // optional
-	IsPrivate_             *string          "is_private"               // optional
-	PrimaryLocation        string           "primary_location"         // optional
-	PrimaryLocationAddress *Address         "primary_location_address" // optional, PrimaryLocationAddress is a read-only field
+	TripInvitees           *TripInvitees     "TripInvitees"             // optional, TripInvitees are read-only
+	TripCrsRemarks         *TripCrsRemarks   "TripCrsRemarks"           // optional, TripCrsRemarks are read-only
+	Id_                    *string           "id"                       // optional, id is a read-only field
+	RelativeUrl            string            "relative_url"             // optional, relative_url is a read-only field
+	StartDate_             string            "start_date"               // optional, xs:date
+	EndDate_               string            "end_date"                 // optional, xs:date
+	Description            string            "description"              // optional
+	DisplayName            string            "display_name"             // optional
+	ImageUrl               string            "image_url"                // optional
+	IsPrivate_             *string           "is_private"               // optional
+	PrimaryLocation        string            "primary_location"         // optional
+	PrimaryLocationAddress *Address          "primary_location_address" // optional, PrimaryLocationAddress is a read-only field
 }
 
 type TripInvitees struct {
-	Invitee               []Invitee        "Invitee"                 // optional, TripInvitees are read-only
+	Invitee []Invitee "Invitee" // optional, TripInvitees are read-only
 }
 
 type tripInviteesD struct {
-	Invitee               []Invitee        "Invitee"                 // optional, TripInvitees are read-only
+	Invitee []Invitee "Invitee" // optional, TripInvitees are read-only
 }
 
 type tripInviteesS struct {
-	Invitee               Invitee        "Invitee"                 // optional, TripInvitees are read-only
+	Invitee Invitee "Invitee" // optional, TripInvitees are read-only
 }
 
 // Unmarshal JSON to handle array vs. no array
@@ -568,15 +568,15 @@ func (ti *TripInvitees) UnmarshalJSON(ba []byte) os.Error {
 }
 
 type ClosenessMatches struct {
-	ClosenessMatch               []ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+	ClosenessMatch []ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
 }
 
 type closenessMatchesD struct {
-	ClosenessMatch               []ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+	ClosenessMatch []ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
 }
 
 type closenessMatchesS struct {
-	ClosenessMatch               ClosenessMatch        "ClosenessMatch"                 // optional, ClosenessMatches are read-only
+	ClosenessMatch ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
 }
 
 // Unmarshal JSON to handle array vs. no array
@@ -598,15 +598,15 @@ func (cm *ClosenessMatches) UnmarshalJSON(ba []byte) os.Error {
 }
 
 type TripCrsRemarks struct {
-	TripCrsRemark               []TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+	TripCrsRemark []TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
 }
 
 type tripCrsRemarksD struct {
-	TripCrsRemark               []TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+	TripCrsRemark []TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
 }
 
 type tripCrsRemarksS struct {
-	TripCrsRemark               TripCrsRemark        "TripCrsRemark"                 // optional, TripCrsRemarks are read-only
+	TripCrsRemark TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
 }
 
 // Unmarshal JSON to handle array vs. no array
@@ -654,12 +654,12 @@ func (t *Trip) EndDate() (*time.Time, os.Error) {
 }
 
 type Object struct {
-	Id_               *string   "id"                 // optional, read-only
-	TripId_           *string   "trip_id"            // optional
-	IsClientTraveler_ *string   "is_client_traveler" // optional, read-only
-	RelativeUrl      string  "relative_url"       // optional, read-only
-	DisplayName      string  "display_name"       // optional
-	Image            []Image "Image"              // optional
+	Id_               *string "id"                 // optional, read-only
+	TripId_           *string "trip_id"            // optional
+	IsClientTraveler_ *string "is_client_traveler" // optional, read-only
+	RelativeUrl       string  "relative_url"       // optional, read-only
+	DisplayName       string  "display_name"       // optional
+	Image             []Image "Image"              // optional
 }
 
 func (o *Object) Id() (uint, os.Error) {
@@ -686,7 +686,7 @@ func (o *Object) IsClientTraveler() (bool, os.Error) {
 type ReservationObject struct {
 	Object
 	CancellationDateTime *DateTime "CancellationDateTime"   // optional
-	BookingDate_          string    "booking_date"           // optional, xs:date
+	BookingDate_         string    "booking_date"           // optional, xs:date
 	BookingRate          string    "booking_rate"           // optional
 	BookingSiteConfNum   string    "booking_site_conf_num"  // optional
 	BookingSiteName      string    "booking_site_name"      // optional
@@ -699,7 +699,7 @@ type ReservationObject struct {
 	SupplierName         string    "supplier_name"          // optional
 	SupplierPhone        string    "supplier_phone"         // optional
 	SupplierUrl          string    "supplier_url"           // optional
-	IsPurchased_          *string     "is_purchased"           // optional
+	IsPurchased_         *string   "is_purchased"           // optional
 	Notes                string    "notes"                  // optional
 	Restrictions         string    "restrictions"           // optional
 	TotalCost            string    "total_cost"             // optional
@@ -725,44 +725,44 @@ type AirObject struct {
 }
 
 type AirSegment struct {
-	Status_                *string      "Status"                  // optional
-	StartDateTime         *DateTime "StartDateTime"           // optional
-	EndDateTime           *DateTime "EndDateTime"             // optional
-	StartAirportCode      string    "start_airport_code"      // optional
-	StartAirportLatitude_  *string  "start_airport_latitude"  // optional, read-only
-	StartAirportLongitude_ *string  "start_airport_longitude" // optional, read-only
-	StartCityName         string    "start_city_name"         // optional
-	StartGate             string    "start_gate"              // optional
-	StartTerminal         string    "start_terminal"          // optional
-	EndAirportCode        string    "end_airport_code"        // optional
-	EndAirportLatitude_    *string  "end_airport_latitude"    // optional, read-only
-	EndAirportLongitude_   *string  "end_airport_longitude"   // optional, read-only
-	EndCityName           string    "end_city_name"           // optional
-	EndGate               string    "end_gate"                // optional
-	EndTerminal           string    "end_terminal"            // optional
-	MarketingAirline      string    "marketing_airline"       // optional
-	MarketingAirlineCode  string    "marketing_airline_code"  // optional, read-only
-	MarketingFlightNumber string    "marketing_flight_number" // optional
-	OperatingAirline      string    "operating_airline"       // optional
-	OperatingAirlineCode  string    "operating_airline_code"  // optional, read-only
-	OperatingFlightNumber string    "operating_flight_number" // optional
-	AlternativeFlightsUrl string    "alternate_flights_url"   // optional, read-only
-	Aircraft              string    "aircraft"                // optional
-	AircraftDisplayName   string    "aircraft_display_name"   // optional, read-only
-	Distance              string    "distance"                // optional
-	Duration              string    "duration"                // optional
-	Entertainment         string    "entertainment"           // optional
-	Meal                  string    "meal"                    // optional
-	Notes                 string    "notes"                   // optional
-	OntimePerc            string    "ontime_perc"             // optional
-	Seats                 string    "seats"                   // optional
-	ServiceClass          string    "service_class"           // optional
-	Stops                 string    "stops"                   // optional
-	BaggageClaim          string    "baggage_claim"           // optional
-	CheckInUrl            string    "check_in_url"            // optional
-	ConflictResolutionUrl string    "conflict_resolution_url" // optional, read-only
-	IsHidden_              *string     "is_hidden"               // optional, read-only
-	Id_                    *string     "id"                      // optional, read-only
+	Status_                *string   "Status"                  // optional
+	StartDateTime          *DateTime "StartDateTime"           // optional
+	EndDateTime            *DateTime "EndDateTime"             // optional
+	StartAirportCode       string    "start_airport_code"      // optional
+	StartAirportLatitude_  *string   "start_airport_latitude"  // optional, read-only
+	StartAirportLongitude_ *string   "start_airport_longitude" // optional, read-only
+	StartCityName          string    "start_city_name"         // optional
+	StartGate              string    "start_gate"              // optional
+	StartTerminal          string    "start_terminal"          // optional
+	EndAirportCode         string    "end_airport_code"        // optional
+	EndAirportLatitude_    *string   "end_airport_latitude"    // optional, read-only
+	EndAirportLongitude_   *string   "end_airport_longitude"   // optional, read-only
+	EndCityName            string    "end_city_name"           // optional
+	EndGate                string    "end_gate"                // optional
+	EndTerminal            string    "end_terminal"            // optional
+	MarketingAirline       string    "marketing_airline"       // optional
+	MarketingAirlineCode   string    "marketing_airline_code"  // optional, read-only
+	MarketingFlightNumber  string    "marketing_flight_number" // optional
+	OperatingAirline       string    "operating_airline"       // optional
+	OperatingAirlineCode   string    "operating_airline_code"  // optional, read-only
+	OperatingFlightNumber  string    "operating_flight_number" // optional
+	AlternativeFlightsUrl  string    "alternate_flights_url"   // optional, read-only
+	Aircraft               string    "aircraft"                // optional
+	AircraftDisplayName    string    "aircraft_display_name"   // optional, read-only
+	Distance               string    "distance"                // optional
+	Duration               string    "duration"                // optional
+	Entertainment          string    "entertainment"           // optional
+	Meal                   string    "meal"                    // optional
+	Notes                  string    "notes"                   // optional
+	OntimePerc             string    "ontime_perc"             // optional
+	Seats                  string    "seats"                   // optional
+	ServiceClass           string    "service_class"           // optional
+	Stops                  string    "stops"                   // optional
+	BaggageClaim           string    "baggage_claim"           // optional
+	CheckInUrl             string    "check_in_url"            // optional
+	ConflictResolutionUrl  string    "conflict_resolution_url" // optional, read-only
+	IsHidden_              *string   "is_hidden"               // optional, read-only
+	Id_                    *string   "id"                      // optional, read-only
 }
 
 func (s *AirSegment) Status() (int, os.Error) {
@@ -869,7 +869,7 @@ type RailSegment struct {
 	ServiceClass        string    "service_class"       // optional
 	TrainNumber         string    "train_number"        // optional
 	TrainType           string    "train_type"          // optional
-	Id_                  *string     "id"                  // optional, read-only
+	Id_                 *string   "id"                  // optional, read-only
 }
 
 func (r *RailSegment) Id() (uint, os.Error) {
@@ -903,7 +903,7 @@ type TransportSegment struct {
 	ConfirmationNum      string    "confirmation_num"     // optional
 	NumberPassengers     string    "number_passengers"    // optional
 	VehicleDescription   string    "vehicle_description"  // optional
-	Id_                   *string     "id"                   // optional, read-only
+	Id_                  *string   "id"                   // optional, read-only
 }
 
 func (r *TransportSegment) Id() (uint, os.Error) {
@@ -934,7 +934,7 @@ type CruiseSegment struct {
 	LocationAddress *Address  "LocationAddress"  // optional
 	LocationName    string    "location_name"    // optional
 	DetailTypeCode  string    "detail_type_code" // optional
-	Id_              *string     "id"               // optional, read-only
+	Id_             *string   "id"               // optional, read-only
 }
 
 func (r *CruiseSegment) Id() (uint, os.Error) {
@@ -1009,8 +1009,8 @@ type DirectionsObject struct {
 // Weather is read-only
 type WeatherObject struct {
 	Object
-	Date_               string   "date"                 // optional, read-only, xs:date
-	Location           string   "location"             // optional, read-only
+	Date_               string  "date"                 // optional, read-only, xs:date
+	Location            string  "location"             // optional, read-only
 	AvgHighTempC_       *string "avg_high_temp_c"      // optional, read-only
 	AvgLowTempC_        *string "avg_low_temp_c"       // optional, read-only
 	AvgWindSpeedKn_     *string "avg_wind_speed_kn"    // optional, read-only
@@ -1058,4 +1058,3 @@ func (w *WeatherObject) AvgSnowDepthCm() (float64, os.Error) {
 	}
 	return strconv.Atof64(*w.AvgSnowDepthCm_)
 }
-
