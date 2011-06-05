@@ -8,6 +8,7 @@ import (
 	"rand"
 	"fmt"
 	"sort"
+	"strconv"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
@@ -16,10 +17,10 @@ import (
 
 // TripIt API URLs for OAuth
 const (
-	UrlObtainRequestToken            = "https://api.tripit.com/oauth/request_token"                              // POST
+	UrlObtainRequestToken            = "/oauth/request_token"                                                    // POST
 	UrlObtainUserAuthorization       = "https://www.tripit.com/oauth/authorize?oauth_token=%s&oauth_callback=%s" // Redirect
 	UrlObtainUserAuthorizationMobile = "https://m.tripit.com/oauth/authorize?oauth_token=%s&oauth_callback=%s"   // Redirect
-	UrlObtainAccessToken             = "https://api.tripit.com/oauth/access_token"                               // POST
+	UrlObtainAccessToken             = "/oauth/access_token"                                                     // POST
 )
 
 // Signature method and version
@@ -132,7 +133,7 @@ func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Requ
 	arr := make([]string, len(p))
 	i := 0
 	for k, v := range p {
-		arr[i] = fmt.Sprintf("%s=%s", http.URLEscape(k), http.URLEscape(v))
+		arr[i] = fmt.Sprintf("%s=\"%s\"", http.URLEscape(k), http.URLEscape(v))
 		i++
 	}
 	s += strings.Join(arr, ",")
@@ -144,7 +145,7 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 	p := map[string]string{
 		"oauth_consumer_key":     a.oauthConsumerKey,
 		"oauth_nonce":            generateNonce(),
-		"oauth_timestamp":        time.LocalTime().Format(time.RFC3339),
+		"oauth_timestamp":        strconv.Itoa64(time.LocalTime().Seconds()),
 		"oauth_signature_method": OAUTH_SIGNATURE_METHOD,
 		"oauth_version":          OAUTH_VERSION,
 	}
@@ -177,10 +178,10 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 		i++
 	}
 	arr.Sort()
-	sigBaseString := strings.Join([]string{httpMethod, baseUrl, strings.Join(arr, "&")}, "&")
+	sigBaseString := strings.Join([]string{httpMethod, http.URLEscape(baseUrl), http.URLEscape(strings.Join(arr, "&"))}, "&")
 	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
 	h := hmac.NewSHA1([]byte(key))
-	fmt.Fprintf(h, "%s", sigBaseString)
+	h.Write([]byte(sigBaseString))
 	b := h.Sum()
 	dst := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
 	base64.StdEncoding.Encode(dst, b)

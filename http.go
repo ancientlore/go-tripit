@@ -7,11 +7,12 @@ import (
 	"json"
 	"io"
 	"bytes"
+	"strings"
 )
 
 // TripIt API information
 const (
-	ApiUrl = "https://api.tripit.com"
+	ApiUrl     = "https://api.tripit.com"
 	ApiVersion = "v1"
 )
 
@@ -40,15 +41,15 @@ type Authorizable interface {
 
 // TripIt class to used to communicate with the API
 type TripIt struct {
-	baseUrl string
-	version string
-	httpClient *http.Client
+	baseUrl     string
+	version     string
+	httpClient  *http.Client
 	credentials Authorizable
 }
 
 // Creates a new TripIt object using the given HTTP client and authorization object
-func New(client *http.Client, creds Authorizable) *TripIt {
-	return &TripIt{ApiUrl, ApiVersion, client, creds}
+func New(apiUrl string, apiVersion string, client *http.Client, creds Authorizable) *TripIt {
+	return &TripIt{apiUrl, apiVersion, client, creds}
 }
 
 // makes request
@@ -62,6 +63,11 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	if resp.StatusCode != 200 {
 		return nil, os.NewError(resp.Status)
 	}
+	//f, _ := os.Create("output.json")
+	//defer f.Close()
+	//io.Copy(f, resp.Body)
+	//f.Seek(0, 0)
+	// json := json.NewDecoder(f)
 	json := json.NewDecoder(resp.Body)
 	result := new(Response)
 	err = json.Decode(result)
@@ -133,7 +139,7 @@ func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) 
 }
 
 func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
-	req, err := http.NewRequest("GET", UrlObtainRequestToken, nil)
+	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainRequestToken, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +156,7 @@ func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
 }
 
 func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
-	req, err := http.NewRequest("GET", UrlObtainAccessToken, nil)
+	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainAccessToken, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -167,21 +173,20 @@ func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
 }
 
 func parseQS(body io.Reader) (map[string]string, os.Error) {
-	buf := make([]byte, 1024)	// assume oauth token response won't be larger
-	_, err := body.Read(buf)
+	buf := make([]byte, 1024) // assume oauth token response won't be larger
+	l, err := body.Read(buf)
 	if err != nil {
 		return nil, err
 	}
-	qm, err := http.ParseQuery(string(buf))
+	qm, err := http.ParseQuery(string(buf[0:l]))
 	if err != nil {
 		return nil, err
 	}
 	result := make(map[string]string)
 	for k, v := range qm {
-		result[k] = v[0]
+		result[k] = strings.TrimSpace(v[0])
 	}
 	return result, nil
 }
 
 // @TODO Add CRS elements
-
