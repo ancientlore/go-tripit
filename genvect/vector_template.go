@@ -91,8 +91,17 @@ func (p *{{{Name}}}Vector) UnmarshalJSON(b []byte) os.Error {
 		arr = make([]{{{Type}}}, 1)
 		err := json.Unmarshal(b, &arr[0])
 		if err != nil {
-			return err
+			if err2, ok := err.(*json.UnmarshalTypeError); ok && err2.Value == "null" {
+				arr = arr[0:0]
+			} else {
+				return err
+			}
 		}
+		{{{.section IsPtr}}}
+		if arr[0] == nil {
+			arr = arr[0:0]
+		}
+		{{{.end}}}
 	}
 	p.Cut(0, p.Len())
 	for _, v := range arr {
@@ -103,9 +112,14 @@ func (p *{{{Name}}}Vector) UnmarshalJSON(b []byte) os.Error {
 
 // MarshalJSON customizes the JSON output for Vectors.
 func (p *{{{Name}}}Vector) MarshalJSON() ([]byte, os.Error) {
-	a := make([]{{{Type}}}, p.Len())
-	for i := 0; i < p.Len(); i++ {
-		a[i] = p.At(i)
+	var a []{{{Type}}}
+	if p == nil {
+		a = make([]{{{Type}}}, 0)
+	} else {
+		a = make([]{{{Type}}}, p.Len())
+		for i := 0; i < p.Len(); i++ {
+			a[i] = p.At(i)
+		}
 	}
 	return json.Marshal(a)
 }
