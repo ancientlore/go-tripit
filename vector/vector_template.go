@@ -109,5 +109,17 @@ func (p *{{{Name}}}Vector) MarshalJSON() ([]byte, os.Error) {
 	}
 	return json.Marshal(a)
 }
+
+// Data returns all the elements as a slice.
+func (p *{{{Name}}}Vector) Data() []{{{Type}}} {
+	arr := make([]{{{Type}}}, p.Len())
+	var i int
+	i = 0
+	p.Do(func(v {{{Type}}}) {
+		arr[i] = v
+		i++
+	})
+	return arr
+}
 `
 }
