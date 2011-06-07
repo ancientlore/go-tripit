@@ -4,7 +4,12 @@
 </head>
 <body>
 	<h1>TripIt Sample</h1>
+	{.section NotAuthorized}
 	<div><a href="/auth">Authorize</a></div>
+	{.end}
+	{.section Authorized}
 	<div><a href="/trips">Trips</a></div>
+	<div><a href="/list?t=points_program">My Points (TripIt Pro)</a>
+	{.end}
 </body>
 </html>

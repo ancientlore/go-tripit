@@ -267,21 +267,21 @@ func (dt *DateTime) SetDateTime(t *time.Time) {
 
 // All PointsProgram elements are read-only
 type PointsProgram struct {
-	Id_                  string                    "id"                    // read-only
-	Name                 string                    "name optional"         // read-only
-	AccountNumber        string                    "account_number"        // optional, read-only
-	AccountLogin         string                    "account_login"         // optional, read-only
-	Balance              string                    "balance"               // optional, read-only
-	EliteStatus          string                    "elite_status"          // optional, read-only
-	EliteNextStatus      string                    "elite_next_status"     // optional, read-only
-	EliteYtdQualify      string                    "elite_ytd_qualify"     // optional, read-only
-	EliteNeedToEarn      string                    "elite_need_to_earn"    // optional, read-only
-	LastModified_        string                    "last_modified"         // read-only
-	TotalNumActivities_  string                    "total_num_activities"  // read-only
-	TotalNumExpirations_ string                    "total_num_expirations" // read-only
-	ErrorMessage         string                    "error_message"         // optional, read-only
-	Activity             []PointsProgramActivity   "Activity"              // optional, read-only
-	Expiration           []PointsProgramExpiration "Expiration"            // optional, read-only
+	Id_                  string                         "id"                    // read-only
+	Name                 string                         "name optional"         // read-only
+	AccountNumber        string                         "account_number"        // optional, read-only
+	AccountLogin         string                         "account_login"         // optional, read-only
+	Balance              string                         "balance"               // optional, read-only
+	EliteStatus          string                         "elite_status"          // optional, read-only
+	EliteNextStatus      string                         "elite_next_status"     // optional, read-only
+	EliteYtdQualify      string                         "elite_ytd_qualify"     // optional, read-only
+	EliteNeedToEarn      string                         "elite_need_to_earn"    // optional, read-only
+	LastModified_        string                         "last_modified"         // read-only
+	TotalNumActivities_  string                         "total_num_activities"  // read-only
+	TotalNumExpirations_ string                         "total_num_expirations" // read-only
+	ErrorMessage         string                         "error_message"         // optional, read-only
+	Activity             *PointsProgramActivityVector   "Activity"              // optional, read-only
+	Expiration           *PointsProgramExpirationVector "Expiration"            // optional, read-only
 }
 
 func (pp *PointsProgram) Id() (uint, os.Error) {
@@ -596,51 +596,44 @@ type AirObject struct {
 }
 
 type AirSegment struct {
-	Status_                *string   "Status"                  // optional
-	StartDateTime          *DateTime "StartDateTime"           // optional
-	EndDateTime            *DateTime "EndDateTime"             // optional
-	StartAirportCode       string    "start_airport_code"      // optional
-	StartAirportLatitude_  *string   "start_airport_latitude"  // optional, read-only
-	StartAirportLongitude_ *string   "start_airport_longitude" // optional, read-only
-	StartCityName          string    "start_city_name"         // optional
-	StartGate              string    "start_gate"              // optional
-	StartTerminal          string    "start_terminal"          // optional
-	EndAirportCode         string    "end_airport_code"        // optional
-	EndAirportLatitude_    *string   "end_airport_latitude"    // optional, read-only
-	EndAirportLongitude_   *string   "end_airport_longitude"   // optional, read-only
-	EndCityName            string    "end_city_name"           // optional
-	EndGate                string    "end_gate"                // optional
-	EndTerminal            string    "end_terminal"            // optional
-	MarketingAirline       string    "marketing_airline"       // optional
-	MarketingAirlineCode   string    "marketing_airline_code"  // optional, read-only
-	MarketingFlightNumber  string    "marketing_flight_number" // optional
-	OperatingAirline       string    "operating_airline"       // optional
-	OperatingAirlineCode   string    "operating_airline_code"  // optional, read-only
-	OperatingFlightNumber  string    "operating_flight_number" // optional
-	AlternativeFlightsUrl  string    "alternate_flights_url"   // optional, read-only
-	Aircraft               string    "aircraft"                // optional
-	AircraftDisplayName    string    "aircraft_display_name"   // optional, read-only
-	Distance               string    "distance"                // optional
-	Duration               string    "duration"                // optional
-	Entertainment          string    "entertainment"           // optional
-	Meal                   string    "meal"                    // optional
-	Notes                  string    "notes"                   // optional
-	OntimePerc             string    "ontime_perc"             // optional
-	Seats                  string    "seats"                   // optional
-	ServiceClass           string    "service_class"           // optional
-	Stops                  string    "stops"                   // optional
-	BaggageClaim           string    "baggage_claim"           // optional
-	CheckInUrl             string    "check_in_url"            // optional
-	ConflictResolutionUrl  string    "conflict_resolution_url" // optional, read-only
-	IsHidden_              *string   "is_hidden"               // optional, read-only
-	Id_                    *string   "id"                      // optional, read-only
-}
-
-func (s *AirSegment) Status() (int, os.Error) {
-	if s.Status_ == nil {
-		return 0, os.NewError("Status not specified")
-	}
-	return strconv.Atoi(*s.Status_)
+	Status                 *FlightStatus "Status"                  // optional
+	StartDateTime          *DateTime     "StartDateTime"           // optional
+	EndDateTime            *DateTime     "EndDateTime"             // optional
+	StartAirportCode       string        "start_airport_code"      // optional
+	StartAirportLatitude_  *string       "start_airport_latitude"  // optional, read-only
+	StartAirportLongitude_ *string       "start_airport_longitude" // optional, read-only
+	StartCityName          string        "start_city_name"         // optional
+	StartGate              string        "start_gate"              // optional
+	StartTerminal          string        "start_terminal"          // optional
+	EndAirportCode         string        "end_airport_code"        // optional
+	EndAirportLatitude_    *string       "end_airport_latitude"    // optional, read-only
+	EndAirportLongitude_   *string       "end_airport_longitude"   // optional, read-only
+	EndCityName            string        "end_city_name"           // optional
+	EndGate                string        "end_gate"                // optional
+	EndTerminal            string        "end_terminal"            // optional
+	MarketingAirline       string        "marketing_airline"       // optional
+	MarketingAirlineCode   string        "marketing_airline_code"  // optional, read-only
+	MarketingFlightNumber  string        "marketing_flight_number" // optional
+	OperatingAirline       string        "operating_airline"       // optional
+	OperatingAirlineCode   string        "operating_airline_code"  // optional, read-only
+	OperatingFlightNumber  string        "operating_flight_number" // optional
+	AlternativeFlightsUrl  string        "alternate_flights_url"   // optional, read-only
+	Aircraft               string        "aircraft"                // optional
+	AircraftDisplayName    string        "aircraft_display_name"   // optional, read-only
+	Distance               string        "distance"                // optional
+	Duration               string        "duration"                // optional
+	Entertainment          string        "entertainment"           // optional
+	Meal                   string        "meal"                    // optional
+	Notes                  string        "notes"                   // optional
+	OntimePerc             string        "ontime_perc"             // optional
+	Seats                  string        "seats"                   // optional
+	ServiceClass           string        "service_class"           // optional
+	Stops                  string        "stops"                   // optional
+	BaggageClaim           string        "baggage_claim"           // optional
+	CheckInUrl             string        "check_in_url"            // optional
+	ConflictResolutionUrl  string        "conflict_resolution_url" // optional, read-only
+	IsHidden_              *string       "is_hidden"               // optional, read-only
+	Id_                    *string       "id"                      // optional, read-only
 }
 
 func (s *AirSegment) StartAirportLatitude() (float64, os.Error) {

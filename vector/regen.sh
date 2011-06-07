@@ -27,3 +27,5 @@
 ../genvect/genvect -name RailSegmentPtr -type "*RailSegment"
 ../genvect/genvect -name TransportSegmentPtr -type "*TransportSegment"
 ../genvect/genvect -name CruiseSegmentPtr -type "*CruiseSegment"
+../genvect/genvect -name PointsProgramActivity
+../genvect/genvect -name PointsProgramExpiration

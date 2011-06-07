@@ -33,7 +33,9 @@ GOFILES=\
 	vector/airsegmentptrvector.go\
 	vector/railsegmentptrvector.go\
 	vector/transportsegmentptrvector.go\
-	vector/cruisesegmentptrvector.go
+	vector/cruisesegmentptrvector.go\
+	vector/pointsprogramactivityvector.go\
+	vector/pointsprogramexpirationvector.go
 
 include $(GOROOT)/src/Make.pkg
 

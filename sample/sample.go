@@ -84,6 +84,7 @@ func main() {
 	http.Handle("/auth2", http.HandlerFunc(CheckAuth))
 	http.Handle("/trips", http.HandlerFunc(Trips))
 	http.Handle("/details", http.HandlerFunc(Details))
+	http.Handle("/list", http.HandlerFunc(List))
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
@@ -91,8 +92,14 @@ func main() {
 }
 
 func Index(w http.ResponseWriter, req *http.Request) {
-	getSession(w, req)
-	indexT.Execute(w, nil)
+	sess := getSession(w, req)
+	m := make(map[string]interface{})
+	if sess["oauth_token"] != "" {
+		m["Authorized"] = true
+	} else {
+		m["NotAuthorized"] = true
+	}
+	indexT.Execute(w, m)
 }
 
 func Auth(w http.ResponseWriter, req *http.Request) {
@@ -127,13 +134,8 @@ func CheckAuth(w http.ResponseWriter, req *http.Request) {
 	}
 	sess["oauth_token"] = m["oauth_token"]
 	sess["oauth_token_secret"] = m["oauth_token_secret"]
-	aurl := fmt.Sprintf("http://%s/trips", *addr)
+	aurl := fmt.Sprintf("http://%s/", *addr)
 	http.Redirect(w, req, aurl, http.StatusFound)
-}
-
-type jsonresult struct {
-	Result *tripit.Response
-	JSON   string
 }
 
 func Trips(w http.ResponseWriter, req *http.Request) {
@@ -184,6 +186,48 @@ func Details(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	resp, err := t.Get(objType, objId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	m := make(map[string]interface{})
+	m["Result"] = resp
+	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if resp.Warning != nil {
+			m["Warning"] = resp.Warning.Data()
+		}
+		if resp.Error != nil {
+			m["Error"] = resp.Error.Data()
+		}
+		apierrorT.Execute(w, m)
+		return
+	}
+	b, _ := json.MarshalIndent(resp, "", "\t")
+	m["JSON"] = string(b)
+	detailsT.Execute(w, m)
+}
+
+func List(w http.ResponseWriter, req *http.Request) {
+	sess := getSession(w, req)
+	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
+	var client http.Client
+	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	q, err := http.ParseQuery(req.URL.RawQuery)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	objType := q["t"][0]
+	filters := make(map[string]string)
+	for k, v := range q {
+		if k !=  "objType" {
+			filters[k] = v[0]
+		}
+	}
+
+	resp, err := t.List(objType, filters)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
