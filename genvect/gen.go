@@ -57,4 +57,3 @@ func main() {
 	defer file.Close()
 	template.Execute(file, info)
 }
-

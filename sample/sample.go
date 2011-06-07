@@ -147,15 +147,22 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 		errorT.Execute(w, err)
 		return
 	}
-	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
-		apierrorT.Execute(w, resp)
+	m := make(map[string]interface{})
+	m["Result"] = resp
+	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if resp.Warning != nil {
+			m["Warning"] = resp.Warning.Data()
+		}
+		if resp.Error != nil {
+			m["Error"] = resp.Error.Data()
+		}
+		apierrorT.Execute(w, m)
 		return
 	}
-	var r jsonresult
-	r.Result = resp
+	m["Trip"] = resp.Trip.Data()
 	b, _ := json.MarshalIndent(resp, "", "\t")
-	r.JSON = string(b)
-	tripsT.Execute(w, r)
+	m["JSON"] = string(b)
+	tripsT.Execute(w, m)
 }
 
 func Details(w http.ResponseWriter, req *http.Request) {
@@ -163,14 +170,14 @@ func Details(w http.ResponseWriter, req *http.Request) {
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
 	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
-	m, err := http.ParseQuery(req.URL.RawQuery)
+	q, err := http.ParseQuery(req.URL.RawQuery)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
 		return
 	}
-	objType := m["t"][0]
-	objId, err := strconv.Atoui(m["id"][0])
+	objType := q["t"][0]
+	objId, err := strconv.Atoui(q["id"][0])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -182,13 +189,19 @@ func Details(w http.ResponseWriter, req *http.Request) {
 		errorT.Execute(w, err)
 		return
 	}
-	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
-		apierrorT.Execute(w, resp)
+	m := make(map[string]interface{})
+	m["Result"] = resp
+	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if resp.Warning != nil {
+			m["Warning"] = resp.Warning.Data()
+		}
+		if resp.Error != nil {
+			m["Error"] = resp.Error.Data()
+		}
+		apierrorT.Execute(w, m)
 		return
 	}
-	var r jsonresult
-	r.Result = resp
 	b, _ := json.MarshalIndent(resp, "", "\t")
-	r.JSON = string(b)
-	detailsT.Execute(w, r)
+	m["JSON"] = string(b)
+	detailsT.Execute(w, m)
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"json"
 )
 
 // TripIt Object Types
@@ -90,27 +89,29 @@ func (w *Warning) String() string {
 	return fmt.Sprintf("TripIt Warning: %s", w.Description)
 }
 
+// Note that the Vectors are pointers - otherwise the JSON marshaler doesn't notice the custom methods
+
 // Represents a TripIt API Response
 type Response struct {
-	Timestamp_       string             "timestamp"
-	NumBytes_        string             "num_bytes"
-	Error            []Error            "Error"            // optional
-	Warning          []Warning          "Warning"          // optional
-	Trip             []Trip             "Trip"             // optional
-	ActivityObject   []ActivityObject   "ActivityObject"   // optional
-	AirObject        []AirObject        "AirObject"        // optional
-	CarObject        []CarObject        "CarObject"        // optional
-	CruiseObject     []CruiseObject     "CruiseObject"     // optional
-	DirectionsObject []DirectionsObject "DirectionsObject" // optional
-	LodgingObject    []LodgingObject    "LodgingObject"    // optional
-	MapObject        []MapObject        "MapObject"        // optional
-	NoteObject       []NoteObject       "NoteObject"       // optional
-	RailObject       []RailObject       "RailObject"       // optional
-	RestaurantObject []RestaurantObject "RestaurantObject" // optional
-	TransportObject  []TransportObject  "TransportObject"  // optional
-	WeatherObject    []WeatherObject    "WeatherObject"    // optional
-	PointsProgram    []PointsProgram    "PointsProgram"    // optional
-	Profile          []Profile          "Profile"          // optional
+	Timestamp_       string                     "timestamp"
+	NumBytes_        string                     "num_bytes"
+	Error            *ErrorVector               "Error"            // optional
+	Warning          *WarningVector             "Warning"          // optional
+	Trip             *TripPtrVector             "Trip"             // optional
+	ActivityObject   *ActivityObjectPtrVector   "ActivityObject"   // optional
+	AirObject        *AirObjectPtrVector        "AirObject"        // optional
+	CarObject        *CarObjectPtrVector        "CarObject"        // optional
+	CruiseObject     *CruiseObjectPtrVector     "CruiseObject"     // optional
+	DirectionsObject *DirectionsObjectPtrVector "DirectionsObject" // optional
+	LodgingObject    *LodgingObjectPtrVector    "LodgingObject"    // optional
+	MapObject        *MapObjectPtrVector        "MapObject"        // optional
+	NoteObject       *NoteObjectPtrVector       "NoteObject"       // optional
+	RailObject       *RailObjectPtrVector       "RailObject"       // optional
+	RestaurantObject *RestaurantObjectPtrVector "RestaurantObject" // optional
+	TransportObject  *TransportObjectPtrVector  "TransportObject"  // optional
+	WeatherObject    *WeatherObjectVector       "WeatherObject"    // optional
+	PointsProgram    *PointsProgramVector       "PointsProgram"    // optional
+	Profile          *ProfileVector             "Profile"          // optional
 	// @TODO need to add invitee stuff
 }
 
@@ -385,63 +386,11 @@ type Profile struct {
 }
 
 type ProfileEmailAddresses struct {
-	ProfileEmailAddress []ProfileEmailAddress "ProfileEmailAddress"
-}
-
-type profileEmailAddressesD struct {
-	ProfileEmailAddress []ProfileEmailAddress "ProfileEmailAddress"
-}
-
-type profileEmailAddressesS struct {
-	ProfileEmailAddress ProfileEmailAddress "ProfileEmailAddress"
-}
-
-// Unmarshal JSON to handle array vs. no array
-func (ea *ProfileEmailAddresses) UnmarshalJSON(ba []byte) os.Error {
-	var d profileEmailAddressesD
-	err := json.Unmarshal(ba, &d)
-	if err != nil {
-		var s profileEmailAddressesS
-		err = json.Unmarshal(ba, &s)
-		if err != nil {
-			return err
-		}
-		ea.ProfileEmailAddress = make([]ProfileEmailAddress, 1)
-		ea.ProfileEmailAddress[0] = s.ProfileEmailAddress
-	} else {
-		ea.ProfileEmailAddress = d.ProfileEmailAddress
-	}
-	return nil
+	ProfileEmailAddress *ProfileEmailAddressVector "ProfileEmailAddress"
 }
 
 type GroupMemberships struct {
-	Group []Group "Group" // optional, read-only
-}
-
-type groupMembershipsD struct {
-	Group []Group "Group" // optional, read-only
-}
-
-type groupMembershipsS struct {
-	Group Group "Group" // optional, read-only
-}
-
-// Unmarshal JSON to handle array vs. no array
-func (gm *GroupMemberships) UnmarshalJSON(ba []byte) os.Error {
-	var d groupMembershipsD
-	err := json.Unmarshal(ba, &d)
-	if err != nil {
-		var s groupMembershipsS
-		err = json.Unmarshal(ba, &s)
-		if err != nil {
-			return err
-		}
-		gm.Group = make([]Group, 1)
-		gm.Group[0] = s.Group
-	} else {
-		gm.Group = d.Group
-	}
-	return nil
+	Group *GroupVector "Group" // optional, read-only
 }
 
 type ProfileAttributes struct {
@@ -538,93 +487,15 @@ type Trip struct {
 }
 
 type TripInvitees struct {
-	Invitee []Invitee "Invitee" // optional, TripInvitees are read-only
-}
-
-type tripInviteesD struct {
-	Invitee []Invitee "Invitee" // optional, TripInvitees are read-only
-}
-
-type tripInviteesS struct {
-	Invitee Invitee "Invitee" // optional, TripInvitees are read-only
-}
-
-// Unmarshal JSON to handle array vs. no array
-func (ti *TripInvitees) UnmarshalJSON(ba []byte) os.Error {
-	var d tripInviteesD
-	err := json.Unmarshal(ba, &d)
-	if err != nil {
-		var s tripInviteesS
-		err = json.Unmarshal(ba, &s)
-		if err != nil {
-			return err
-		}
-		ti.Invitee = make([]Invitee, 1)
-		ti.Invitee[0] = s.Invitee
-	} else {
-		ti.Invitee = d.Invitee
-	}
-	return nil
+	Invitee *InviteeVector "Invitee" // optional, TripInvitees are read-only
 }
 
 type ClosenessMatches struct {
-	ClosenessMatch []ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
-}
-
-type closenessMatchesD struct {
-	ClosenessMatch []ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
-}
-
-type closenessMatchesS struct {
-	ClosenessMatch ClosenessMatch "ClosenessMatch" // optional, ClosenessMatches are read-only
-}
-
-// Unmarshal JSON to handle array vs. no array
-func (cm *ClosenessMatches) UnmarshalJSON(ba []byte) os.Error {
-	var d closenessMatchesD
-	err := json.Unmarshal(ba, &d)
-	if err != nil {
-		var s closenessMatchesS
-		err = json.Unmarshal(ba, &s)
-		if err != nil {
-			return err
-		}
-		cm.ClosenessMatch = make([]ClosenessMatch, 1)
-		cm.ClosenessMatch[0] = s.ClosenessMatch
-	} else {
-		cm.ClosenessMatch = d.ClosenessMatch
-	}
-	return nil
+	ClosenessMatch *ClosenessMatchVector "Match" // optional, ClosenessMatches are read-only
 }
 
 type TripCrsRemarks struct {
-	TripCrsRemark []TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
-}
-
-type tripCrsRemarksD struct {
-	TripCrsRemark []TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
-}
-
-type tripCrsRemarksS struct {
-	TripCrsRemark TripCrsRemark "TripCrsRemark" // optional, TripCrsRemarks are read-only
-}
-
-// Unmarshal JSON to handle array vs. no array
-func (tr *TripCrsRemarks) UnmarshalJSON(ba []byte) os.Error {
-	var d tripCrsRemarksD
-	err := json.Unmarshal(ba, &d)
-	if err != nil {
-		var s tripCrsRemarksS
-		err = json.Unmarshal(ba, &s)
-		if err != nil {
-			return err
-		}
-		tr.TripCrsRemark = make([]TripCrsRemark, 1)
-		tr.TripCrsRemark[0] = s.TripCrsRemark
-	} else {
-		tr.TripCrsRemark = d.TripCrsRemark
-	}
-	return nil
+	TripCrsRemark *TripCrsRemarkVector "TripCrsRemark" // optional, TripCrsRemarks are read-only
 }
 
 func (t *Trip) Id() (uint, os.Error) {
@@ -654,12 +525,12 @@ func (t *Trip) EndDate() (*time.Time, os.Error) {
 }
 
 type Object struct {
-	Id_               *string "id"                 // optional, read-only
-	TripId_           *string "trip_id"            // optional
-	IsClientTraveler_ *string "is_client_traveler" // optional, read-only
-	RelativeUrl       string  "relative_url"       // optional, read-only
-	DisplayName       string  "display_name"       // optional
-	Image             []Image "Image"              // optional
+	Id_               *string         "id"                 // optional, read-only
+	TripId_           *string         "trip_id"            // optional
+	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
+	RelativeUrl       string          "relative_url"       // optional, read-only
+	DisplayName       string          "display_name"       // optional
+	Image             *ImagePtrVector "Image"              // optional
 }
 
 func (o *Object) Id() (uint, os.Error) {
@@ -720,8 +591,8 @@ func (o *ReservationObject) IsPurchased() (bool, os.Error) {
 
 type AirObject struct {
 	ReservationObject
-	Segment  []AirSegment "Segment"
-	Traveler []Traveler   "Traveler" // optional
+	Segment  *AirSegmentPtrVector "Segment"
+	Traveler *TravelerPtrVector   "Traveler" // optional
 }
 
 type AirSegment struct {
@@ -819,13 +690,13 @@ func (s *AirSegment) IsHidden() (bool, os.Error) {
 // hotel average daily rate should be in booking_rate
 type LodgingObject struct {
 	ReservationObject
-	StartDateTime *DateTime  "StartDateTime" // optional
-	EndDateTime   *DateTime  "EndDateTime"   // optional
-	Address       *Address   "Address"       // optional
-	Guest         []Traveler "Guest"         // optional
-	NumberGuests  string     "number_guests" // optional
-	NumberRooms   string     "numer_rooms"   // optional
-	RoomType      string     "room_type"     // optional
+	StartDateTime *DateTime          "StartDateTime" // optional
+	EndDateTime   *DateTime          "EndDateTime"   // optional
+	Address       *Address           "Address"       // optional
+	Guest         *TravelerPtrVector "Guest"         // optional
+	NumberGuests  string             "number_guests" // optional
+	NumberRooms   string             "numer_rooms"   // optional
+	RoomType      string             "room_type"     // optional
 }
 
 // car cancellation remarks should be in restrictions
@@ -833,26 +704,26 @@ type LodgingObject struct {
 // car daily rate should be in booking_rate
 type CarObject struct {
 	ReservationObject
-	StartDateTime        *DateTime  "StartDateTime"        // optional
-	EndDateTime          *DateTime  "EndDateTime"          // optional
-	StartLocationAddress *Address   "StartLocationAddress" // optional
-	EndLocationAddress   *Address   "EndLocationAddress"   // optional
-	Driver               []Traveler "Driver"               // optional
-	StartLocationHours   string     "start_location_hours" // optional
-	StartLocationName    string     "start_location_name"  // optional
-	StartLocationPhone   string     "start_location_phone" // optional
-	EndLocationHours     string     "end_location_hours"   // optional
-	EndLocationName      string     "end_location_name"    // optional
-	EndLocationPhone     string     "end_location_phone"   // optional
-	CarDescription       string     "car_description"      // optional
-	CarType              string     "car_type"             // optional
-	MileageCharges       string     "mileage_charges"      // optional
+	StartDateTime        *DateTime          "StartDateTime"        // optional
+	EndDateTime          *DateTime          "EndDateTime"          // optional
+	StartLocationAddress *Address           "StartLocationAddress" // optional
+	EndLocationAddress   *Address           "EndLocationAddress"   // optional
+	Driver               *TravelerPtrVector "Driver"               // optional
+	StartLocationHours   string             "start_location_hours" // optional
+	StartLocationName    string             "start_location_name"  // optional
+	StartLocationPhone   string             "start_location_phone" // optional
+	EndLocationHours     string             "end_location_hours"   // optional
+	EndLocationName      string             "end_location_name"    // optional
+	EndLocationPhone     string             "end_location_phone"   // optional
+	CarDescription       string             "car_description"      // optional
+	CarType              string             "car_type"             // optional
+	MileageCharges       string             "mileage_charges"      // optional
 }
 
 type RailObject struct {
 	ReservationObject
-	Segment  []RailSegment "Segment"
-	Traveler []Traveler    "Traveler" // optional
+	Segment  *RailSegmentPtrVector "Segment"
+	Traveler *TravelerPtrVector    "Traveler" // optional
 }
 
 type RailSegment struct {
@@ -887,8 +758,8 @@ const (
 
 type TransportObject struct {
 	ReservationObject
-	Segment  []TransportSegment "Segment"
-	Traveler []Traveler         "Traveler" // optional
+	Segment  *TransportSegmentPtrVector "Segment"
+	Traveler *TravelerPtrVector         "Traveler" // optional
 }
 
 type TransportSegment struct {
@@ -920,12 +791,12 @@ const (
 
 type CruiseObject struct {
 	ReservationObject
-	Segment     []CruiseSegment "Segment"
-	Traveler    []Traveler      "Traveler"     // optional
-	CabinNumber string          "cabin_number" // optional
-	CabinType   string          "cabin_type"   // optional
-	Dining      string          "dining"       // optional
-	ShipName    string          "ship_name"    // optional
+	Segment     *CruiseSegmentPtrVector "Segment"
+	Traveler    *TravelerPtrVector      "Traveler"     // optional
+	CabinNumber string                  "cabin_number" // optional
+	CabinType   string                  "cabin_type"   // optional
+	Dining      string                  "dining"       // optional
+	ShipName    string                  "ship_name"    // optional
 }
 
 type CruiseSegment struct {
@@ -968,12 +839,12 @@ const (
 
 type ActivityObject struct {
 	ReservationObject
-	StartDateTime  *DateTime  "StartDateTime"    // optional
-	EndTime        string     "end_time"         // optional, xs:time
-	Address        *Address   "Address"          // optional
-	Participant    []Traveler "Participant"      // optional
-	DetailTypeCode string     "detail_type_code" // optional
-	LocationName   string     "location_name"    // optional
+	StartDateTime  *DateTime          "StartDateTime"    // optional
+	EndTime        string             "end_time"         // optional, xs:time
+	Address        *Address           "Address"          // optional
+	Participant    *TravelerPtrVector "Participant"      // optional
+	DetailTypeCode string             "detail_type_code" // optional
+	LocationName   string             "location_name"    // optional
 }
 
 // Note Detail Types
