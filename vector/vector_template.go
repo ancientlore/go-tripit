@@ -99,5 +99,15 @@ func (p *{{{Name}}}Vector) UnmarshalJSON(b []byte) os.Error {
 		p.Push(v)
 	}
 	return nil
-}`
+}
+
+// MarshalJSON customizes the JSON output for Vectors.
+func (p *{{{Name}}}Vector) MarshalJSON() ([]byte, os.Error) {
+	a := make([]{{{Type}}}, p.Len())
+	for i := 0; i < p.Len(); i++ {
+		a[i] = p.At(i)
+	}
+	return json.Marshal(a)
+}
+`
 }
