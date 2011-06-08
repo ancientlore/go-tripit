@@ -524,75 +524,67 @@ func (t *Trip) EndDate() (*time.Time, os.Error) {
 	return time.Parse("2006-01-02", t.EndDate_)
 }
 
-type Object struct {
-	Id_               *string         "id"                 // optional, read-only
-	TripId_           *string         "trip_id"            // optional
-	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
-	RelativeUrl       string          "relative_url"       // optional, read-only
-	DisplayName       string          "display_name"       // optional
-	Image             *ImagePtrVector "Image"              // optional
+type AirObject struct {
+	Id_                  *string              "id"                     // optional, read-only
+	TripId_              *string              "trip_id"                // optional
+	IsClientTraveler_    *string              "is_client_traveler"     // optional, read-only
+	RelativeUrl          string               "relative_url"           // optional, read-only
+	DisplayName          string               "display_name"           // optional
+	Image                *ImagePtrVector      "Image"                  // optional
+	CancellationDateTime *DateTime            "CancellationDateTime"   // optional
+	BookingDate_         string               "booking_date"           // optional, xs:date
+	BookingRate          string               "booking_rate"           // optional
+	BookingSiteConfNum   string               "booking_site_conf_num"  // optional
+	BookingSiteName      string               "booking_site_name"      // optional
+	BookingSitePhone     string               "booking_site_phone"     // optional
+	BookingSiteUrl       string               "booking_site_url"       // optional
+	RecordLocator        string               "record_locator"         // optional
+	SupplierConfNum      string               "supplier_conf_num"      // optional
+	SupplierContact      string               "supplier_contact"       // optional
+	SupplierEmailAddress string               "supplier_email_address" // optional
+	SupplierName         string               "supplier_name"          // optional
+	SupplierPhone        string               "supplier_phone"         // optional
+	SupplierUrl          string               "supplier_url"           // optional
+	IsPurchased_         *string              "is_purchased"           // optional
+	Notes                string               "notes"                  // optional
+	Restrictions         string               "restrictions"           // optional
+	TotalCost            string               "total_cost"             // optional
+	Segment              *AirSegmentPtrVector "Segment"
+	Traveler             *TravelerPtrVector   "Traveler" // optional
 }
 
-func (o *Object) Id() (uint, os.Error) {
+func (o *AirObject) Id() (uint, os.Error) {
 	if o.Id_ == nil {
 		return 0, os.NewError("Id not specified")
 	}
 	return strconv.Atoui(*o.Id_)
 }
 
-func (o *Object) TripId() (uint, os.Error) {
+func (o *AirObject) TripId() (uint, os.Error) {
 	if o.TripId_ == nil {
 		return 0, os.NewError("TripId not specified")
 	}
 	return strconv.Atoui(*o.TripId_)
 }
 
-func (o *Object) IsClientTraveler() (bool, os.Error) {
+func (o *AirObject) IsClientTraveler() (bool, os.Error) {
 	if o.IsClientTraveler_ == nil {
 		return false, os.NewError("IsClientTraveler not specified")
 	}
 	return strconv.Atob(*o.IsClientTraveler_)
 }
 
-type ReservationObject struct {
-	Object
-	CancellationDateTime *DateTime "CancellationDateTime"   // optional
-	BookingDate_         string    "booking_date"           // optional, xs:date
-	BookingRate          string    "booking_rate"           // optional
-	BookingSiteConfNum   string    "booking_site_conf_num"  // optional
-	BookingSiteName      string    "booking_site_name"      // optional
-	BookingSitePhone     string    "booking_site_phone"     // optional
-	BookingSiteUrl       string    "booking_site_url"       // optional
-	RecordLocator        string    "record_locator"         // optional
-	SupplierConfNum      string    "supplier_conf_num"      // optional
-	SupplierContact      string    "supplier_contact"       // optional
-	SupplierEmailAddress string    "supplier_email_address" // optional
-	SupplierName         string    "supplier_name"          // optional
-	SupplierPhone        string    "supplier_phone"         // optional
-	SupplierUrl          string    "supplier_url"           // optional
-	IsPurchased_         *string   "is_purchased"           // optional
-	Notes                string    "notes"                  // optional
-	Restrictions         string    "restrictions"           // optional
-	TotalCost            string    "total_cost"             // optional
-}
-
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *ReservationObject) BookingDate() (*time.Time, os.Error) {
+func (r *AirObject) BookingDate() (*time.Time, os.Error) {
 	return time.Parse("2006-01-02", r.BookingDate_)
 }
 
-func (o *ReservationObject) IsPurchased() (bool, os.Error) {
+func (o *AirObject) IsPurchased() (bool, os.Error) {
 	if o.IsPurchased_ == nil {
 		return false, os.NewError("IsPurchased not specified")
 	}
 	return strconv.Atob(*o.IsPurchased_)
-}
-
-type AirObject struct {
-	ReservationObject
-	Segment  *AirSegmentPtrVector "Segment"
-	Traveler *TravelerPtrVector   "Traveler" // optional
 }
 
 type AirSegment struct {
@@ -682,41 +674,212 @@ func (s *AirSegment) IsHidden() (bool, os.Error) {
 // hotel room description should be in notes
 // hotel average daily rate should be in booking_rate
 type LodgingObject struct {
-	ReservationObject
-	StartDateTime *DateTime          "StartDateTime" // optional
-	EndDateTime   *DateTime          "EndDateTime"   // optional
-	Address       *Address           "Address"       // optional
-	Guest         *TravelerPtrVector "Guest"         // optional
-	NumberGuests  string             "number_guests" // optional
-	NumberRooms   string             "numer_rooms"   // optional
-	RoomType      string             "room_type"     // optional
+	Id_                  *string            "id"                     // optional, read-only
+	TripId_              *string            "trip_id"                // optional
+	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
+	RelativeUrl          string             "relative_url"           // optional, read-only
+	DisplayName          string             "display_name"           // optional
+	Image                *ImagePtrVector    "Image"                  // optional
+	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
+	BookingDate_         string             "booking_date"           // optional, xs:date
+	BookingRate          string             "booking_rate"           // optional
+	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
+	BookingSiteName      string             "booking_site_name"      // optional
+	BookingSitePhone     string             "booking_site_phone"     // optional
+	BookingSiteUrl       string             "booking_site_url"       // optional
+	RecordLocator        string             "record_locator"         // optional
+	SupplierConfNum      string             "supplier_conf_num"      // optional
+	SupplierContact      string             "supplier_contact"       // optional
+	SupplierEmailAddress string             "supplier_email_address" // optional
+	SupplierName         string             "supplier_name"          // optional
+	SupplierPhone        string             "supplier_phone"         // optional
+	SupplierUrl          string             "supplier_url"           // optional
+	IsPurchased_         *string            "is_purchased"           // optional
+	Notes                string             "notes"                  // optional
+	Restrictions         string             "restrictions"           // optional
+	TotalCost            string             "total_cost"             // optional
+	StartDateTime        *DateTime          "StartDateTime"          // optional
+	EndDateTime          *DateTime          "EndDateTime"            // optional
+	Address              *Address           "Address"                // optional
+	Guest                *TravelerPtrVector "Guest"                  // optional
+	NumberGuests         string             "number_guests"          // optional
+	NumberRooms          string             "numer_rooms"            // optional
+	RoomType             string             "room_type"              // optional
+}
+
+func (o *LodgingObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *LodgingObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *LodgingObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *LodgingObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *LodgingObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 // car cancellation remarks should be in restrictions
 // car pickup instructions should be in notes
 // car daily rate should be in booking_rate
 type CarObject struct {
-	ReservationObject
-	StartDateTime        *DateTime          "StartDateTime"        // optional
-	EndDateTime          *DateTime          "EndDateTime"          // optional
-	StartLocationAddress *Address           "StartLocationAddress" // optional
-	EndLocationAddress   *Address           "EndLocationAddress"   // optional
-	Driver               *TravelerPtrVector "Driver"               // optional
-	StartLocationHours   string             "start_location_hours" // optional
-	StartLocationName    string             "start_location_name"  // optional
-	StartLocationPhone   string             "start_location_phone" // optional
-	EndLocationHours     string             "end_location_hours"   // optional
-	EndLocationName      string             "end_location_name"    // optional
-	EndLocationPhone     string             "end_location_phone"   // optional
-	CarDescription       string             "car_description"      // optional
-	CarType              string             "car_type"             // optional
-	MileageCharges       string             "mileage_charges"      // optional
+	Id_                  *string            "id"                     // optional, read-only
+	TripId_              *string            "trip_id"                // optional
+	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
+	RelativeUrl          string             "relative_url"           // optional, read-only
+	DisplayName          string             "display_name"           // optional
+	Image                *ImagePtrVector    "Image"                  // optional
+	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
+	BookingDate_         string             "booking_date"           // optional, xs:date
+	BookingRate          string             "booking_rate"           // optional
+	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
+	BookingSiteName      string             "booking_site_name"      // optional
+	BookingSitePhone     string             "booking_site_phone"     // optional
+	BookingSiteUrl       string             "booking_site_url"       // optional
+	RecordLocator        string             "record_locator"         // optional
+	SupplierConfNum      string             "supplier_conf_num"      // optional
+	SupplierContact      string             "supplier_contact"       // optional
+	SupplierEmailAddress string             "supplier_email_address" // optional
+	SupplierName         string             "supplier_name"          // optional
+	SupplierPhone        string             "supplier_phone"         // optional
+	SupplierUrl          string             "supplier_url"           // optional
+	IsPurchased_         *string            "is_purchased"           // optional
+	Notes                string             "notes"                  // optional
+	Restrictions         string             "restrictions"           // optional
+	TotalCost            string             "total_cost"             // optional
+	StartDateTime        *DateTime          "StartDateTime"          // optional
+	EndDateTime          *DateTime          "EndDateTime"            // optional
+	StartLocationAddress *Address           "StartLocationAddress"   // optional
+	EndLocationAddress   *Address           "EndLocationAddress"     // optional
+	Driver               *TravelerPtrVector "Driver"                 // optional
+	StartLocationHours   string             "start_location_hours"   // optional
+	StartLocationName    string             "start_location_name"    // optional
+	StartLocationPhone   string             "start_location_phone"   // optional
+	EndLocationHours     string             "end_location_hours"     // optional
+	EndLocationName      string             "end_location_name"      // optional
+	EndLocationPhone     string             "end_location_phone"     // optional
+	CarDescription       string             "car_description"        // optional
+	CarType              string             "car_type"               // optional
+	MileageCharges       string             "mileage_charges"        // optional
+}
+
+func (o *CarObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *CarObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *CarObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *CarObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *CarObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 type RailObject struct {
-	ReservationObject
-	Segment  *RailSegmentPtrVector "Segment"
-	Traveler *TravelerPtrVector    "Traveler" // optional
+	Id_                  *string               "id"                     // optional, read-only
+	TripId_              *string               "trip_id"                // optional
+	IsClientTraveler_    *string               "is_client_traveler"     // optional, read-only
+	RelativeUrl          string                "relative_url"           // optional, read-only
+	DisplayName          string                "display_name"           // optional
+	Image                *ImagePtrVector       "Image"                  // optional
+	CancellationDateTime *DateTime             "CancellationDateTime"   // optional
+	BookingDate_         string                "booking_date"           // optional, xs:date
+	BookingRate          string                "booking_rate"           // optional
+	BookingSiteConfNum   string                "booking_site_conf_num"  // optional
+	BookingSiteName      string                "booking_site_name"      // optional
+	BookingSitePhone     string                "booking_site_phone"     // optional
+	BookingSiteUrl       string                "booking_site_url"       // optional
+	RecordLocator        string                "record_locator"         // optional
+	SupplierConfNum      string                "supplier_conf_num"      // optional
+	SupplierContact      string                "supplier_contact"       // optional
+	SupplierEmailAddress string                "supplier_email_address" // optional
+	SupplierName         string                "supplier_name"          // optional
+	SupplierPhone        string                "supplier_phone"         // optional
+	SupplierUrl          string                "supplier_url"           // optional
+	IsPurchased_         *string               "is_purchased"           // optional
+	Notes                string                "notes"                  // optional
+	Restrictions         string                "restrictions"           // optional
+	TotalCost            string                "total_cost"             // optional
+	Segment              *RailSegmentPtrVector "Segment"
+	Traveler             *TravelerPtrVector    "Traveler" // optional
+}
+
+func (o *RailObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *RailObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *RailObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *RailObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *RailObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 type RailSegment struct {
@@ -750,9 +913,66 @@ const (
 )
 
 type TransportObject struct {
-	ReservationObject
-	Segment  *TransportSegmentPtrVector "Segment"
-	Traveler *TravelerPtrVector         "Traveler" // optional
+	Id_                  *string                    "id"                     // optional, read-only
+	TripId_              *string                    "trip_id"                // optional
+	IsClientTraveler_    *string                    "is_client_traveler"     // optional, read-only
+	RelativeUrl          string                     "relative_url"           // optional, read-only
+	DisplayName          string                     "display_name"           // optional
+	Image                *ImagePtrVector            "Image"                  // optional
+	CancellationDateTime *DateTime                  "CancellationDateTime"   // optional
+	BookingDate_         string                     "booking_date"           // optional, xs:date
+	BookingRate          string                     "booking_rate"           // optional
+	BookingSiteConfNum   string                     "booking_site_conf_num"  // optional
+	BookingSiteName      string                     "booking_site_name"      // optional
+	BookingSitePhone     string                     "booking_site_phone"     // optional
+	BookingSiteUrl       string                     "booking_site_url"       // optional
+	RecordLocator        string                     "record_locator"         // optional
+	SupplierConfNum      string                     "supplier_conf_num"      // optional
+	SupplierContact      string                     "supplier_contact"       // optional
+	SupplierEmailAddress string                     "supplier_email_address" // optional
+	SupplierName         string                     "supplier_name"          // optional
+	SupplierPhone        string                     "supplier_phone"         // optional
+	SupplierUrl          string                     "supplier_url"           // optional
+	IsPurchased_         *string                    "is_purchased"           // optional
+	Notes                string                     "notes"                  // optional
+	Restrictions         string                     "restrictions"           // optional
+	TotalCost            string                     "total_cost"             // optional
+	Segment              *TransportSegmentPtrVector "Segment"
+	Traveler             *TravelerPtrVector         "Traveler" // optional
+}
+
+func (o *TransportObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *TransportObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *TransportObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *TransportObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *TransportObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 type TransportSegment struct {
@@ -783,13 +1003,70 @@ const (
 )
 
 type CruiseObject struct {
-	ReservationObject
-	Segment     *CruiseSegmentPtrVector "Segment"
-	Traveler    *TravelerPtrVector      "Traveler"     // optional
-	CabinNumber string                  "cabin_number" // optional
-	CabinType   string                  "cabin_type"   // optional
-	Dining      string                  "dining"       // optional
-	ShipName    string                  "ship_name"    // optional
+	Id_                  *string                 "id"                     // optional, read-only
+	TripId_              *string                 "trip_id"                // optional
+	IsClientTraveler_    *string                 "is_client_traveler"     // optional, read-only
+	RelativeUrl          string                  "relative_url"           // optional, read-only
+	DisplayName          string                  "display_name"           // optional
+	Image                *ImagePtrVector         "Image"                  // optional
+	CancellationDateTime *DateTime               "CancellationDateTime"   // optional
+	BookingDate_         string                  "booking_date"           // optional, xs:date
+	BookingRate          string                  "booking_rate"           // optional
+	BookingSiteConfNum   string                  "booking_site_conf_num"  // optional
+	BookingSiteName      string                  "booking_site_name"      // optional
+	BookingSitePhone     string                  "booking_site_phone"     // optional
+	BookingSiteUrl       string                  "booking_site_url"       // optional
+	RecordLocator        string                  "record_locator"         // optional
+	SupplierConfNum      string                  "supplier_conf_num"      // optional
+	SupplierContact      string                  "supplier_contact"       // optional
+	SupplierEmailAddress string                  "supplier_email_address" // optional
+	SupplierName         string                  "supplier_name"          // optional
+	SupplierPhone        string                  "supplier_phone"         // optional
+	SupplierUrl          string                  "supplier_url"           // optional
+	IsPurchased_         *string                 "is_purchased"           // optional
+	Notes                string                  "notes"                  // optional
+	Restrictions         string                  "restrictions"           // optional
+	TotalCost            string                  "total_cost"             // optional
+	Segment              *CruiseSegmentPtrVector "Segment"
+	Traveler             *TravelerPtrVector      "Traveler"     // optional
+	CabinNumber          string                  "cabin_number" // optional
+	CabinType            string                  "cabin_type"   // optional
+	Dining               string                  "dining"       // optional
+	ShipName             string                  "ship_name"    // optional
+}
+
+func (o *CruiseObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *CruiseObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *CruiseObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *CruiseObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *CruiseObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 type CruiseSegment struct {
@@ -811,15 +1088,72 @@ func (r *CruiseSegment) Id() (uint, os.Error) {
 // restaurant name should be in supplier_name
 // restaurant notes should be in notes
 type RestaurantObject struct {
-	ReservationObject
-	DateTime          *DateTime "DateTime"          // optional
-	Address           *Address  "Address"           // optional
-	ReservationHolder *Traveler "ReservationHolder" // optional
-	Cuisine           string    "cuisine"           // optional
-	DressCode         string    "dress_code"        // optional
-	Hours             string    "hours"             // optional
-	NumberPatrons     string    "number_patrons"    // optional
-	PriceRange        string    "price_range"       // optional
+	Id_                  *string         "id"                     // optional, read-only
+	TripId_              *string         "trip_id"                // optional
+	IsClientTraveler_    *string         "is_client_traveler"     // optional, read-only
+	RelativeUrl          string          "relative_url"           // optional, read-only
+	DisplayName          string          "display_name"           // optional
+	Image                *ImagePtrVector "Image"                  // optional
+	CancellationDateTime *DateTime       "CancellationDateTime"   // optional
+	BookingDate_         string          "booking_date"           // optional, xs:date
+	BookingRate          string          "booking_rate"           // optional
+	BookingSiteConfNum   string          "booking_site_conf_num"  // optional
+	BookingSiteName      string          "booking_site_name"      // optional
+	BookingSitePhone     string          "booking_site_phone"     // optional
+	BookingSiteUrl       string          "booking_site_url"       // optional
+	RecordLocator        string          "record_locator"         // optional
+	SupplierConfNum      string          "supplier_conf_num"      // optional
+	SupplierContact      string          "supplier_contact"       // optional
+	SupplierEmailAddress string          "supplier_email_address" // optional
+	SupplierName         string          "supplier_name"          // optional
+	SupplierPhone        string          "supplier_phone"         // optional
+	SupplierUrl          string          "supplier_url"           // optional
+	IsPurchased_         *string         "is_purchased"           // optional
+	Notes                string          "notes"                  // optional
+	Restrictions         string          "restrictions"           // optional
+	TotalCost            string          "total_cost"             // optional
+	DateTime             *DateTime       "DateTime"               // optional
+	Address              *Address        "Address"                // optional
+	ReservationHolder    *Traveler       "ReservationHolder"      // optional
+	Cuisine              string          "cuisine"                // optional
+	DressCode            string          "dress_code"             // optional
+	Hours                string          "hours"                  // optional
+	NumberPatrons        string          "number_patrons"         // optional
+	PriceRange           string          "price_range"            // optional
+}
+
+func (o *RestaurantObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *RestaurantObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *RestaurantObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *RestaurantObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *RestaurantObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 // Activity Detail Types
@@ -831,13 +1165,70 @@ const (
 )
 
 type ActivityObject struct {
-	ReservationObject
-	StartDateTime  *DateTime          "StartDateTime"    // optional
-	EndTime        string             "end_time"         // optional, xs:time
-	Address        *Address           "Address"          // optional
-	Participant    *TravelerPtrVector "Participant"      // optional
-	DetailTypeCode string             "detail_type_code" // optional
-	LocationName   string             "location_name"    // optional
+	Id_                  *string            "id"                     // optional, read-only
+	TripId_              *string            "trip_id"                // optional
+	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
+	RelativeUrl          string             "relative_url"           // optional, read-only
+	DisplayName          string             "display_name"           // optional
+	Image                *ImagePtrVector    "Image"                  // optional
+	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
+	BookingDate_         string             "booking_date"           // optional, xs:date
+	BookingRate          string             "booking_rate"           // optional
+	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
+	BookingSiteName      string             "booking_site_name"      // optional
+	BookingSitePhone     string             "booking_site_phone"     // optional
+	BookingSiteUrl       string             "booking_site_url"       // optional
+	RecordLocator        string             "record_locator"         // optional
+	SupplierConfNum      string             "supplier_conf_num"      // optional
+	SupplierContact      string             "supplier_contact"       // optional
+	SupplierEmailAddress string             "supplier_email_address" // optional
+	SupplierName         string             "supplier_name"          // optional
+	SupplierPhone        string             "supplier_phone"         // optional
+	SupplierUrl          string             "supplier_url"           // optional
+	IsPurchased_         *string            "is_purchased"           // optional
+	Notes                string             "notes"                  // optional
+	Restrictions         string             "restrictions"           // optional
+	TotalCost            string             "total_cost"             // optional
+	StartDateTime        *DateTime          "StartDateTime"          // optional
+	EndTime              string             "end_time"               // optional, xs:time
+	Address              *Address           "Address"                // optional
+	Participant          *TravelerPtrVector "Participant"            // optional
+	DetailTypeCode       string             "detail_type_code"       // optional
+	LocationName         string             "location_name"          // optional
+}
+
+func (o *ActivityObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *ActivityObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *ActivityObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
+}
+
+// returns a time.Time object for BookingDate
+// Note: This won't have proper time zone information
+func (r *ActivityObject) BookingDate() (*time.Time, os.Error) {
+	return time.Parse("2006-01-02", r.BookingDate_)
+}
+
+func (o *ActivityObject) IsPurchased() (bool, os.Error) {
+	if o.IsPurchased_ == nil {
+		return false, os.NewError("IsPurchased not specified")
+	}
+	return strconv.Atob(*o.IsPurchased_)
 }
 
 // Note Detail Types
@@ -846,40 +1237,144 @@ const (
 )
 
 type NoteObject struct {
-	Object
-	DateTime       *DateTime "DateTime"         // optional
-	Address        *Address  "Address"          // optional
-	DetailTypeCode string    "detail_type_code" // optional
-	Source         string    "source"           // optional
-	Text           string    "text"             // optional
-	Url            string    "url"              // optional
-	Notes          string    "notes"            // optional
+	Id_               *string         "id"                 // optional, read-only
+	TripId_           *string         "trip_id"            // optional
+	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
+	RelativeUrl       string          "relative_url"       // optional, read-only
+	DisplayName       string          "display_name"       // optional
+	Image             *ImagePtrVector "Image"              // optional
+	DateTime          *DateTime       "DateTime"           // optional
+	Address           *Address        "Address"            // optional
+	DetailTypeCode    string          "detail_type_code"   // optional
+	Source            string          "source"             // optional
+	Text              string          "text"               // optional
+	Url               string          "url"                // optional
+	Notes             string          "notes"              // optional
+}
+
+func (o *NoteObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *NoteObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *NoteObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
 }
 
 
 type MapObject struct {
-	Object
-	DateTime *DateTime "DateTime" // optional
-	Address  *Address  "Address"  // optional
+	Id_               *string         "id"                 // optional, read-only
+	TripId_           *string         "trip_id"            // optional
+	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
+	RelativeUrl       string          "relative_url"       // optional, read-only
+	DisplayName       string          "display_name"       // optional
+	Image             *ImagePtrVector "Image"              // optional
+	DateTime          *DateTime       "DateTime"           // optional
+	Address           *Address        "Address"            // optional
+}
+
+func (o *MapObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *MapObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *MapObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
 }
 
 type DirectionsObject struct {
-	Object
-	DateTime     *DateTime "DateTime"     // optional
-	StartAddress *Address  "StartAddress" // optional
-	EndAddress   *Address  "EndAddress"   // optional
+	Id_               *string         "id"                 // optional, read-only
+	TripId_           *string         "trip_id"            // optional
+	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
+	RelativeUrl       string          "relative_url"       // optional, read-only
+	DisplayName       string          "display_name"       // optional
+	Image             *ImagePtrVector "Image"              // optional
+	DateTime          *DateTime       "DateTime"           // optional
+	StartAddress      *Address        "StartAddress"       // optional
+	EndAddress        *Address        "EndAddress"         // optional
+}
+
+func (o *DirectionsObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *DirectionsObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *DirectionsObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
 }
 
 // Weather is read-only
 type WeatherObject struct {
-	Object
-	Date_               string  "date"                 // optional, read-only, xs:date
-	Location            string  "location"             // optional, read-only
-	AvgHighTempC_       *string "avg_high_temp_c"      // optional, read-only
-	AvgLowTempC_        *string "avg_low_temp_c"       // optional, read-only
-	AvgWindSpeedKn_     *string "avg_wind_speed_kn"    // optional, read-only
-	AvgPrecipitationCm_ *string "avg_precipitation_cm" // optional, read-only
-	AvgSnowDepthCm_     *string "avg_snow_depth_cm"    // optional, read-only
+	Id_                 *string         "id"                   // optional, read-only
+	TripId_             *string         "trip_id"              // optional
+	IsClientTraveler_   *string         "is_client_traveler"   // optional, read-only
+	RelativeUrl         string          "relative_url"         // optional, read-only
+	DisplayName         string          "display_name"         // optional
+	Image               *ImagePtrVector "Image"                // optional
+	Date_               string          "date"                 // optional, read-only, xs:date
+	Location            string          "location"             // optional, read-only
+	AvgHighTempC_       *string         "avg_high_temp_c"      // optional, read-only
+	AvgLowTempC_        *string         "avg_low_temp_c"       // optional, read-only
+	AvgWindSpeedKn_     *string         "avg_wind_speed_kn"    // optional, read-only
+	AvgPrecipitationCm_ *string         "avg_precipitation_cm" // optional, read-only
+	AvgSnowDepthCm_     *string         "avg_snow_depth_cm"    // optional, read-only
+}
+
+func (o *WeatherObject) Id() (uint, os.Error) {
+	if o.Id_ == nil {
+		return 0, os.NewError("Id not specified")
+	}
+	return strconv.Atoui(*o.Id_)
+}
+
+func (o *WeatherObject) TripId() (uint, os.Error) {
+	if o.TripId_ == nil {
+		return 0, os.NewError("TripId not specified")
+	}
+	return strconv.Atoui(*o.TripId_)
+}
+
+func (o *WeatherObject) IsClientTraveler() (bool, os.Error) {
+	if o.IsClientTraveler_ == nil {
+		return false, os.NewError("IsClientTraveler not specified")
+	}
+	return strconv.Atob(*o.IsClientTraveler_)
 }
 
 // returns a time.Time object for StartDate

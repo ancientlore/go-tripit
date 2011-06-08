@@ -10,4 +10,4 @@ http://golang.org/
 
 Current Status:
 
-This library is under development and has not yet reached a usable milestone.
+OAuth and the Get/List functions are basically operational. Adding, replacing, and deleting objects has not beed tested.
