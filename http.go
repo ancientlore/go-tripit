@@ -8,6 +8,8 @@ import (
 	"io"
 	"bytes"
 	"strings"
+	"io/ioutil"
+	"strconv"
 )
 
 // TripIt API information
@@ -54,7 +56,6 @@ func New(apiUrl string, apiVersion string, client *http.Client, creds Authorizab
 
 // makes request
 func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
-	t.credentials.Authorize(req, nil)
 	resp, err := t.httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -88,6 +89,7 @@ func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
 	if err != nil {
 		return nil, err
 	}
+	t.credentials.Authorize(req, nil)
 	return t.makeRequest(req)
 }
 
@@ -101,21 +103,38 @@ func (t *TripIt) List(objectType string, filterParms map[string]string) (*Respon
 	if err != nil {
 		return nil, err
 	}
+	t.credentials.Authorize(req, nil)
 	return t.makeRequest(req)
+}
+
+func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
+	b, err := json.Marshal(r)
+	if err != nil {
+		return nil, nil, err
+	}
+	s := string(b)
+	// s = `{"Trip":{"start_date":"2011-12-09","end_date":"2011-12-27","primary_location":"Cancun, Mexico","Display Name":"My Test Trip"}}`
+	m := make(map[string][]string)
+	m["json"] = []string{s}
+	args := make(map[string]string)
+	args["json"] = s
+	return bytes.NewBuffer([]byte(http.EncodeQuery(m))), args, nil
 }
 
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Create(r *Request) (*Response, os.Error) {
-	b := new(bytes.Buffer)
-	json := json.NewEncoder(b)
-	err := json.Encode(r)
+	buf, args, err := encodeForm(r)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/create/format/json", t.baseUrl, t.version), b)
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/create/format/json", t.baseUrl, t.version), ioutil.NopCloser(buf))
 	if err != nil {
 		return nil, err
 	}
+	t.credentials.Authorize(req, args)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
+	req.ContentLength = int64(buf.Len())
 	return t.makeRequest(req)
 }
 
@@ -131,6 +150,7 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 	if err != nil {
 		return nil, err
 	}
+	t.credentials.Authorize(req, nil)
 	return t.makeRequest(req)
 }
 
@@ -140,6 +160,7 @@ func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) 
 	if err != nil {
 		return nil, err
 	}
+	t.credentials.Authorize(req, nil)
 	return t.makeRequest(req)
 }
 

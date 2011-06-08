@@ -21,6 +21,7 @@ var url = flag.String("url", tripit.ApiUrl, "TripIt API URL")
 var indexT = template.MustParseFile("index.html", nil)
 var tripsT = template.MustParseFile("trips.html", nil)
 var detailsT = template.MustParseFile("details.html", nil)
+var editT = template.MustParseFile("edit.html", nil)
 var errorT = template.MustParseFile("error.html", nil)
 var apierrorT = template.MustParseFile("apierror.html", nil)
 
@@ -85,6 +86,8 @@ func main() {
 	http.Handle("/trips", http.HandlerFunc(Trips))
 	http.Handle("/details", http.HandlerFunc(Details))
 	http.Handle("/list", http.HandlerFunc(List))
+	http.Handle("/edit", http.HandlerFunc(Edit))
+	http.Handle("/save", http.HandlerFunc(Save))
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
@@ -249,3 +252,147 @@ func List(w http.ResponseWriter, req *http.Request) {
 	m["JSON"] = string(b)
 	detailsT.Execute(w, m)
 }
+
+func Edit(w http.ResponseWriter, req *http.Request) {
+	sess := getSession(w, req)
+	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
+	var client http.Client
+	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	q, err := http.ParseQuery(req.URL.RawQuery)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+	}
+	objType := q["t"][0]
+	var objId uint = 0
+	tmp, ok := q["id"]
+	if ok {
+		objId, err = strconv.Atoui(tmp[0])
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+	}
+	var trip *tripit.Trip
+	m := make(map[string]interface{})
+	if objId > 0 {
+		resp, err := t.Get(objType, objId)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+			if resp.Warning != nil {
+				m["Warning"] = resp.Warning.Data()
+			}
+			if resp.Error != nil {
+				m["Error"] = resp.Error.Data()
+			}
+			apierrorT.Execute(w, m)
+			return
+		}
+		m["Result"] = resp
+		trip = resp.Trip.At(0)
+	} else {
+		trip = new(tripit.Trip)
+		trip.Id_ = new(string)
+	}
+	m["Trip"] = trip
+	editT.Execute(w, m)
+}
+
+func Save(w http.ResponseWriter, req *http.Request) {
+	sess := getSession(w, req)
+	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
+	var client http.Client
+	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	err := req.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorT.Execute(w, err)
+		return
+
+	}
+	objType := req.Form["t"][0]
+	var objId uint = 0
+	tmp, ok := req.Form["id"]
+	if ok && tmp[0] != "" && tmp[0] != "<nil>" {
+		objId, err = strconv.Atoui(tmp[0])
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+	}
+	var trip tripit.Trip
+	m := make(map[string]interface{})
+	if objId > 0 {
+		resp, err := t.Get(objType, objId)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+			if resp.Warning != nil {
+				m["Warning"] = resp.Warning.Data()
+			}
+			if resp.Error != nil {
+				m["Error"] = resp.Error.Data()
+			}
+			apierrorT.Execute(w, m)
+			return
+		}
+		trip = *resp.Trip.At(0)
+		trip.DisplayName = req.Form["DisplayName"][0]
+		trip.Description = req.Form["Description"][0]
+		request := new(tripit.Request)
+		request.Trip = &trip
+		resp, err = t.Replace(objType, objId, request)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+			if resp.Warning != nil {
+				m["Warning"] = resp.Warning.Data()
+			}
+			if resp.Error != nil {
+				m["Error"] = resp.Error.Data()
+			}
+			apierrorT.Execute(w, m)
+			return
+		}
+	} else {
+		trip.DisplayName = req.Form["DisplayName"][0]
+		trip.Description = req.Form["Description"][0]
+		request := new(tripit.Request)
+		request.Trip = &trip
+		b, err := json.Marshal(request)
+		log.Print(string(b))
+		resp, err := t.Create(request)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			errorT.Execute(w, err)
+			return
+		}
+		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+			if resp.Warning != nil {
+				m["Warning"] = resp.Warning.Data()
+			}
+			if resp.Error != nil {
+				m["Error"] = resp.Error.Data()
+			}
+			apierrorT.Execute(w, m)
+			return
+		}
+	}
+
+	aurl := fmt.Sprintf("http://%s/details?t=%s&id=%d", *addr, objType, objId)
+	http.Redirect(w, req, aurl, http.StatusFound)
+}
+
