@@ -113,7 +113,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 		return nil, nil, err
 	}
 	s := string(b)
-	// s = `{"Trip":{"start_date":"2011-12-09","end_date":"2011-12-27","primary_location":"Cancun, Mexico","Display Name":"My Test Trip"}}`
+	// s = `{"Trip":{"start_date":"2011-12-09","end_date":"2011-12-27","primary_location":"Cancun, Mexico","display_name":"My Test Trip"}}`
 	m := make(map[string][]string)
 	m["json"] = []string{s}
 	args := make(map[string]string)
