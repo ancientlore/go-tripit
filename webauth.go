@@ -9,8 +9,8 @@ import (
 // Credential used for web authorization. Web authorization is for testing
 // and needs to be enabled on your TripIt account.
 type WebAuthCredential struct {
-	username string
-	password string
+	username string // Account user name
+	password string // Account password
 }
 
 // Returns the user name

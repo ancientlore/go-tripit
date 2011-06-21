@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 genvect/genvect -name Error
 genvect/genvect -name Warning
 genvect/genvect -name ClosenessMatch

@@ -225,7 +225,7 @@ func List(w http.ResponseWriter, req *http.Request) {
 	objType := q["t"][0]
 	filters := make(map[string]string)
 	for k, v := range q {
-		if k !=  "objType" {
+		if k != "objType" {
 			filters[k] = v[0]
 		}
 	}
@@ -395,4 +395,3 @@ func Save(w http.ResponseWriter, req *http.Request) {
 	aurl := fmt.Sprintf("http://%s/details?t=%s&id=%d", *addr, objType, objId)
 	http.Redirect(w, req, aurl, http.StatusFound)
 }
-

@@ -1,3 +1,8 @@
+// The go-tripit library is a Go API library for accessing the TripIt service. The API supports
+// two forms of authorization - simple web authorization and OAuth. The library uses TripIt's
+// JSON interface, and has structs representing all of the TripIt types. Within these structs,
+// elements ending in an underscore have access functions that set or get the value in a more
+// pleasant form for use in Go programs.
 package tripit
 
 import (
@@ -209,6 +214,7 @@ type FlightStatus struct {
 	LastModified_              string    "last_modified"              // read-only
 }
 
+// Returns the flight status as an int
 func (fs *FlightStatus) FlightStatus() (int, os.Error) {
 	if fs.FlightStatus_ == nil {
 		return 0, os.NewError("Flight status not specified")
@@ -216,6 +222,7 @@ func (fs *FlightStatus) FlightStatus() (int, os.Error) {
 	return strconv.Atoi(*fs.FlightStatus_)
 }
 
+// Returns whether the connection is at risk as a boolean
 func (fs *FlightStatus) IsConnectionAtRisk() (bool, os.Error) {
 	if fs.IsConnectionAtRisk_ == nil {
 		return false, os.NewError("Is connection at risk not specified")
@@ -232,6 +239,7 @@ func (fs *FlightStatus) LastModified() (*time.Time, os.Error) {
 	return time.SecondsToUTC(l), nil
 }
 
+// Information about images
 type Image struct {
 	Caption string "caption" // optional
 	Url     string "url"
@@ -251,6 +259,7 @@ type DateTime struct {
 	UtcOffset string "utc_offset" // optional, read-only
 }
 
+// Convert to a time.Time
 func (dt DateTime) DateTime() (*time.Time, os.Error) {
 	if dt.UtcOffset == "" {
 		return time.Parse(time.RFC3339, fmt.Sprintf("%sT%sZ", dt.Date_, dt.Time_))
@@ -258,6 +267,7 @@ func (dt DateTime) DateTime() (*time.Time, os.Error) {
 	return time.Parse(time.RFC3339, fmt.Sprintf("%sT%s%s", dt.Date_, dt.Time_, dt.UtcOffset))
 }
 
+// Sets the values of the DateTime strucure from a time.Time
 func (dt *DateTime) SetDateTime(t *time.Time) {
 	dt.Date_ = t.Format("2006-01-02")
 	dt.Time_ = t.Format("15:04:05")
@@ -265,6 +275,7 @@ func (dt *DateTime) SetDateTime(t *time.Time) {
 	dt.Timezone = t.Format("MST")
 }
 
+// PointsProgram contains information about tracked travel programs for TripIt Pro users.
 // All PointsProgram elements are read-only
 type PointsProgram struct {
 	Id_                  string                         "id"                    // read-only
@@ -284,14 +295,17 @@ type PointsProgram struct {
 	Expiration           *PointsProgramExpirationVector "Expiration"            // optional, read-only
 }
 
+// Returns the ID
 func (pp *PointsProgram) Id() (uint, os.Error) {
 	return strconv.Atoui(pp.Id_)
 }
 
+// Returns the total number of activities
 func (pp *PointsProgram) TotalNumActivities() (int, os.Error) {
 	return strconv.Atoi(pp.TotalNumActivities_)
 }
 
+// Returns the total number of expirations
 func (pp *PointsProgram) TotalNumExpirations() (int, os.Error) {
 	return strconv.Atoi(pp.TotalNumExpirations_)
 }
@@ -305,6 +319,7 @@ func (pp *PointsProgram) LastModified() (*time.Time, os.Error) {
 	return time.SecondsToUTC(v), nil
 }
 
+// PointsProgramActivity contains program transactions
 // All PointsProgramActivity elements are read-only
 type PointsProgramActivity struct {
 	Date_       string "date"        // read-only, xs:date
@@ -332,6 +347,7 @@ func (pe *PointsProgramExpiration) Date() (*time.Time, os.Error) {
 	return time.Parse("2006-01-02", pe.Date_)
 }
 
+// TripShare contains information about which users a trip is shared with
 type TripShare struct {
 	TripId_            string "trip_id"
 	IsTraveler_        string "is_traveler"
@@ -339,26 +355,32 @@ type TripShare struct {
 	IsSentWithDetails_ string "is_sent_with_details"
 }
 
+// Returns the TripId
 func (ts *TripShare) TripId() (uint, os.Error) {
 	return strconv.Atoui(ts.TripId_)
 }
 
+// Returns a boolean indicating whether this record is for a traveler
 func (ts *TripShare) IsTraveler() (bool, os.Error) {
 	return strconv.Atob(ts.IsTraveler_)
 }
 
+// Returns a boolean indicating whether the item is read-only
 func (ts *TripShare) IsReadOnly() (bool, os.Error) {
 	return strconv.Atob(ts.IsReadOnly_)
 }
 
+// Returns a boolean for is sent with details
 func (ts *TripShare) IsSentWithDetails() (bool, os.Error) {
 	return strconv.Atob(ts.IsSentWithDetails_)
 }
 
+// Connection request
 type ConnectionRequest struct {
 
 }
 
+// Invitation contains a list of users invited to see the trip
 type Invitation struct {
 	EmailAddresses    []string           "EmailAddresses"
 	TripShare         *TripShare         "TripShare"         // optional
@@ -366,6 +388,7 @@ type Invitation struct {
 	Message           string             "message"           // optional
 }
 
+// Profile contains user information
 // All Profile elements are read-only
 type Profile struct {
 	Attributes            ProfileAttributes      "_attributes"           // read-only
@@ -385,14 +408,17 @@ type Profile struct {
 	IcalUrl               string                 "ical_url"              // optional, read-only
 }
 
+// ProfileEmailAddresses contains the list of email addresses for a user
 type ProfileEmailAddresses struct {
 	ProfileEmailAddress *ProfileEmailAddressVector "ProfileEmailAddress"
 }
 
+// GroupMemberships contains a list of groups that the user is a member of
 type GroupMemberships struct {
 	Group *GroupVector "Group" // optional, read-only
 }
 
+// ProfileAttributes represent links to profiles
 type ProfileAttributes struct {
 	Ref string "ref" // read-only
 }
@@ -407,6 +433,7 @@ func (p *Profile) IsPro() (bool, os.Error) {
 	return strconv.Atob(p.IsPro_)
 }
 
+// ProfileEmailAddress contains an email address and its properties
 // All ProfileEmailAddress elements are read-only
 type ProfileEmailAddress struct {
 	Address       string "address"        // read-only
@@ -430,12 +457,14 @@ func (e *ProfileEmailAddress) IsPrimary() (bool, os.Error) {
 	return strconv.Atob(e.IsPrimary_)
 }
 
+// Group contains data about a group in TripIt
 // All Group elements are read-only
 type Group struct {
 	DisplayName string "display_name" // read-only
 	Url         string "url"          // read-only
 }
 
+// Trip Invitee
 // All Invitee elements are read-only
 type Invitee struct {
 	IsReadOnly_ string            "is_read_only" // read-only
@@ -443,33 +472,40 @@ type Invitee struct {
 	Attributes  InviteeAttributes "_attributes"  // read-only, Use the profile_ref attribute to reference a Profile
 }
 
+// Returns whether the Invitee is read-only
 func (i *Invitee) IsReadOnly() (bool, os.Error) {
 	return strconv.Atob(i.IsReadOnly_)
 }
 
+// Returns whether the Invitee is a traveler on the trip
 func (i *Invitee) IsTraveler() (bool, os.Error) {
 	return strconv.Atob(i.IsTraveler_)
 }
 
+// Used to link to user profiles
 type InviteeAttributes struct {
 	ProfileRef string "profile_ref" // read-only, used to reference a profile
 }
 
+// A CRS remark
 // All TripCrsRemark elements are read-only
 type TripCrsRemark struct {
 	RecordLocator string "record_locator" // read-only
 	Notes         string "notes"          // read-only
 }
 
+// List of nearby users
 // All ClosenessMatch elements are read-only
 type ClosenessMatch struct {
 	Attributes ClosenessMatchAttributes "_attributes" // read-only, Use the profile_ref attribute to reference a Profile
 }
 
+// Links to profiles of nearby users
 type ClosenessMatchAttributes struct {
 	ProfileRef string "profile_ref" // read-only, Use the profile_ref attribute to reference a Profile
 }
 
+// The Trip
 type Trip struct {
 	ClosenessMatches       *ClosenessMatches "ClosenessMatches"         // optional, ClosenessMatches are read-only
 	TripInvitees           *TripInvitees     "TripInvitees"             // optional, TripInvitees are read-only
@@ -486,18 +522,22 @@ type Trip struct {
 	PrimaryLocationAddress *Address          "primary_location_address" // optional, PrimaryLocationAddress is a read-only field
 }
 
+// People invited to view a trip
 type TripInvitees struct {
 	Invitee *InviteeVector "Invitee" // optional, TripInvitees are read-only
 }
 
+// TripIt users who are near this trip
 type ClosenessMatches struct {
 	ClosenessMatch *ClosenessMatchVector "Match" // optional, ClosenessMatches are read-only
 }
 
+// Remarks from a reservation system
 type TripCrsRemarks struct {
 	TripCrsRemark *TripCrsRemarkVector "TripCrsRemark" // optional, TripCrsRemarks are read-only
 }
 
+// returns the ID of the trip
 func (t *Trip) Id() (uint, os.Error) {
 	if t.Id_ == nil {
 		return 0, os.NewError("Id field is not specified")
@@ -505,6 +545,7 @@ func (t *Trip) Id() (uint, os.Error) {
 	return strconv.Atoui(*t.Id_)
 }
 
+// Returns whether the trip is private
 func (t *Trip) IsPrivate() (bool, os.Error) {
 	if t.IsPrivate_ == nil {
 		return false, os.NewError("IsPrivate field is not specified")
@@ -524,6 +565,7 @@ func (t *Trip) EndDate() (*time.Time, os.Error) {
 	return time.Parse("2006-01-02", t.EndDate_)
 }
 
+// AirObject contains data about a flight
 type AirObject struct {
 	Id_                  *string              "id"                     // optional, read-only
 	TripId_              *string              "trip_id"                // optional
@@ -553,6 +595,7 @@ type AirObject struct {
 	Traveler             *TravelerPtrVector   "Traveler" // optional
 }
 
+// Returns the ID
 func (o *AirObject) Id() (uint, os.Error) {
 	if o.Id_ == nil {
 		return 0, os.NewError("Id not specified")
@@ -560,6 +603,7 @@ func (o *AirObject) Id() (uint, os.Error) {
 	return strconv.Atoui(*o.Id_)
 }
 
+// Returns the associated trip ID
 func (o *AirObject) TripId() (uint, os.Error) {
 	if o.TripId_ == nil {
 		return 0, os.NewError("TripId not specified")
@@ -567,6 +611,7 @@ func (o *AirObject) TripId() (uint, os.Error) {
 	return strconv.Atoui(*o.TripId_)
 }
 
+// Returns whether the client is a traveler
 func (o *AirObject) IsClientTraveler() (bool, os.Error) {
 	if o.IsClientTraveler_ == nil {
 		return false, os.NewError("IsClientTraveler not specified")
@@ -580,6 +625,7 @@ func (r *AirObject) BookingDate() (*time.Time, os.Error) {
 	return time.Parse("2006-01-02", r.BookingDate_)
 }
 
+// returns whether the flights have been purchased
 func (o *AirObject) IsPurchased() (bool, os.Error) {
 	if o.IsPurchased_ == nil {
 		return false, os.NewError("IsPurchased not specified")
@@ -587,6 +633,7 @@ func (o *AirObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// AirSegment contains details about individual flights
 type AirSegment struct {
 	Status                 *FlightStatus "Status"                  // optional
 	StartDateTime          *DateTime     "StartDateTime"           // optional
@@ -670,6 +717,7 @@ func (s *AirSegment) IsHidden() (bool, os.Error) {
 	return strconv.Atob(*s.IsHidden_)
 }
 
+// LodgingObject contains information about hotels or other lodging
 // hotel cancellation remarks should be in restrictions
 // hotel room description should be in notes
 // hotel average daily rate should be in booking_rate
@@ -741,6 +789,7 @@ func (o *LodgingObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// CarObject contains information about rental cars
 // car cancellation remarks should be in restrictions
 // car pickup instructions should be in notes
 // car daily rate should be in booking_rate
@@ -819,6 +868,7 @@ func (o *CarObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// RailObject contains information about trains
 type RailObject struct {
 	Id_                  *string               "id"                     // optional, read-only
 	TripId_              *string               "trip_id"                // optional
@@ -882,6 +932,7 @@ func (o *RailObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// RailSegment contains details about an indivual train ride
 type RailSegment struct {
 	StartDateTime       *DateTime "StartDateTime"       // optional
 	EndDateTime         *DateTime "EndDateTime"         // optional
@@ -912,6 +963,7 @@ const (
 	TransportDetailTypeGroundTransportation = "G"
 )
 
+// TransportObject contains details about other forms of transport like bus rides
 type TransportObject struct {
 	Id_                  *string                    "id"                     // optional, read-only
 	TripId_              *string                    "trip_id"                // optional
@@ -975,6 +1027,7 @@ func (o *TransportObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// TransportSegment contains details about indivual transport rides
 type TransportSegment struct {
 	StartDateTime        *DateTime "StartDateTime"        // optional
 	EndDateTime          *DateTime "EndDateTime"          // optional
@@ -1002,6 +1055,7 @@ const (
 	CruiseDetailTypePortOfCall = "P"
 )
 
+// CruiseObject contains information about cruises
 type CruiseObject struct {
 	Id_                  *string                 "id"                     // optional, read-only
 	TripId_              *string                 "trip_id"                // optional
@@ -1069,6 +1123,7 @@ func (o *CruiseObject) IsPurchased() (bool, os.Error) {
 	return strconv.Atob(*o.IsPurchased_)
 }
 
+// CruiseSegment contains details about indivual cruise segments
 type CruiseSegment struct {
 	StartDateTime   *DateTime "StartDateTime"    // optional
 	EndDateTime     *DateTime "EndDateTime"      // optional
@@ -1085,6 +1140,7 @@ func (r *CruiseSegment) Id() (uint, os.Error) {
 	return strconv.Atoui(*r.Id_)
 }
 
+// RestaurantObject contains details about dining reservations
 // restaurant name should be in supplier_name
 // restaurant notes should be in notes
 type RestaurantObject struct {
@@ -1164,6 +1220,7 @@ const (
 	ActivityDetailTypeTour    = "T"
 )
 
+// ActivityObject contains details about activities like museum, theatre, and other events
 type ActivityObject struct {
 	Id_                  *string            "id"                     // optional, read-only
 	TripId_              *string            "trip_id"                // optional
@@ -1236,6 +1293,7 @@ const (
 	NoteDetailTypeArticle = "A"
 )
 
+// NoteObject contains information about notes added by the traveler
 type NoteObject struct {
 	Id_               *string         "id"                 // optional, read-only
 	TripId_           *string         "trip_id"            // optional
@@ -1273,7 +1331,7 @@ func (o *NoteObject) IsClientTraveler() (bool, os.Error) {
 	return strconv.Atob(*o.IsClientTraveler_)
 }
 
-
+// MapObject contains addresses to show on a map
 type MapObject struct {
 	Id_               *string         "id"                 // optional, read-only
 	TripId_           *string         "trip_id"            // optional
@@ -1306,6 +1364,7 @@ func (o *MapObject) IsClientTraveler() (bool, os.Error) {
 	return strconv.Atob(*o.IsClientTraveler_)
 }
 
+// DirectionsObject contains addresses to show directions for on the trip
 type DirectionsObject struct {
 	Id_               *string         "id"                 // optional, read-only
 	TripId_           *string         "trip_id"            // optional
@@ -1339,6 +1398,7 @@ func (o *DirectionsObject) IsClientTraveler() (bool, os.Error) {
 	return strconv.Atob(*o.IsClientTraveler_)
 }
 
+// WeatherObject contains information about the weather at a particular destination
 // Weather is read-only
 type WeatherObject struct {
 	Id_                 *string         "id"                   // optional, read-only

@@ -54,7 +54,7 @@ func New(apiUrl string, apiVersion string, client *http.Client, creds Authorizab
 	return &TripIt{apiUrl, apiVersion, client, creds}
 }
 
-// makes request
+// Makes an HTTP request to the TripIt API and returns the response.
 func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	resp, err := t.httpClient.Do(req)
 	if err != nil {
@@ -83,6 +83,7 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	return result, nil
 }
 
+// Gets an Object of the given type and ID, and returns the Response object from TripIt
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
@@ -93,6 +94,9 @@ func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
 	return t.makeRequest(req)
 }
 
+// Lists objects of the given type, filtered by the given filter parameters. Returns
+// the response object from TripIt. To understand filter parameters and which filters
+// can be combined, see the TripIt API documenation.
 // supports: trip, object, points_program
 func (t *TripIt) List(objectType string, filterParms map[string]string) (*Response, os.Error) {
 	var x string
@@ -107,6 +111,7 @@ func (t *TripIt) List(objectType string, filterParms map[string]string) (*Respon
 	return t.makeRequest(req)
 }
 
+// encodeForm encodes form arguments to send to TripIt
 func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 	b, err := json.Marshal(r)
 	if err != nil {
@@ -121,6 +126,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 	return bytes.NewBuffer([]byte(http.EncodeQuery(m))), args, nil
 }
 
+// Creates an object in TripIt based on the given Request, returning the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Create(r *Request) (*Response, os.Error) {
 	buf, args, err := encodeForm(r)
@@ -138,6 +144,8 @@ func (t *TripIt) Create(r *Request) (*Response, os.Error) {
 	return t.makeRequest(req)
 }
 
+// Replaces the object of the given type and ID with the new object in the Request. Returns
+// the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Response, os.Error) {
 	b := new(bytes.Buffer)
@@ -154,6 +162,8 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 	return t.makeRequest(req)
 }
 
+// Deletes the object of the given type and ID from TripIt, and returns the Response object
+// from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/delete/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), nil)
@@ -164,6 +174,10 @@ func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) 
 	return t.makeRequest(req)
 }
 
+// GetRequestToken is step 1 of the OAuth process. The function returns the token and secret
+// from TripIt that is used in subsequent authentication requests. This token and secret
+// is not the permanent one - if the user aborts the authentication process, these can
+// be discarded.
 func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
 	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainRequestToken, nil)
 	if err != nil {
@@ -181,6 +195,9 @@ func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
 	return parseQS(resp.Body)
 }
 
+// GetAccesssToken gets the final OAuth token and token secret for an
+// authenticated user. These should be saved with the user's ID for
+// future used of the API on the user's behalf.
 func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
 	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainAccessToken, nil)
 	if err != nil {
@@ -198,6 +215,7 @@ func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
 	return parseQS(resp.Body)
 }
 
+// parseQS parses the query string in the body and returns a simple map of the values.
 func parseQS(body io.Reader) (map[string]string, os.Error) {
 	buf := make([]byte, 1024) // assume oauth token response won't be larger
 	l, err := body.Read(buf)

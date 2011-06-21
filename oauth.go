@@ -31,11 +31,11 @@ const (
 
 // OAuth consumer credential for use with TripIt API
 type OAuthConsumerCredential struct {
-	oauthConsumerKey    string
-	oauthConsumerSecret string
-	oauthOauthToken     string
-	oauthTokenSecret    string
-	oauthRequestorId    string
+	oauthConsumerKey    string // Consumer key provided by TripIt
+	oauthConsumerSecret string // Consumer secret provided by TripIt
+	oauthOauthToken     string // OAuth token
+	oauthTokenSecret    string // OAuth token secret
+	oauthRequestorId    string // Requestor ID
 }
 
 // Get a credential with no token (to get a request token)
@@ -90,12 +90,13 @@ func (a *OAuthConsumerCredential) OAuthRequestorId() string {
 	return a.oauthRequestorId
 }
 
-// Adds the authorization header for OAuth to the request, including any additional arguments
+// Adds the authorization header for OAuth to the request, including any additional arguments.
+// Additional arguments are used in signature generation.
 func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[string]string) {
 	request.Header.Set("Authorization", a.generateAuthorizationHeader(request, args))
 }
 
-// Validates the URL's OAuth signature
+// Validates the URL's OAuth signature in the given url
 func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
 	u, err := http.ParseURL(url)
 	if err != nil {
