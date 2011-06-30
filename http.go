@@ -123,7 +123,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 	m["json"] = []string{s}
 	args := make(map[string]string)
 	args["json"] = s
-	return bytes.NewBuffer([]byte(http.EncodeQuery(m))), args, nil
+	return bytes.NewBuffer([]byte(http.Values(m).Encode())), args, nil
 }
 
 // Creates an object in TripIt based on the given Request, returning the Response object from TripIt.
