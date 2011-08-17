@@ -172,13 +172,13 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 // Generates the OAuth signature for a given URL
 func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
 	params["oauth_signature"] = "", false
-	arr := sort.StringArray(make([]string, len(params)))
+	arr := make([]string, len(params))
 	i := 0
 	for k, v := range params {
 		arr[i] = fmt.Sprintf("%s=%s", http.URLEscape(k), http.URLEscape(v))
 		i++
 	}
-	arr.Sort()
+	sort.Sort(sort.StringSlice(arr))
 	sigBaseString := strings.Join([]string{httpMethod, http.URLEscape(baseUrl), http.URLEscape(strings.Join(arr, "&"))}, "&")
 	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
 	h := hmac.NewSHA1([]byte(key))

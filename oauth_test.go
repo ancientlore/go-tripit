@@ -11,11 +11,11 @@ func TestOAuth(t *testing.T) {
 	c := NewOAuth2LeggedCredential("foo", "bar", "app")
 	c.Authorize(r, nil)
 	t.Log(r.Header["Authorization"][0])
-	arr := strings.Split(r.Header["Authorization"][0], ",", -1)
+	arr := strings.Split(r.Header["Authorization"][0], ",")
 	p := make([]string, len(arr))
 	j := 0
 	for i := range arr {
-		kva := strings.Split(arr[i], "=", -1)
+		kva := strings.Split(arr[i], "=")
 		if kva[0] != "OAuth realm" {
 			t.Log(kva)
 			p[j] = kva[0] + "=" + strings.Trim(kva[1], "\"")

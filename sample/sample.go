@@ -53,7 +53,7 @@ func getSession(w http.ResponseWriter, req *http.Request) map[string]string {
 	var gs getsess
 	gs.id = -1
 	var err os.Error
-	for _, c := range req.Cookie {
+	for _, c := range req.Cookies() {
 		if c.Name == "samplesession" {
 			gs.id, err = strconv.Atoi(c.Value)
 			if err != nil {
