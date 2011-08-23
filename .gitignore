@@ -2,3 +2,5 @@
 _obj
 _test
 *.swp
+*.6
+*.out
