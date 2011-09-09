@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"log"
-	"template"
+	"old/template"
 	"http"
 	"fmt"
 	"strconv"
@@ -11,12 +11,13 @@ import (
 	"json"
 	"container/vector"
 	"../_obj/tripit"
+	"url"
 )
 
 var addr = flag.String("addr", "localhost:8080", "HTTP Service Address")
 var oauthConsumerKey = flag.String("key", "", "OAuth Consumer Key from TripIt")
 var oauthConsumerSecret = flag.String("secret", "", "OAuth Consumer Secret from TripIt")
-var url = flag.String("url", tripit.ApiUrl, "TripIt API URL")
+var url_ = flag.String("url", tripit.ApiUrl, "TripIt API URL")
 
 var indexT = template.MustParseFile("index.html", nil)
 var tripsT = template.MustParseFile("trips.html", nil)
@@ -110,7 +111,7 @@ func Auth(w http.ResponseWriter, req *http.Request) {
 	cred := tripit.NewOAuthRequestCredential(*oauthConsumerKey, *oauthConsumerSecret)
 	log.Print("Cred ", cred)
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
 	m, err := t.GetRequestToken()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -121,14 +122,14 @@ func Auth(w http.ResponseWriter, req *http.Request) {
 	sess["oauth_token"] = m["oauth_token"]
 	sess["oauth_token_secret"] = m["oauth_token_secret"]
 	aurl := fmt.Sprintf("http://%s/auth2", *addr)
-	http.Redirect(w, req, fmt.Sprintf(tripit.UrlObtainUserAuthorization, http.URLEscape(m["oauth_token"]), http.URLEscape(aurl)), http.StatusFound)
+	http.Redirect(w, req, fmt.Sprintf(tripit.UrlObtainUserAuthorization, url.QueryEscape(m["oauth_token"]), url.QueryEscape(aurl)), http.StatusFound)
 }
 
 func CheckAuth(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
 	m, err := t.GetAccessToken()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -145,7 +146,7 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
 	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "true", tripit.FilterPast: "false"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -174,8 +175,8 @@ func Details(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
-	q, err := http.ParseQuery(req.URL.RawQuery)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
+	q, err := url.ParseQuery(req.URL.RawQuery)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -215,8 +216,8 @@ func List(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
-	q, err := http.ParseQuery(req.URL.RawQuery)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
+	q, err := url.ParseQuery(req.URL.RawQuery)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -257,8 +258,8 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
-	q, err := http.ParseQuery(req.URL.RawQuery)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
+	q, err := url.ParseQuery(req.URL.RawQuery)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -308,7 +309,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 	sess := getSession(w, req)
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
-	t := tripit.New(*url, tripit.ApiVersion, &client, cred)
+	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
 	err := req.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -13,6 +13,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"crypto/hmac"
+	"url"
 )
 
 // TripIt API URLs for OAuth
@@ -97,12 +98,12 @@ func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[stri
 }
 
 // Validates the URL's OAuth signature in the given url
-func (a *OAuthConsumerCredential) ValidateSignature(url string) bool {
-	u, err := http.ParseURL(url)
+func (a *OAuthConsumerCredential) ValidateSignature(url_ string) bool {
+	u, err := url.Parse(url_)
 	if err != nil {
 		return false
 	}
-	q, err := http.ParseQuery(u.RawQuery)
+	q, err := url.ParseQuery(u.RawQuery)
 	if err != nil {
 		return false
 	}
@@ -134,7 +135,7 @@ func (a *OAuthConsumerCredential) generateAuthorizationHeader(request *http.Requ
 	arr := make([]string, len(p))
 	i := 0
 	for k, v := range p {
-		arr[i] = fmt.Sprintf("%s=\"%s\"", http.URLEscape(k), http.URLEscape(v))
+		arr[i] = fmt.Sprintf("%s=\"%s\"", url.QueryEscape(k), url.QueryEscape(v))
 		i++
 	}
 	s += strings.Join(arr, ",")
@@ -175,11 +176,11 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 	arr := make([]string, len(params))
 	i := 0
 	for k, v := range params {
-		arr[i] = fmt.Sprintf("%s=%s", http.URLEscape(k), http.URLEscape(v))
+		arr[i] = fmt.Sprintf("%s=%s", url.QueryEscape(k), url.QueryEscape(v))
 		i++
 	}
 	sort.Sort(sort.StringSlice(arr))
-	sigBaseString := strings.Join([]string{httpMethod, http.URLEscape(baseUrl), http.URLEscape(strings.Join(arr, "&"))}, "&")
+	sigBaseString := strings.Join([]string{httpMethod, url.QueryEscape(baseUrl), url.QueryEscape(strings.Join(arr, "&"))}, "&")
 	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
 	h := hmac.NewSHA1([]byte(key))
 	h.Write([]byte(sigBaseString))

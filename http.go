@@ -10,6 +10,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"strconv"
+	"url"
 )
 
 // TripIt API information
@@ -123,7 +124,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 	m["json"] = []string{s}
 	args := make(map[string]string)
 	args["json"] = s
-	return bytes.NewBuffer([]byte(http.Values(m).Encode())), args, nil
+	return bytes.NewBuffer([]byte(url.Values(m).Encode())), args, nil
 }
 
 // Creates an object in TripIt based on the given Request, returning the Response object from TripIt.
@@ -222,7 +223,7 @@ func parseQS(body io.Reader) (map[string]string, os.Error) {
 	if err != nil {
 		return nil, err
 	}
-	qm, err := http.ParseQuery(string(buf[0:l]))
+	qm, err := url.ParseQuery(string(buf[0:l]))
 	if err != nil {
 		return nil, err
 	}

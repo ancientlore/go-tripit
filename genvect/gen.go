@@ -1,7 +1,7 @@
 package main
 
 import (
-	"template"
+	"old/template"
 	"os"
 	"flag"
 	"log"
