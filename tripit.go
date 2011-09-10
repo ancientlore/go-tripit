@@ -30,28 +30,28 @@ const (
 
 // Request contains the objects that can be sent to TripIt in a request
 type Request struct {
-	Invitation       []Invitation      "Invitation"       // optional
-	Trip             *Trip             "Trip"             // optional
-	ActivityObject   *ActivityObject   "ActivityObject"   // optional
-	AirObject        *AirObject        "AirObject"        // optional
-	CarObject        *CarObject        "CarObject"        // optional
-	CruiseObject     *CruiseObject     "CruiseObject"     // optional
-	DirectionsObject *DirectionsObject "DirectionsObject" // optional
-	LodgingObject    *LodgingObject    "LodgingObject"    // optional
-	MapObject        *MapObject        "MapObject"        // optional
-	NoteObject       *NoteObject       "NoteObject"       // optional
-	RailObject       *RailObject       "RailObject"       // optional
-	RestaurantObject *RestaurantObject "RestaurantObject" // optional
-	TransportObject  *TransportObject  "TransportObject"  // optional
+	Invitation       []Invitation      `json:"Invitation"`       // optional
+	Trip             *Trip             `json:"Trip"`             // optional
+	ActivityObject   *ActivityObject   `json:"ActivityObject"`   // optional
+	AirObject        *AirObject        `json:"AirObject"`        // optional
+	CarObject        *CarObject        `json:"CarObject"`        // optional
+	CruiseObject     *CruiseObject     `json:"CruiseObject"`     // optional
+	DirectionsObject *DirectionsObject `json:"DirectionsObject"` // optional
+	LodgingObject    *LodgingObject    `json:"LodgingObject"`    // optional
+	MapObject        *MapObject        `json:"MapObject"`        // optional
+	NoteObject       *NoteObject       `json:"NoteObject"`       // optional
+	RailObject       *RailObject       `json:"RailObject"`       // optional
+	RestaurantObject *RestaurantObject `json:"RestaurantObject"` // optional
+	TransportObject  *TransportObject  `json:"TransportObject"`  // optional
 }
 
 // Error is returned from TripIt on error conditions
 type Error struct {
-	Code_              string  "code"                // read-only
-	DetailedErrorCode_ *string "detailed_error_code" // optional, read-only
-	Description        string  "description"         // read-only
-	EntityType         string  "entity_type"         // read-only
-	Timestamp_         string  "timestamp"           // read-only, xs:datetime
+	Code_              string  `json:"code"`                // read-only
+	DetailedErrorCode_ *string `json:"detailed_error_code"` // optional, read-only
+	Description        string  `json:"description"`         // read-only
+	EntityType         string  `json:"entity_type"`         // read-only
+	Timestamp_         string  `json:"timestamp"`           // read-only, xs:datetime
 }
 
 // Returns error code
@@ -79,9 +79,9 @@ func (e *Error) String() string {
 
 // Warning is returned from TripIt to indicate warning conditions
 type Warning struct {
-	Description string "description" // read-only
-	EntityType  string "entity_type" // read-only
-	Timestamp   string "timestamp"   // read-only, xs:datetime
+	Description string `json:"description"` // read-only
+	EntityType  string `json:"entity_type"` // read-only
+	Timestamp   string `json:"timestamp"`   // read-only, xs:datetime
 }
 
 // returns a time.Time object for the Timestamp
@@ -98,25 +98,25 @@ func (w *Warning) String() string {
 
 // Represents a TripIt API Response
 type Response struct {
-	Timestamp_       string                     "timestamp"
-	NumBytes_        string                     "num_bytes"
-	Error            *ErrorVector               "Error"            // optional
-	Warning          *WarningVector             "Warning"          // optional
-	Trip             *TripPtrVector             "Trip"             // optional
-	ActivityObject   *ActivityObjectPtrVector   "ActivityObject"   // optional
-	AirObject        *AirObjectPtrVector        "AirObject"        // optional
-	CarObject        *CarObjectPtrVector        "CarObject"        // optional
-	CruiseObject     *CruiseObjectPtrVector     "CruiseObject"     // optional
-	DirectionsObject *DirectionsObjectPtrVector "DirectionsObject" // optional
-	LodgingObject    *LodgingObjectPtrVector    "LodgingObject"    // optional
-	MapObject        *MapObjectPtrVector        "MapObject"        // optional
-	NoteObject       *NoteObjectPtrVector       "NoteObject"       // optional
-	RailObject       *RailObjectPtrVector       "RailObject"       // optional
-	RestaurantObject *RestaurantObjectPtrVector "RestaurantObject" // optional
-	TransportObject  *TransportObjectPtrVector  "TransportObject"  // optional
-	WeatherObject    *WeatherObjectVector       "WeatherObject"    // optional
-	PointsProgram    *PointsProgramVector       "PointsProgram"    // optional
-	Profile          *ProfileVector             "Profile"          // optional
+	Timestamp_       string                     `json:"timestamp"`
+	NumBytes_        string                     `json:"num_bytes"`
+	Error            *ErrorVector               `json:"Error"`            // optional
+	Warning          *WarningVector             `json:"Warning"`          // optional
+	Trip             *TripPtrVector             `json:"Trip"`             // optional
+	ActivityObject   *ActivityObjectPtrVector   `json:"ActivityObject"`   // optional
+	AirObject        *AirObjectPtrVector        `json:"AirObject"`        // optional
+	CarObject        *CarObjectPtrVector        `json:"CarObject"`        // optional
+	CruiseObject     *CruiseObjectPtrVector     `json:"CruiseObject"`     // optional
+	DirectionsObject *DirectionsObjectPtrVector `json:"DirectionsObject"` // optional
+	LodgingObject    *LodgingObjectPtrVector    `json:"LodgingObject"`    // optional
+	MapObject        *MapObjectPtrVector        `json:"MapObject"`        // optional
+	NoteObject       *NoteObjectPtrVector       `json:"NoteObject"`       // optional
+	RailObject       *RailObjectPtrVector       `json:"RailObject"`       // optional
+	RestaurantObject *RestaurantObjectPtrVector `json:"RestaurantObject"` // optional
+	TransportObject  *TransportObjectPtrVector  `json:"TransportObject"`  // optional
+	WeatherObject    *WeatherObjectVector       `json:"WeatherObject"`    // optional
+	PointsProgram    *PointsProgramVector       `json:"PointsProgram"`    // optional
+	Profile          *ProfileVector             `json:"Profile"`          // optional
 	// @TODO need to add invitee stuff
 }
 
@@ -142,15 +142,15 @@ func (r *Response) NumBytes() (int, os.Error) {
 	See documentation for more information.
 */
 type Address struct {
-	Address    string  "address"   // optional
-	Addr1      string  "addr1"     // optional
-	Addr2      string  "addr2"     // optional
-	City       string  "city"      // optional
-	State      string  "state"     // optional
-	Zip        string  "zip"       // optional
-	Country    string  "country"   // optional
-	Latitude_  *string "latitude"  // optional, read-only
-	Longitude_ *string "longitude" // optional, read-only
+	Address    string  `json:"address"`   // optional
+	Addr1      string  `json:"addr1"`     // optional
+	Addr2      string  `json:"addr2"`     // optional
+	City       string  `json:"city"`      // optional
+	State      string  `json:"state"`     // optional
+	Zip        string  `json:"zip"`       // optional
+	Country    string  `json:"country"`   // optional
+	Latitude_  *string `json:"latitude"`  // optional, read-only
+	Longitude_ *string `json:"longitude"` // optional, read-only
 }
 
 // Return the latitude of the address
@@ -171,14 +171,14 @@ func (a *Address) Longitude() (float64, os.Error) {
 
 // Information about a traveler
 type Traveler struct {
-	FirstName                string "first_name"                 // optional
-	MiddleName               string "middle_name"                // optional
-	LastName                 string "last_name"                  // optional
-	FrequentTravelerNum      string "frequent_traveler_num"      // optional
-	FrequentTravelerSupplier string "frequent_traveler_supplier" // optional
-	MealPreference           string "meal_preference"            // optional
-	SeatPreference           string "seat_preference"            // optional
-	TicketNum                string "ticket_num optional"
+	FirstName                string `json:"first_name"`                 // optional
+	MiddleName               string `json:"middle_name"`                // optional
+	LastName                 string `json:"last_name"`                  // optional
+	FrequentTravelerNum      string `json:"frequent_traveler_num"`      // optional
+	FrequentTravelerSupplier string `json:"frequent_traveler_supplier"` // optional
+	MealPreference           string `json:"meal_preference"`            // optional
+	SeatPreference           string `json:"seat_preference"`            // optional
+	TicketNum                string `json:"ticket_num"` //optional
 }
 
 // Flight status values
@@ -198,20 +198,20 @@ const (
 
 // All FlightStatus fields are read-only and only available for monitored TripIt Pro AirSegments
 type FlightStatus struct {
-	ScheduledDepartureDateTime *DateTime "ScheduledDepartureDateTime" // optional, read-only
-	EstimatedDepartureDateTime *DateTime "EstimatedDepartureDateTime" // optional, read-only
-	ScheduledArrivalDateTime   *DateTime "ScheduledArrivalDateTime"   // optional, read-only
-	EstimatedArrivalDateTime   *DateTime "EstimatedArrivalDateTime"   // optional, read-only
-	FlightStatus_              *string   "flight_status"              // optional, read-only
-	IsConnectionAtRisk_        *string   "is_connection_at_risk"      // optional, read-only
-	DepartureTerminal          string    "departure_terminal"         // optional, read-only
-	DepartureGate              string    "departure_gate"             // optional, read-only
-	ArrivalTerminal            string    "arrival_terminal"           // optional, read-only
-	ArrivalGate                string    "arrival_gate"               // optional, read-only
-	LayoverMinutes             string    "layover_minutes"            // optional, read-only
-	BaggageClaim               string    "baggage_claim"              // optional, read-only
-	DivertedAirportCode        string    "diverted_airport_code"      // optional, read-only
-	LastModified_              string    "last_modified"              // read-only
+	ScheduledDepartureDateTime *DateTime `json:"ScheduledDepartureDateTime"` // optional, read-only
+	EstimatedDepartureDateTime *DateTime `json:"EstimatedDepartureDateTime"` // optional, read-only
+	ScheduledArrivalDateTime   *DateTime `json:"ScheduledArrivalDateTime"`   // optional, read-only
+	EstimatedArrivalDateTime   *DateTime `json:"EstimatedArrivalDateTime"`   // optional, read-only
+	FlightStatus_              *string   `json:"flight_status"`              // optional, read-only
+	IsConnectionAtRisk_        *string   `json:"is_connection_at_risk"`      // optional, read-only
+	DepartureTerminal          string    `json:"departure_terminal"`         // optional, read-only
+	DepartureGate              string    `json:"departure_gate"`             // optional, read-only
+	ArrivalTerminal            string    `json:"arrival_terminal"`           // optional, read-only
+	ArrivalGate                string    `json:"arrival_gate"`               // optional, read-only
+	LayoverMinutes             string    `json:"layover_minutes"`            // optional, read-only
+	BaggageClaim               string    `json:"baggage_claim"`              // optional, read-only
+	DivertedAirportCode        string    `json:"diverted_airport_code"`      // optional, read-only
+	LastModified_              string    `json:"last_modified"`              // read-only
 }
 
 // Returns the flight status as an int
@@ -241,8 +241,8 @@ func (fs *FlightStatus) LastModified() (*time.Time, os.Error) {
 
 // Information about images
 type Image struct {
-	Caption string "caption" // optional
-	Url     string "url"
+	Caption string `json:"caption"` // optional
+	Url     string `json:"url"`
 }
 
 // Stores date and time zone information, for example:
@@ -253,10 +253,10 @@ type Image struct {
 //    "utc_offset":"-08:00"
 // }
 type DateTime struct {
-	Date_     string "date"       // optional, xs:date
-	Time_     string "time"       // optional, xs:time
-	Timezone  string "timezone"   // optional, read-only
-	UtcOffset string "utc_offset" // optional, read-only
+	Date_     string `json:"date"`       // optional, xs:date
+	Time_     string `json:"time"`       // optional, xs:time
+	Timezone  string `json:"timezone"`   // optional, read-only
+	UtcOffset string `json:"utc_offset"` // optional, read-only
 }
 
 // Convert to a time.Time
@@ -278,21 +278,21 @@ func (dt *DateTime) SetDateTime(t *time.Time) {
 // PointsProgram contains information about tracked travel programs for TripIt Pro users.
 // All PointsProgram elements are read-only
 type PointsProgram struct {
-	Id_                  string                         "id"                    // read-only
-	Name                 string                         "name optional"         // read-only
-	AccountNumber        string                         "account_number"        // optional, read-only
-	AccountLogin         string                         "account_login"         // optional, read-only
-	Balance              string                         "balance"               // optional, read-only
-	EliteStatus          string                         "elite_status"          // optional, read-only
-	EliteNextStatus      string                         "elite_next_status"     // optional, read-only
-	EliteYtdQualify      string                         "elite_ytd_qualify"     // optional, read-only
-	EliteNeedToEarn      string                         "elite_need_to_earn"    // optional, read-only
-	LastModified_        string                         "last_modified"         // read-only
-	TotalNumActivities_  string                         "total_num_activities"  // read-only
-	TotalNumExpirations_ string                         "total_num_expirations" // read-only
-	ErrorMessage         string                         "error_message"         // optional, read-only
-	Activity             *PointsProgramActivityVector   "Activity"              // optional, read-only
-	Expiration           *PointsProgramExpirationVector "Expiration"            // optional, read-only
+	Id_                  string                         `json:"id"`                    // read-only
+	Name                 string                         `json:"name"`         // optional, read-only
+	AccountNumber        string                         `json:"account_number"`        // optional, read-only
+	AccountLogin         string                         `json:"account_login"`         // optional, read-only
+	Balance              string                         `json:"balance"`               // optional, read-only
+	EliteStatus          string                         `json:"elite_status"`          // optional, read-only
+	EliteNextStatus      string                         `json:"elite_next_status"`     // optional, read-only
+	EliteYtdQualify      string                         `json:"elite_ytd_qualify"`     // optional, read-only
+	EliteNeedToEarn      string                         `json:"elite_need_to_earn"`    // optional, read-only
+	LastModified_        string                         `json:"last_modified"`         // read-only
+	TotalNumActivities_  string                         `json:"total_num_activities"`  // read-only
+	TotalNumExpirations_ string                         `json:"total_num_expirations"` // read-only
+	ErrorMessage         string                         `json:"error_message"`         // optional, read-only
+	Activity             *PointsProgramActivityVector   `json:"Activity"`              // optional, read-only
+	Expiration           *PointsProgramExpirationVector `json:"Expiration"`            // optional, read-only
 }
 
 // Returns the ID
@@ -322,11 +322,11 @@ func (pp *PointsProgram) LastModified() (*time.Time, os.Error) {
 // PointsProgramActivity contains program transactions
 // All PointsProgramActivity elements are read-only
 type PointsProgramActivity struct {
-	Date_       string "date"        // read-only, xs:date
-	Description string "description" // optional, read-only
-	Base        string "base"        // optional, read-only
-	Bonus       string "bonus"       // optional, read-only
-	Total       string "total"       // optional, read-only
+	Date_       string `json:"date"`        // read-only, xs:date
+	Description string `json:"description"` // optional, read-only
+	Base        string `json:"base"`        // optional, read-only
+	Bonus       string `json:"bonus"`       // optional, read-only
+	Total       string `json:"total"`       // optional, read-only
 }
 
 // returns a time.Time object for Date
@@ -337,8 +337,8 @@ func (pa *PointsProgramActivity) Date() (*time.Time, os.Error) {
 
 // All PointsProgramExpiration elements are read-only
 type PointsProgramExpiration struct {
-	Date_  string "date"   // read-only, xs:date
-	Amount string "amount" // optional, read-only
+	Date_  string `json:"date"`   // read-only, xs:date
+	Amount string `json:"amount"` // optional, read-only
 }
 
 // returns a time.Time object for Date
@@ -349,10 +349,10 @@ func (pe *PointsProgramExpiration) Date() (*time.Time, os.Error) {
 
 // TripShare contains information about which users a trip is shared with
 type TripShare struct {
-	TripId_            string "trip_id"
-	IsTraveler_        string "is_traveler"
-	IsReadOnly_        string "is_read_only"
-	IsSentWithDetails_ string "is_sent_with_details"
+	TripId_            string `json:"trip_id"`
+	IsTraveler_        string `json:"is_traveler"`
+	IsReadOnly_        string `json:"is_read_only"`
+	IsSentWithDetails_ string `json:"is_sent_with_details"`
 }
 
 // Returns the TripId
@@ -382,45 +382,45 @@ type ConnectionRequest struct {
 
 // Invitation contains a list of users invited to see the trip
 type Invitation struct {
-	EmailAddresses    []string           "EmailAddresses"
-	TripShare         *TripShare         "TripShare"         // optional
-	ConnectionRequest *ConnectionRequest "ConnectionRequest" // optional
-	Message           string             "message"           // optional
+	EmailAddresses    []string           `json:"EmailAddresses"`
+	TripShare         *TripShare         `json:"TripShare"`         // optional
+	ConnectionRequest *ConnectionRequest `json:"ConnectionRequest"` // optional
+	Message           string             `json:"message"`           // optional
 }
 
 // Profile contains user information
 // All Profile elements are read-only
 type Profile struct {
-	Attributes            ProfileAttributes      "_attributes"           // read-only
-	ProfileEmailAddresses *ProfileEmailAddresses "ProfileEmailAddresses" // optional, read-only
-	GroupMemberships      *GroupMemberships      "GroupMemberships"      // optional, read-only
-	IsClient_             string                 "is_client"             // read-only
-	IsPro_                string                 "is_pro"                // read-only
-	ScreenName            string                 "screen_name"           // read-only
-	PublicDisplayName     string                 "public_display_name"   // read-only
-	ProfileUrl            string                 "profile_url"           // read-only
-	HomeCity              string                 "home_city"             // optional, read-only
-	Company               string                 "company"               // optional, read-only
-	AboutMeInfo           string                 "about_me_info"         // optional, read-only
-	PhotoUrl              string                 "photo_url"             // optional, read-only
-	ActivityFeedUrl       string                 "activity_feed_url"     // optional, read-only
-	AlertsFeedUrl         string                 "alerts_feed_url"       // optional, read-only
-	IcalUrl               string                 "ical_url"              // optional, read-only
+	Attributes            ProfileAttributes      `json:"_attributes"`           // read-only
+	ProfileEmailAddresses *ProfileEmailAddresses `json:"ProfileEmailAddresses"` // optional, read-only
+	GroupMemberships      *GroupMemberships      `json:"GroupMemberships"`      // optional, read-only
+	IsClient_             string                 `json:"is_client"`             // read-only
+	IsPro_                string                 `json:"is_pro"`                // read-only
+	ScreenName            string                 `json:"screen_name"`           // read-only
+	PublicDisplayName     string                 `json:"public_display_name"`   // read-only
+	ProfileUrl            string                 `json:"profile_url"`           // read-only
+	HomeCity              string                 `json:"home_city"`             // optional, read-only
+	Company               string                 `json:"company"`               // optional, read-only
+	AboutMeInfo           string                 `json:"about_me_info"`         // optional, read-only
+	PhotoUrl              string                 `json:"photo_url"`             // optional, read-only
+	ActivityFeedUrl       string                 `json:"activity_feed_url"`     // optional, read-only
+	AlertsFeedUrl         string                 `json:"alerts_feed_url"`       // optional, read-only
+	IcalUrl               string                 `json:"ical_url"`              // optional, read-only
 }
 
 // ProfileEmailAddresses contains the list of email addresses for a user
 type ProfileEmailAddresses struct {
-	ProfileEmailAddress *ProfileEmailAddressVector "ProfileEmailAddress"
+	ProfileEmailAddress *ProfileEmailAddressVector `json:"ProfileEmailAddress"`
 }
 
 // GroupMemberships contains a list of groups that the user is a member of
 type GroupMemberships struct {
-	Group *GroupVector "Group" // optional, read-only
+	Group *GroupVector `json:"Group"` // optional, read-only
 }
 
 // ProfileAttributes represent links to profiles
 type ProfileAttributes struct {
-	Ref string "ref" // read-only
+	Ref string `json:"ref"` // read-only
 }
 
 // Returns whether the profile is a client
@@ -436,10 +436,10 @@ func (p *Profile) IsPro() (bool, os.Error) {
 // ProfileEmailAddress contains an email address and its properties
 // All ProfileEmailAddress elements are read-only
 type ProfileEmailAddress struct {
-	Address       string "address"        // read-only
-	IsAutoImport_ string "is_auto_import" // read-only
-	IsConfirmed_  string "is_confirmed"   // read-only
-	IsPrimary_    string "is_primary"     // read-only
+	Address       string `json:"address"`        // read-only
+	IsAutoImport_ string `json:"is_auto_import"` // read-only
+	IsConfirmed_  string `json:"is_confirmed"`   // read-only
+	IsPrimary_    string `json:"is_primary"`     // read-only
 }
 
 // Returns whether the email address 
@@ -460,16 +460,16 @@ func (e *ProfileEmailAddress) IsPrimary() (bool, os.Error) {
 // Group contains data about a group in TripIt
 // All Group elements are read-only
 type Group struct {
-	DisplayName string "display_name" // read-only
-	Url         string "url"          // read-only
+	DisplayName string `json:"display_name"` // read-only
+	Url         string `json:"url"`          // read-only
 }
 
 // Trip Invitee
 // All Invitee elements are read-only
 type Invitee struct {
-	IsReadOnly_ string            "is_read_only" // read-only
-	IsTraveler_ string            "is_traveler"  // read-only
-	Attributes  InviteeAttributes "_attributes"  // read-only, Use the profile_ref attribute to reference a Profile
+	IsReadOnly_ string            `json:"is_read_only"` // read-only
+	IsTraveler_ string            `json:"is_traveler"`  // read-only
+	Attributes  InviteeAttributes `json:"_attributes"`  // read-only, Use the profile_ref attribute to reference a Profile
 }
 
 // Returns whether the Invitee is read-only
@@ -484,57 +484,57 @@ func (i *Invitee) IsTraveler() (bool, os.Error) {
 
 // Used to link to user profiles
 type InviteeAttributes struct {
-	ProfileRef string "profile_ref" // read-only, used to reference a profile
+	ProfileRef string `json:"profile_ref"` // read-only, used to reference a profile
 }
 
 // A CRS remark
 // All TripCrsRemark elements are read-only
 type TripCrsRemark struct {
-	RecordLocator string "record_locator" // read-only
-	Notes         string "notes"          // read-only
+	RecordLocator string `json:"record_locator"` // read-only
+	Notes         string `json:"notes"`          // read-only
 }
 
 // List of nearby users
 // All ClosenessMatch elements are read-only
 type ClosenessMatch struct {
-	Attributes ClosenessMatchAttributes "_attributes" // read-only, Use the profile_ref attribute to reference a Profile
+	Attributes ClosenessMatchAttributes `json:"_attributes"` // read-only, Use the profile_ref attribute to reference a Profile
 }
 
 // Links to profiles of nearby users
 type ClosenessMatchAttributes struct {
-	ProfileRef string "profile_ref" // read-only, Use the profile_ref attribute to reference a Profile
+	ProfileRef string `json:"profile_ref"` // read-only, Use the profile_ref attribute to reference a Profile
 }
 
 // The Trip
 type Trip struct {
-	ClosenessMatches       *ClosenessMatches "ClosenessMatches"         // optional, ClosenessMatches are read-only
-	TripInvitees           *TripInvitees     "TripInvitees"             // optional, TripInvitees are read-only
-	TripCrsRemarks         *TripCrsRemarks   "TripCrsRemarks"           // optional, TripCrsRemarks are read-only
-	Id_                    *string           "id"                       // optional, id is a read-only field
-	RelativeUrl            string            "relative_url"             // optional, relative_url is a read-only field
-	StartDate_             string            "start_date"               // optional, xs:date
-	EndDate_               string            "end_date"                 // optional, xs:date
-	Description            string            "description"              // optional
-	DisplayName            string            "display_name"             // optional
-	ImageUrl               string            "image_url"                // optional
-	IsPrivate_             *string           "is_private"               // optional
-	PrimaryLocation        string            "primary_location"         // optional
-	PrimaryLocationAddress *Address          "primary_location_address" // optional, PrimaryLocationAddress is a read-only field
+	ClosenessMatches       *ClosenessMatches `json:"ClosenessMatches"`         // optional, ClosenessMatches are read-only
+	TripInvitees           *TripInvitees     `json:"TripInvitees"`             // optional, TripInvitees are read-only
+	TripCrsRemarks         *TripCrsRemarks   `json:"TripCrsRemarks"`           // optional, TripCrsRemarks are read-only
+	Id_                    *string           `json:"id"`                       // optional, id is a read-only field
+	RelativeUrl            string            `json:"relative_url"`             // optional, relative_url is a read-only field
+	StartDate_             string            `json:"start_date"`               // optional, xs:date
+	EndDate_               string            `json:"end_date"`                 // optional, xs:date
+	Description            string            `json:"description"`              // optional
+	DisplayName            string            `json:"display_name"`             // optional
+	ImageUrl               string            `json:"image_url"`                // optional
+	IsPrivate_             *string           `json:"is_private"`               // optional
+	PrimaryLocation        string            `json:"primary_location"`         // optional
+	PrimaryLocationAddress *Address          `json:"primary_location_address"` // optional, PrimaryLocationAddress is a read-only field
 }
 
 // People invited to view a trip
 type TripInvitees struct {
-	Invitee *InviteeVector "Invitee" // optional, TripInvitees are read-only
+	Invitee *InviteeVector `json:"Invitee"` // optional, TripInvitees are read-only
 }
 
 // TripIt users who are near this trip
 type ClosenessMatches struct {
-	ClosenessMatch *ClosenessMatchVector "Match" // optional, ClosenessMatches are read-only
+	ClosenessMatch *ClosenessMatchVector `json:"Match"` // optional, ClosenessMatches are read-only
 }
 
 // Remarks from a reservation system
 type TripCrsRemarks struct {
-	TripCrsRemark *TripCrsRemarkVector "TripCrsRemark" // optional, TripCrsRemarks are read-only
+	TripCrsRemark *TripCrsRemarkVector `json:"TripCrsRemark"` // optional, TripCrsRemarks are read-only
 }
 
 // returns the ID of the trip
@@ -567,32 +567,32 @@ func (t *Trip) EndDate() (*time.Time, os.Error) {
 
 // AirObject contains data about a flight
 type AirObject struct {
-	Id_                  *string              "id"                     // optional, read-only
-	TripId_              *string              "trip_id"                // optional
-	IsClientTraveler_    *string              "is_client_traveler"     // optional, read-only
-	RelativeUrl          string               "relative_url"           // optional, read-only
-	DisplayName          string               "display_name"           // optional
-	Image                *ImagePtrVector      "Image"                  // optional
-	CancellationDateTime *DateTime            "CancellationDateTime"   // optional
-	BookingDate_         string               "booking_date"           // optional, xs:date
-	BookingRate          string               "booking_rate"           // optional
-	BookingSiteConfNum   string               "booking_site_conf_num"  // optional
-	BookingSiteName      string               "booking_site_name"      // optional
-	BookingSitePhone     string               "booking_site_phone"     // optional
-	BookingSiteUrl       string               "booking_site_url"       // optional
-	RecordLocator        string               "record_locator"         // optional
-	SupplierConfNum      string               "supplier_conf_num"      // optional
-	SupplierContact      string               "supplier_contact"       // optional
-	SupplierEmailAddress string               "supplier_email_address" // optional
-	SupplierName         string               "supplier_name"          // optional
-	SupplierPhone        string               "supplier_phone"         // optional
-	SupplierUrl          string               "supplier_url"           // optional
-	IsPurchased_         *string              "is_purchased"           // optional
-	Notes                string               "notes"                  // optional
-	Restrictions         string               "restrictions"           // optional
-	TotalCost            string               "total_cost"             // optional
-	Segment              *AirSegmentPtrVector "Segment"
-	Traveler             *TravelerPtrVector   "Traveler" // optional
+	Id_                  *string              `json:"id"`                     // optional, read-only
+	TripId_              *string              `json:"trip_id"`                // optional
+	IsClientTraveler_    *string              `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string               `json:"relative_url"`           // optional, read-only
+	DisplayName          string               `json:"display_name"`           // optional
+	Image                *ImagePtrVector      `json:"Image"`                  // optional
+	CancellationDateTime *DateTime            `json:"CancellationDateTime"`   // optional
+	BookingDate_         string               `json:"booking_date"`           // optional, xs:date
+	BookingRate          string               `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string               `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string               `json:"booking_site_name"`      // optional
+	BookingSitePhone     string               `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string               `json:"booking_site_url"`       // optional
+	RecordLocator        string               `json:"record_locator"`         // optional
+	SupplierConfNum      string               `json:"supplier_conf_num"`      // optional
+	SupplierContact      string               `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string               `json:"supplier_email_address"` // optional
+	SupplierName         string               `json:"supplier_name"`          // optional
+	SupplierPhone        string               `json:"supplier_phone"`         // optional
+	SupplierUrl          string               `json:"supplier_url"`           // optional
+	IsPurchased_         *string              `json:"is_purchased"`           // optional
+	Notes                string               `json:"notes"`                  // optional
+	Restrictions         string               `json:"restrictions"`           // optional
+	TotalCost            string               `json:"total_cost"`             // optional
+	Segment              *AirSegmentPtrVector `json:"Segment"`
+	Traveler             *TravelerPtrVector   `json:"Traveler"` // optional
 }
 
 // Returns the ID
@@ -635,44 +635,44 @@ func (o *AirObject) IsPurchased() (bool, os.Error) {
 
 // AirSegment contains details about individual flights
 type AirSegment struct {
-	Status                 *FlightStatus "Status"                  // optional
-	StartDateTime          *DateTime     "StartDateTime"           // optional
-	EndDateTime            *DateTime     "EndDateTime"             // optional
-	StartAirportCode       string        "start_airport_code"      // optional
-	StartAirportLatitude_  *string       "start_airport_latitude"  // optional, read-only
-	StartAirportLongitude_ *string       "start_airport_longitude" // optional, read-only
-	StartCityName          string        "start_city_name"         // optional
-	StartGate              string        "start_gate"              // optional
-	StartTerminal          string        "start_terminal"          // optional
-	EndAirportCode         string        "end_airport_code"        // optional
-	EndAirportLatitude_    *string       "end_airport_latitude"    // optional, read-only
-	EndAirportLongitude_   *string       "end_airport_longitude"   // optional, read-only
-	EndCityName            string        "end_city_name"           // optional
-	EndGate                string        "end_gate"                // optional
-	EndTerminal            string        "end_terminal"            // optional
-	MarketingAirline       string        "marketing_airline"       // optional
-	MarketingAirlineCode   string        "marketing_airline_code"  // optional, read-only
-	MarketingFlightNumber  string        "marketing_flight_number" // optional
-	OperatingAirline       string        "operating_airline"       // optional
-	OperatingAirlineCode   string        "operating_airline_code"  // optional, read-only
-	OperatingFlightNumber  string        "operating_flight_number" // optional
-	AlternativeFlightsUrl  string        "alternate_flights_url"   // optional, read-only
-	Aircraft               string        "aircraft"                // optional
-	AircraftDisplayName    string        "aircraft_display_name"   // optional, read-only
-	Distance               string        "distance"                // optional
-	Duration               string        "duration"                // optional
-	Entertainment          string        "entertainment"           // optional
-	Meal                   string        "meal"                    // optional
-	Notes                  string        "notes"                   // optional
-	OntimePerc             string        "ontime_perc"             // optional
-	Seats                  string        "seats"                   // optional
-	ServiceClass           string        "service_class"           // optional
-	Stops                  string        "stops"                   // optional
-	BaggageClaim           string        "baggage_claim"           // optional
-	CheckInUrl             string        "check_in_url"            // optional
-	ConflictResolutionUrl  string        "conflict_resolution_url" // optional, read-only
-	IsHidden_              *string       "is_hidden"               // optional, read-only
-	Id_                    *string       "id"                      // optional, read-only
+	Status                 *FlightStatus `json:"Status"`                  // optional
+	StartDateTime          *DateTime     `json:"StartDateTime"`           // optional
+	EndDateTime            *DateTime     `json:"EndDateTime"`             // optional
+	StartAirportCode       string        `json:"start_airport_code"`      // optional
+	StartAirportLatitude_  *string       `json:"start_airport_latitude"`  // optional, read-only
+	StartAirportLongitude_ *string       `json:"start_airport_longitude"` // optional, read-only
+	StartCityName          string        `json:"start_city_name"`         // optional
+	StartGate              string        `json:"start_gate"`              // optional
+	StartTerminal          string        `json:"start_terminal"`          // optional
+	EndAirportCode         string        `json:"end_airport_code"`        // optional
+	EndAirportLatitude_    *string       `json:"end_airport_latitude"`    // optional, read-only
+	EndAirportLongitude_   *string       `json:"end_airport_longitude"`   // optional, read-only
+	EndCityName            string        `json:"end_city_name"`           // optional
+	EndGate                string        `json:"end_gate"`                // optional
+	EndTerminal            string        `json:"end_terminal"`            // optional
+	MarketingAirline       string        `json:"marketing_airline"`       // optional
+	MarketingAirlineCode   string        `json:"marketing_airline_code"`  // optional, read-only
+	MarketingFlightNumber  string        `json:"marketing_flight_number"` // optional
+	OperatingAirline       string        `json:"operating_airline"`       // optional
+	OperatingAirlineCode   string        `json:"operating_airline_code"`  // optional, read-only
+	OperatingFlightNumber  string        `json:"operating_flight_number"` // optional
+	AlternativeFlightsUrl  string        `json:"alternate_flights_url"`   // optional, read-only
+	Aircraft               string        `json:"aircraft"`                // optional
+	AircraftDisplayName    string        `json:"aircraft_display_name"`   // optional, read-only
+	Distance               string        `json:"distance"`                // optional
+	Duration               string        `json:"duration"`                // optional
+	Entertainment          string        `json:"entertainment"`           // optional
+	Meal                   string        `json:"meal"`                    // optional
+	Notes                  string        `json:"notes"`                   // optional
+	OntimePerc             string        `json:"ontime_perc"`             // optional
+	Seats                  string        `json:"seats"`                   // optional
+	ServiceClass           string        `json:"service_class"`           // optional
+	Stops                  string        `json:"stops"`                   // optional
+	BaggageClaim           string        `json:"baggage_claim"`           // optional
+	CheckInUrl             string        `json:"check_in_url"`            // optional
+	ConflictResolutionUrl  string        `json:"conflict_resolution_url"` // optional, read-only
+	IsHidden_              *string       `json:"is_hidden"`               // optional, read-only
+	Id_                    *string       `json:"id"`                      // optional, read-only
 }
 
 func (s *AirSegment) StartAirportLatitude() (float64, os.Error) {
@@ -722,37 +722,37 @@ func (s *AirSegment) IsHidden() (bool, os.Error) {
 // hotel room description should be in notes
 // hotel average daily rate should be in booking_rate
 type LodgingObject struct {
-	Id_                  *string            "id"                     // optional, read-only
-	TripId_              *string            "trip_id"                // optional
-	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
-	RelativeUrl          string             "relative_url"           // optional, read-only
-	DisplayName          string             "display_name"           // optional
-	Image                *ImagePtrVector    "Image"                  // optional
-	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
-	BookingDate_         string             "booking_date"           // optional, xs:date
-	BookingRate          string             "booking_rate"           // optional
-	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
-	BookingSiteName      string             "booking_site_name"      // optional
-	BookingSitePhone     string             "booking_site_phone"     // optional
-	BookingSiteUrl       string             "booking_site_url"       // optional
-	RecordLocator        string             "record_locator"         // optional
-	SupplierConfNum      string             "supplier_conf_num"      // optional
-	SupplierContact      string             "supplier_contact"       // optional
-	SupplierEmailAddress string             "supplier_email_address" // optional
-	SupplierName         string             "supplier_name"          // optional
-	SupplierPhone        string             "supplier_phone"         // optional
-	SupplierUrl          string             "supplier_url"           // optional
-	IsPurchased_         *string            "is_purchased"           // optional
-	Notes                string             "notes"                  // optional
-	Restrictions         string             "restrictions"           // optional
-	TotalCost            string             "total_cost"             // optional
-	StartDateTime        *DateTime          "StartDateTime"          // optional
-	EndDateTime          *DateTime          "EndDateTime"            // optional
-	Address              *Address           "Address"                // optional
-	Guest                *TravelerPtrVector "Guest"                  // optional
-	NumberGuests         string             "number_guests"          // optional
-	NumberRooms          string             "numer_rooms"            // optional
-	RoomType             string             "room_type"              // optional
+	Id_                  *string            `json:"id"`                     // optional, read-only
+	TripId_              *string            `json:"trip_id"`                // optional
+	IsClientTraveler_    *string            `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string             `json:"relative_url"`           // optional, read-only
+	DisplayName          string             `json:"display_name"`           // optional
+	Image                *ImagePtrVector    `json:"Image"`                  // optional
+	CancellationDateTime *DateTime          `json:"CancellationDateTime"`   // optional
+	BookingDate_         string             `json:"booking_date"`           // optional, xs:date
+	BookingRate          string             `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string             `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string             `json:"booking_site_name"`      // optional
+	BookingSitePhone     string             `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string             `json:"booking_site_url"`       // optional
+	RecordLocator        string             `json:"record_locator"`         // optional
+	SupplierConfNum      string             `json:"supplier_conf_num"`      // optional
+	SupplierContact      string             `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string             `json:"supplier_email_address"` // optional
+	SupplierName         string             `json:"supplier_name"`          // optional
+	SupplierPhone        string             `json:"supplier_phone"`         // optional
+	SupplierUrl          string             `json:"supplier_url"`           // optional
+	IsPurchased_         *string            `json:"is_purchased"`           // optional
+	Notes                string             `json:"notes"`                  // optional
+	Restrictions         string             `json:"restrictions"`           // optional
+	TotalCost            string             `json:"total_cost"`             // optional
+	StartDateTime        *DateTime          `json:"StartDateTime"`          // optional
+	EndDateTime          *DateTime          `json:"EndDateTime"`            // optional
+	Address              *Address           `json:"Address"`                // optional
+	Guest                *TravelerPtrVector `json:"Guest"`                  // optional
+	NumberGuests         string             `json:"number_guests"`          // optional
+	NumberRooms          string             `json:"numer_rooms"`            // optional
+	RoomType             string             `json:"room_type"`              // optional
 }
 
 func (o *LodgingObject) Id() (uint, os.Error) {
@@ -794,44 +794,44 @@ func (o *LodgingObject) IsPurchased() (bool, os.Error) {
 // car pickup instructions should be in notes
 // car daily rate should be in booking_rate
 type CarObject struct {
-	Id_                  *string            "id"                     // optional, read-only
-	TripId_              *string            "trip_id"                // optional
-	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
-	RelativeUrl          string             "relative_url"           // optional, read-only
-	DisplayName          string             "display_name"           // optional
-	Image                *ImagePtrVector    "Image"                  // optional
-	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
-	BookingDate_         string             "booking_date"           // optional, xs:date
-	BookingRate          string             "booking_rate"           // optional
-	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
-	BookingSiteName      string             "booking_site_name"      // optional
-	BookingSitePhone     string             "booking_site_phone"     // optional
-	BookingSiteUrl       string             "booking_site_url"       // optional
-	RecordLocator        string             "record_locator"         // optional
-	SupplierConfNum      string             "supplier_conf_num"      // optional
-	SupplierContact      string             "supplier_contact"       // optional
-	SupplierEmailAddress string             "supplier_email_address" // optional
-	SupplierName         string             "supplier_name"          // optional
-	SupplierPhone        string             "supplier_phone"         // optional
-	SupplierUrl          string             "supplier_url"           // optional
-	IsPurchased_         *string            "is_purchased"           // optional
-	Notes                string             "notes"                  // optional
-	Restrictions         string             "restrictions"           // optional
-	TotalCost            string             "total_cost"             // optional
-	StartDateTime        *DateTime          "StartDateTime"          // optional
-	EndDateTime          *DateTime          "EndDateTime"            // optional
-	StartLocationAddress *Address           "StartLocationAddress"   // optional
-	EndLocationAddress   *Address           "EndLocationAddress"     // optional
-	Driver               *TravelerPtrVector "Driver"                 // optional
-	StartLocationHours   string             "start_location_hours"   // optional
-	StartLocationName    string             "start_location_name"    // optional
-	StartLocationPhone   string             "start_location_phone"   // optional
-	EndLocationHours     string             "end_location_hours"     // optional
-	EndLocationName      string             "end_location_name"      // optional
-	EndLocationPhone     string             "end_location_phone"     // optional
-	CarDescription       string             "car_description"        // optional
-	CarType              string             "car_type"               // optional
-	MileageCharges       string             "mileage_charges"        // optional
+	Id_                  *string            `json:"id"`                     // optional, read-only
+	TripId_              *string            `json:"trip_id"`                // optional
+	IsClientTraveler_    *string            `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string             `json:"relative_url"`           // optional, read-only
+	DisplayName          string             `json:"display_name"`           // optional
+	Image                *ImagePtrVector    `json:"Image"`                  // optional
+	CancellationDateTime *DateTime          `json:"CancellationDateTime"`   // optional
+	BookingDate_         string             `json:"booking_date"`           // optional, xs:date
+	BookingRate          string             `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string             `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string             `json:"booking_site_name"`      // optional
+	BookingSitePhone     string             `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string             `json:"booking_site_url"`       // optional
+	RecordLocator        string             `json:"record_locator"`         // optional
+	SupplierConfNum      string             `json:"supplier_conf_num"`      // optional
+	SupplierContact      string             `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string             `json:"supplier_email_address"` // optional
+	SupplierName         string             `json:"supplier_name"`          // optional
+	SupplierPhone        string             `json:"supplier_phone"`         // optional
+	SupplierUrl          string             `json:"supplier_url"`           // optional
+	IsPurchased_         *string            `json:"is_purchased"`           // optional
+	Notes                string             `json:"notes"`                  // optional
+	Restrictions         string             `json:"restrictions"`           // optional
+	TotalCost            string             `json:"total_cost"`             // optional
+	StartDateTime        *DateTime          `json:"StartDateTime"`          // optional
+	EndDateTime          *DateTime          `json:"EndDateTime"`            // optional
+	StartLocationAddress *Address           `json:"StartLocationAddress"`   // optional
+	EndLocationAddress   *Address           `json:"EndLocationAddress"`     // optional
+	Driver               *TravelerPtrVector `json:"Driver"`                 // optional
+	StartLocationHours   string             `json:"start_location_hours"`   // optional
+	StartLocationName    string             `json:"start_location_name"`    // optional
+	StartLocationPhone   string             `json:"start_location_phone"`   // optional
+	EndLocationHours     string             `json:"end_location_hours"`     // optional
+	EndLocationName      string             `json:"end_location_name"`      // optional
+	EndLocationPhone     string             `json:"end_location_phone"`     // optional
+	CarDescription       string             `json:"car_description"`        // optional
+	CarType              string             `json:"car_type"`               // optional
+	MileageCharges       string             `json:"mileage_charges"`        // optional
 }
 
 func (o *CarObject) Id() (uint, os.Error) {
@@ -870,32 +870,32 @@ func (o *CarObject) IsPurchased() (bool, os.Error) {
 
 // RailObject contains information about trains
 type RailObject struct {
-	Id_                  *string               "id"                     // optional, read-only
-	TripId_              *string               "trip_id"                // optional
-	IsClientTraveler_    *string               "is_client_traveler"     // optional, read-only
-	RelativeUrl          string                "relative_url"           // optional, read-only
-	DisplayName          string                "display_name"           // optional
-	Image                *ImagePtrVector       "Image"                  // optional
-	CancellationDateTime *DateTime             "CancellationDateTime"   // optional
-	BookingDate_         string                "booking_date"           // optional, xs:date
-	BookingRate          string                "booking_rate"           // optional
-	BookingSiteConfNum   string                "booking_site_conf_num"  // optional
-	BookingSiteName      string                "booking_site_name"      // optional
-	BookingSitePhone     string                "booking_site_phone"     // optional
-	BookingSiteUrl       string                "booking_site_url"       // optional
-	RecordLocator        string                "record_locator"         // optional
-	SupplierConfNum      string                "supplier_conf_num"      // optional
-	SupplierContact      string                "supplier_contact"       // optional
-	SupplierEmailAddress string                "supplier_email_address" // optional
-	SupplierName         string                "supplier_name"          // optional
-	SupplierPhone        string                "supplier_phone"         // optional
-	SupplierUrl          string                "supplier_url"           // optional
-	IsPurchased_         *string               "is_purchased"           // optional
-	Notes                string                "notes"                  // optional
-	Restrictions         string                "restrictions"           // optional
-	TotalCost            string                "total_cost"             // optional
-	Segment              *RailSegmentPtrVector "Segment"
-	Traveler             *TravelerPtrVector    "Traveler" // optional
+	Id_                  *string               `json:"id"`                     // optional, read-only
+	TripId_              *string               `json:"trip_id"`                // optional
+	IsClientTraveler_    *string               `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string                `json:"relative_url"`           // optional, read-only
+	DisplayName          string                `json:"display_name"`           // optional
+	Image                *ImagePtrVector       `json:"Image"`                  // optional
+	CancellationDateTime *DateTime             `json:"CancellationDateTime"`   // optional
+	BookingDate_         string                `json:"booking_date"`           // optional, xs:date
+	BookingRate          string                `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string                `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string                `json:"booking_site_name"`      // optional
+	BookingSitePhone     string                `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string                `json:"booking_site_url"`       // optional
+	RecordLocator        string                `json:"record_locator"`         // optional
+	SupplierConfNum      string                `json:"supplier_conf_num"`      // optional
+	SupplierContact      string                `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string                `json:"supplier_email_address"` // optional
+	SupplierName         string                `json:"supplier_name"`          // optional
+	SupplierPhone        string                `json:"supplier_phone"`         // optional
+	SupplierUrl          string                `json:"supplier_url"`           // optional
+	IsPurchased_         *string               `json:"is_purchased"`           // optional
+	Notes                string                `json:"notes"`                  // optional
+	Restrictions         string                `json:"restrictions"`           // optional
+	TotalCost            string                `json:"total_cost"`             // optional
+	Segment              *RailSegmentPtrVector `json:"Segment"`
+	Traveler             *TravelerPtrVector    `json:"Traveler"` // optional
 }
 
 func (o *RailObject) Id() (uint, os.Error) {
@@ -934,20 +934,20 @@ func (o *RailObject) IsPurchased() (bool, os.Error) {
 
 // RailSegment contains details about an indivual train ride
 type RailSegment struct {
-	StartDateTime       *DateTime "StartDateTime"       // optional
-	EndDateTime         *DateTime "EndDateTime"         // optional
-	StartStationAddress *Address  "StartStationAddress" // optional
-	EndStationAddress   *Address  "EndStationAddress"   // optional
-	StartStationName    string    "start_station_name"  // optional
-	EndStationName      string    "end_station_name"    // optional
-	CarrierName         string    "carrier_name"        // optional
-	CoachNumber         string    "coach_number"        // optional
-	ConfirmationNum     string    "confirmation_num"    // optional
-	Seats               string    "seats"               // optional
-	ServiceClass        string    "service_class"       // optional
-	TrainNumber         string    "train_number"        // optional
-	TrainType           string    "train_type"          // optional
-	Id_                 *string   "id"                  // optional, read-only
+	StartDateTime       *DateTime `json:"StartDateTime"`       // optional
+	EndDateTime         *DateTime `json:"EndDateTime"`         // optional
+	StartStationAddress *Address  `json:"StartStationAddress"` // optional
+	EndStationAddress   *Address  `json:"EndStationAddress"`   // optional
+	StartStationName    string    `json:"start_station_name"`  // optional
+	EndStationName      string    `json:"end_station_name"`    // optional
+	CarrierName         string    `json:"carrier_name"`        // optional
+	CoachNumber         string    `json:"coach_number"`        // optional
+	ConfirmationNum     string    `json:"confirmation_num"`    // optional
+	Seats               string    `json:"seats"`               // optional
+	ServiceClass        string    `json:"service_class"`       // optional
+	TrainNumber         string    `json:"train_number"`        // optional
+	TrainType           string    `json:"train_type"`          // optional
+	Id_                 *string   `json:"id"`                  // optional, read-only
 }
 
 func (r *RailSegment) Id() (uint, os.Error) {
@@ -965,32 +965,32 @@ const (
 
 // TransportObject contains details about other forms of transport like bus rides
 type TransportObject struct {
-	Id_                  *string                    "id"                     // optional, read-only
-	TripId_              *string                    "trip_id"                // optional
-	IsClientTraveler_    *string                    "is_client_traveler"     // optional, read-only
-	RelativeUrl          string                     "relative_url"           // optional, read-only
-	DisplayName          string                     "display_name"           // optional
-	Image                *ImagePtrVector            "Image"                  // optional
-	CancellationDateTime *DateTime                  "CancellationDateTime"   // optional
-	BookingDate_         string                     "booking_date"           // optional, xs:date
-	BookingRate          string                     "booking_rate"           // optional
-	BookingSiteConfNum   string                     "booking_site_conf_num"  // optional
-	BookingSiteName      string                     "booking_site_name"      // optional
-	BookingSitePhone     string                     "booking_site_phone"     // optional
-	BookingSiteUrl       string                     "booking_site_url"       // optional
-	RecordLocator        string                     "record_locator"         // optional
-	SupplierConfNum      string                     "supplier_conf_num"      // optional
-	SupplierContact      string                     "supplier_contact"       // optional
-	SupplierEmailAddress string                     "supplier_email_address" // optional
-	SupplierName         string                     "supplier_name"          // optional
-	SupplierPhone        string                     "supplier_phone"         // optional
-	SupplierUrl          string                     "supplier_url"           // optional
-	IsPurchased_         *string                    "is_purchased"           // optional
-	Notes                string                     "notes"                  // optional
-	Restrictions         string                     "restrictions"           // optional
-	TotalCost            string                     "total_cost"             // optional
-	Segment              *TransportSegmentPtrVector "Segment"
-	Traveler             *TravelerPtrVector         "Traveler" // optional
+	Id_                  *string                    `json:"id"`                     // optional, read-only
+	TripId_              *string                    `json:"trip_id"`                // optional
+	IsClientTraveler_    *string                    `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string                     `json:"relative_url"`           // optional, read-only
+	DisplayName          string                     `json:"display_name"`           // optional
+	Image                *ImagePtrVector            `json:"Image"`                  // optional
+	CancellationDateTime *DateTime                  `json:"CancellationDateTime"`   // optional
+	BookingDate_         string                     `json:"booking_date"`           // optional, xs:date
+	BookingRate          string                     `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string                     `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string                     `json:"booking_site_name"`      // optional
+	BookingSitePhone     string                     `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string                     `json:"booking_site_url"`       // optional
+	RecordLocator        string                     `json:"record_locator"`         // optional
+	SupplierConfNum      string                     `json:"supplier_conf_num"`      // optional
+	SupplierContact      string                     `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string                     `json:"supplier_email_address"` // optional
+	SupplierName         string                     `json:"supplier_name"`          // optional
+	SupplierPhone        string                     `json:"supplier_phone"`         // optional
+	SupplierUrl          string                     `json:"supplier_url"`           // optional
+	IsPurchased_         *string                    `json:"is_purchased"`           // optional
+	Notes                string                     `json:"notes"`                  // optional
+	Restrictions         string                     `json:"restrictions"`           // optional
+	TotalCost            string                     `json:"total_cost"`             // optional
+	Segment              *TransportSegmentPtrVector `json:"Segment"`
+	Traveler             *TravelerPtrVector         `json:"Traveler"` // optional
 }
 
 func (o *TransportObject) Id() (uint, os.Error) {
@@ -1029,18 +1029,18 @@ func (o *TransportObject) IsPurchased() (bool, os.Error) {
 
 // TransportSegment contains details about indivual transport rides
 type TransportSegment struct {
-	StartDateTime        *DateTime "StartDateTime"        // optional
-	EndDateTime          *DateTime "EndDateTime"          // optional
-	StartLocationAddress *Address  "StartLocationAddress" // optional
-	EndLocationAddress   *Address  "EndLocationAddress"   // optional
-	StartLocationName    string    "start_location_name"  // optional
-	EndLocationName      string    "end_location_name"    // optional
-	DetailTypeCode       string    "detail_type_code"     // optional
-	CarrierName          string    "carrier_name"         // optional
-	ConfirmationNum      string    "confirmation_num"     // optional
-	NumberPassengers     string    "number_passengers"    // optional
-	VehicleDescription   string    "vehicle_description"  // optional
-	Id_                  *string   "id"                   // optional, read-only
+	StartDateTime        *DateTime `json:"StartDateTime"`        // optional
+	EndDateTime          *DateTime `json:"EndDateTime"`          // optional
+	StartLocationAddress *Address  `json:"StartLocationAddress"` // optional
+	EndLocationAddress   *Address  `json:"EndLocationAddress"`   // optional
+	StartLocationName    string    `json:"start_location_name"`  // optional
+	EndLocationName      string    `json:"end_location_name"`    // optional
+	DetailTypeCode       string    `json:"detail_type_code"`     // optional
+	CarrierName          string    `json:"carrier_name"`         // optional
+	ConfirmationNum      string    `json:"confirmation_num"`     // optional
+	NumberPassengers     string    `json:"number_passengers"`    // optional
+	VehicleDescription   string    `json:"vehicle_description"`  // optional
+	Id_                  *string   `json:"id"`                   // optional, read-only
 }
 
 func (r *TransportSegment) Id() (uint, os.Error) {
@@ -1057,36 +1057,36 @@ const (
 
 // CruiseObject contains information about cruises
 type CruiseObject struct {
-	Id_                  *string                 "id"                     // optional, read-only
-	TripId_              *string                 "trip_id"                // optional
-	IsClientTraveler_    *string                 "is_client_traveler"     // optional, read-only
-	RelativeUrl          string                  "relative_url"           // optional, read-only
-	DisplayName          string                  "display_name"           // optional
-	Image                *ImagePtrVector         "Image"                  // optional
-	CancellationDateTime *DateTime               "CancellationDateTime"   // optional
-	BookingDate_         string                  "booking_date"           // optional, xs:date
-	BookingRate          string                  "booking_rate"           // optional
-	BookingSiteConfNum   string                  "booking_site_conf_num"  // optional
-	BookingSiteName      string                  "booking_site_name"      // optional
-	BookingSitePhone     string                  "booking_site_phone"     // optional
-	BookingSiteUrl       string                  "booking_site_url"       // optional
-	RecordLocator        string                  "record_locator"         // optional
-	SupplierConfNum      string                  "supplier_conf_num"      // optional
-	SupplierContact      string                  "supplier_contact"       // optional
-	SupplierEmailAddress string                  "supplier_email_address" // optional
-	SupplierName         string                  "supplier_name"          // optional
-	SupplierPhone        string                  "supplier_phone"         // optional
-	SupplierUrl          string                  "supplier_url"           // optional
-	IsPurchased_         *string                 "is_purchased"           // optional
-	Notes                string                  "notes"                  // optional
-	Restrictions         string                  "restrictions"           // optional
-	TotalCost            string                  "total_cost"             // optional
-	Segment              *CruiseSegmentPtrVector "Segment"
-	Traveler             *TravelerPtrVector      "Traveler"     // optional
-	CabinNumber          string                  "cabin_number" // optional
-	CabinType            string                  "cabin_type"   // optional
-	Dining               string                  "dining"       // optional
-	ShipName             string                  "ship_name"    // optional
+	Id_                  *string                 `json:"id"`                     // optional, read-only
+	TripId_              *string                 `json:"trip_id"`                // optional
+	IsClientTraveler_    *string                 `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string                  `json:"relative_url"`           // optional, read-only
+	DisplayName          string                  `json:"display_name"`           // optional
+	Image                *ImagePtrVector         `json:"Image"`                  // optional
+	CancellationDateTime *DateTime               `json:"CancellationDateTime"`   // optional
+	BookingDate_         string                  `json:"booking_date"`           // optional, xs:date
+	BookingRate          string                  `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string                  `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string                  `json:"booking_site_name"`      // optional
+	BookingSitePhone     string                  `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string                  `json:"booking_site_url"`       // optional
+	RecordLocator        string                  `json:"record_locator"`         // optional
+	SupplierConfNum      string                  `json:"supplier_conf_num"`      // optional
+	SupplierContact      string                  `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string                  `json:"supplier_email_address"` // optional
+	SupplierName         string                  `json:"supplier_name"`          // optional
+	SupplierPhone        string                  `json:"supplier_phone"`         // optional
+	SupplierUrl          string                  `json:"supplier_url"`           // optional
+	IsPurchased_         *string                 `json:"is_purchased"`           // optional
+	Notes                string                  `json:"notes"`                  // optional
+	Restrictions         string                  `json:"restrictions"`           // optional
+	TotalCost            string                  `json:"total_cost"`             // optional
+	Segment              *CruiseSegmentPtrVector `json:"Segment"`
+	Traveler             *TravelerPtrVector      `json:"Traveler"`     // optional
+	CabinNumber          string                  `json:"cabin_number"` // optional
+	CabinType            string                  `json:"cabin_type"`   // optional
+	Dining               string                  `json:"dining"`       // optional
+	ShipName             string                  `json:"ship_name"`    // optional
 }
 
 func (o *CruiseObject) Id() (uint, os.Error) {
@@ -1125,12 +1125,12 @@ func (o *CruiseObject) IsPurchased() (bool, os.Error) {
 
 // CruiseSegment contains details about indivual cruise segments
 type CruiseSegment struct {
-	StartDateTime   *DateTime "StartDateTime"    // optional
-	EndDateTime     *DateTime "EndDateTime"      // optional
-	LocationAddress *Address  "LocationAddress"  // optional
-	LocationName    string    "location_name"    // optional
-	DetailTypeCode  string    "detail_type_code" // optional
-	Id_             *string   "id"               // optional, read-only
+	StartDateTime   *DateTime `json:"StartDateTime"`    // optional
+	EndDateTime     *DateTime `json:"EndDateTime"`      // optional
+	LocationAddress *Address  `json:"LocationAddress"`  // optional
+	LocationName    string    `json:"location_name"`    // optional
+	DetailTypeCode  string    `json:"detail_type_code"` // optional
+	Id_             *string   `json:"id"`               // optional, read-only
 }
 
 func (r *CruiseSegment) Id() (uint, os.Error) {
@@ -1144,38 +1144,38 @@ func (r *CruiseSegment) Id() (uint, os.Error) {
 // restaurant name should be in supplier_name
 // restaurant notes should be in notes
 type RestaurantObject struct {
-	Id_                  *string         "id"                     // optional, read-only
-	TripId_              *string         "trip_id"                // optional
-	IsClientTraveler_    *string         "is_client_traveler"     // optional, read-only
-	RelativeUrl          string          "relative_url"           // optional, read-only
-	DisplayName          string          "display_name"           // optional
-	Image                *ImagePtrVector "Image"                  // optional
-	CancellationDateTime *DateTime       "CancellationDateTime"   // optional
-	BookingDate_         string          "booking_date"           // optional, xs:date
-	BookingRate          string          "booking_rate"           // optional
-	BookingSiteConfNum   string          "booking_site_conf_num"  // optional
-	BookingSiteName      string          "booking_site_name"      // optional
-	BookingSitePhone     string          "booking_site_phone"     // optional
-	BookingSiteUrl       string          "booking_site_url"       // optional
-	RecordLocator        string          "record_locator"         // optional
-	SupplierConfNum      string          "supplier_conf_num"      // optional
-	SupplierContact      string          "supplier_contact"       // optional
-	SupplierEmailAddress string          "supplier_email_address" // optional
-	SupplierName         string          "supplier_name"          // optional
-	SupplierPhone        string          "supplier_phone"         // optional
-	SupplierUrl          string          "supplier_url"           // optional
-	IsPurchased_         *string         "is_purchased"           // optional
-	Notes                string          "notes"                  // optional
-	Restrictions         string          "restrictions"           // optional
-	TotalCost            string          "total_cost"             // optional
-	DateTime             *DateTime       "DateTime"               // optional
-	Address              *Address        "Address"                // optional
-	ReservationHolder    *Traveler       "ReservationHolder"      // optional
-	Cuisine              string          "cuisine"                // optional
-	DressCode            string          "dress_code"             // optional
-	Hours                string          "hours"                  // optional
-	NumberPatrons        string          "number_patrons"         // optional
-	PriceRange           string          "price_range"            // optional
+	Id_                  *string         `json:"id"`                     // optional, read-only
+	TripId_              *string         `json:"trip_id"`                // optional
+	IsClientTraveler_    *string         `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string          `json:"relative_url"`           // optional, read-only
+	DisplayName          string          `json:"display_name"`           // optional
+	Image                *ImagePtrVector `json:"Image"`                  // optional
+	CancellationDateTime *DateTime       `json:"CancellationDateTime"`   // optional
+	BookingDate_         string          `json:"booking_date"`           // optional, xs:date
+	BookingRate          string          `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string          `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string          `json:"booking_site_name"`      // optional
+	BookingSitePhone     string          `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string          `json:"booking_site_url"`       // optional
+	RecordLocator        string          `json:"record_locator"`         // optional
+	SupplierConfNum      string          `json:"supplier_conf_num"`      // optional
+	SupplierContact      string          `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string          `json:"supplier_email_address"` // optional
+	SupplierName         string          `json:"supplier_name"`          // optional
+	SupplierPhone        string          `json:"supplier_phone"`         // optional
+	SupplierUrl          string          `json:"supplier_url"`           // optional
+	IsPurchased_         *string         `json:"is_purchased"`           // optional
+	Notes                string          `json:"notes"`                  // optional
+	Restrictions         string          `json:"restrictions"`           // optional
+	TotalCost            string          `json:"total_cost"`             // optional
+	DateTime             *DateTime       `json:"DateTime"`               // optional
+	Address              *Address        `json:"Address"`                // optional
+	ReservationHolder    *Traveler       `json:"ReservationHolder"`      // optional
+	Cuisine              string          `json:"cuisine"`                // optional
+	DressCode            string          `json:"dress_code"`             // optional
+	Hours                string          `json:"hours"`                  // optional
+	NumberPatrons        string          `json:"number_patrons"`         // optional
+	PriceRange           string          `json:"price_range"`            // optional
 }
 
 func (o *RestaurantObject) Id() (uint, os.Error) {
@@ -1222,36 +1222,36 @@ const (
 
 // ActivityObject contains details about activities like museum, theatre, and other events
 type ActivityObject struct {
-	Id_                  *string            "id"                     // optional, read-only
-	TripId_              *string            "trip_id"                // optional
-	IsClientTraveler_    *string            "is_client_traveler"     // optional, read-only
-	RelativeUrl          string             "relative_url"           // optional, read-only
-	DisplayName          string             "display_name"           // optional
-	Image                *ImagePtrVector    "Image"                  // optional
-	CancellationDateTime *DateTime          "CancellationDateTime"   // optional
-	BookingDate_         string             "booking_date"           // optional, xs:date
-	BookingRate          string             "booking_rate"           // optional
-	BookingSiteConfNum   string             "booking_site_conf_num"  // optional
-	BookingSiteName      string             "booking_site_name"      // optional
-	BookingSitePhone     string             "booking_site_phone"     // optional
-	BookingSiteUrl       string             "booking_site_url"       // optional
-	RecordLocator        string             "record_locator"         // optional
-	SupplierConfNum      string             "supplier_conf_num"      // optional
-	SupplierContact      string             "supplier_contact"       // optional
-	SupplierEmailAddress string             "supplier_email_address" // optional
-	SupplierName         string             "supplier_name"          // optional
-	SupplierPhone        string             "supplier_phone"         // optional
-	SupplierUrl          string             "supplier_url"           // optional
-	IsPurchased_         *string            "is_purchased"           // optional
-	Notes                string             "notes"                  // optional
-	Restrictions         string             "restrictions"           // optional
-	TotalCost            string             "total_cost"             // optional
-	StartDateTime        *DateTime          "StartDateTime"          // optional
-	EndTime              string             "end_time"               // optional, xs:time
-	Address              *Address           "Address"                // optional
-	Participant          *TravelerPtrVector "Participant"            // optional
-	DetailTypeCode       string             "detail_type_code"       // optional
-	LocationName         string             "location_name"          // optional
+	Id_                  *string            `json:"id"`                     // optional, read-only
+	TripId_              *string            `json:"trip_id"`                // optional
+	IsClientTraveler_    *string            `json:"is_client_traveler"`     // optional, read-only
+	RelativeUrl          string             `json:"relative_url"`           // optional, read-only
+	DisplayName          string             `json:"display_name"`           // optional
+	Image                *ImagePtrVector    `json:"Image"`                  // optional
+	CancellationDateTime *DateTime          `json:"CancellationDateTime"`   // optional
+	BookingDate_         string             `json:"booking_date"`           // optional, xs:date
+	BookingRate          string             `json:"booking_rate"`           // optional
+	BookingSiteConfNum   string             `json:"booking_site_conf_num"`  // optional
+	BookingSiteName      string             `json:"booking_site_name"`      // optional
+	BookingSitePhone     string             `json:"booking_site_phone"`     // optional
+	BookingSiteUrl       string             `json:"booking_site_url"`       // optional
+	RecordLocator        string             `json:"record_locator"`         // optional
+	SupplierConfNum      string             `json:"supplier_conf_num"`      // optional
+	SupplierContact      string             `json:"supplier_contact"`       // optional
+	SupplierEmailAddress string             `json:"supplier_email_address"` // optional
+	SupplierName         string             `json:"supplier_name"`          // optional
+	SupplierPhone        string             `json:"supplier_phone"`         // optional
+	SupplierUrl          string             `json:"supplier_url"`           // optional
+	IsPurchased_         *string            `json:"is_purchased"`           // optional
+	Notes                string             `json:"notes"`                  // optional
+	Restrictions         string             `json:"restrictions"`           // optional
+	TotalCost            string             `json:"total_cost"`             // optional
+	StartDateTime        *DateTime          `json:"StartDateTime"`          // optional
+	EndTime              string             `json:"end_time"`               // optional, xs:time
+	Address              *Address           `json:"Address"`                // optional
+	Participant          *TravelerPtrVector `json:"Participant"`            // optional
+	DetailTypeCode       string             `json:"detail_type_code"`       // optional
+	LocationName         string             `json:"location_name"`          // optional
 }
 
 func (o *ActivityObject) Id() (uint, os.Error) {
@@ -1295,19 +1295,19 @@ const (
 
 // NoteObject contains information about notes added by the traveler
 type NoteObject struct {
-	Id_               *string         "id"                 // optional, read-only
-	TripId_           *string         "trip_id"            // optional
-	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
-	RelativeUrl       string          "relative_url"       // optional, read-only
-	DisplayName       string          "display_name"       // optional
-	Image             *ImagePtrVector "Image"              // optional
-	DateTime          *DateTime       "DateTime"           // optional
-	Address           *Address        "Address"            // optional
-	DetailTypeCode    string          "detail_type_code"   // optional
-	Source            string          "source"             // optional
-	Text              string          "text"               // optional
-	Url               string          "url"                // optional
-	Notes             string          "notes"              // optional
+	Id_               *string         `json:"id"`                 // optional, read-only
+	TripId_           *string         `json:"trip_id"`            // optional
+	IsClientTraveler_ *string         `json:"is_client_traveler"` // optional, read-only
+	RelativeUrl       string          `json:"relative_url"`       // optional, read-only
+	DisplayName       string          `json:"display_name"`       // optional
+	Image             *ImagePtrVector `json:"Image"`              // optional
+	DateTime          *DateTime       `json:"DateTime"`           // optional
+	Address           *Address        `json:"Address"`            // optional
+	DetailTypeCode    string          `json:"detail_type_code"`   // optional
+	Source            string          `json:"source"`             // optional
+	Text              string          `json:"text"`               // optional
+	Url               string          `json:"url"`                // optional
+	Notes             string          `json:"notes"`              // optional
 }
 
 func (o *NoteObject) Id() (uint, os.Error) {
@@ -1333,14 +1333,14 @@ func (o *NoteObject) IsClientTraveler() (bool, os.Error) {
 
 // MapObject contains addresses to show on a map
 type MapObject struct {
-	Id_               *string         "id"                 // optional, read-only
-	TripId_           *string         "trip_id"            // optional
-	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
-	RelativeUrl       string          "relative_url"       // optional, read-only
-	DisplayName       string          "display_name"       // optional
-	Image             *ImagePtrVector "Image"              // optional
-	DateTime          *DateTime       "DateTime"           // optional
-	Address           *Address        "Address"            // optional
+	Id_               *string         `json:"id"`                 // optional, read-only
+	TripId_           *string         `json:"trip_id"`            // optional
+	IsClientTraveler_ *string         `json:"is_client_traveler"` // optional, read-only
+	RelativeUrl       string          `json:"relative_url"`       // optional, read-only
+	DisplayName       string          `json:"display_name"`       // optional
+	Image             *ImagePtrVector `json:"Image"`              // optional
+	DateTime          *DateTime       `json:"DateTime"`           // optional
+	Address           *Address        `json:"Address"`            // optional
 }
 
 func (o *MapObject) Id() (uint, os.Error) {
@@ -1366,15 +1366,15 @@ func (o *MapObject) IsClientTraveler() (bool, os.Error) {
 
 // DirectionsObject contains addresses to show directions for on the trip
 type DirectionsObject struct {
-	Id_               *string         "id"                 // optional, read-only
-	TripId_           *string         "trip_id"            // optional
-	IsClientTraveler_ *string         "is_client_traveler" // optional, read-only
-	RelativeUrl       string          "relative_url"       // optional, read-only
-	DisplayName       string          "display_name"       // optional
-	Image             *ImagePtrVector "Image"              // optional
-	DateTime          *DateTime       "DateTime"           // optional
-	StartAddress      *Address        "StartAddress"       // optional
-	EndAddress        *Address        "EndAddress"         // optional
+	Id_               *string         `json:"id"`                 // optional, read-only
+	TripId_           *string         `json:"trip_id"`            // optional
+	IsClientTraveler_ *string         `json:"is_client_traveler"` // optional, read-only
+	RelativeUrl       string          `json:"relative_url"`       // optional, read-only
+	DisplayName       string          `json:"display_name"`       // optional
+	Image             *ImagePtrVector `json:"Image"`              // optional
+	DateTime          *DateTime       `json:"DateTime"`           // optional
+	StartAddress      *Address        `json:"StartAddress"`       // optional
+	EndAddress        *Address        `json:"EndAddress"`         // optional
 }
 
 func (o *DirectionsObject) Id() (uint, os.Error) {
@@ -1401,19 +1401,19 @@ func (o *DirectionsObject) IsClientTraveler() (bool, os.Error) {
 // WeatherObject contains information about the weather at a particular destination
 // Weather is read-only
 type WeatherObject struct {
-	Id_                 *string         "id"                   // optional, read-only
-	TripId_             *string         "trip_id"              // optional
-	IsClientTraveler_   *string         "is_client_traveler"   // optional, read-only
-	RelativeUrl         string          "relative_url"         // optional, read-only
-	DisplayName         string          "display_name"         // optional
-	Image               *ImagePtrVector "Image"                // optional
-	Date_               string          "date"                 // optional, read-only, xs:date
-	Location            string          "location"             // optional, read-only
-	AvgHighTempC_       *string         "avg_high_temp_c"      // optional, read-only
-	AvgLowTempC_        *string         "avg_low_temp_c"       // optional, read-only
-	AvgWindSpeedKn_     *string         "avg_wind_speed_kn"    // optional, read-only
-	AvgPrecipitationCm_ *string         "avg_precipitation_cm" // optional, read-only
-	AvgSnowDepthCm_     *string         "avg_snow_depth_cm"    // optional, read-only
+	Id_                 *string         `json:"id"`                   // optional, read-only
+	TripId_             *string         `json:"trip_id"`              // optional
+	IsClientTraveler_   *string         `json:"is_client_traveler"`   // optional, read-only
+	RelativeUrl         string          `json:"relative_url"`         // optional, read-only
+	DisplayName         string          `json:"display_name"`         // optional
+	Image               *ImagePtrVector `json:"Image"`                // optional
+	Date_               string          `json:"date"`                 // optional, read-only, xs:date
+	Location            string          `json:"location"`             // optional, read-only
+	AvgHighTempC_       *string         `json:"avg_high_temp_c"`      // optional, read-only
+	AvgLowTempC_        *string         `json:"avg_low_temp_c"`       // optional, read-only
+	AvgWindSpeedKn_     *string         `json:"avg_wind_speed_kn"`    // optional, read-only
+	AvgPrecipitationCm_ *string         `json:"avg_precipitation_cm"` // optional, read-only
+	AvgSnowDepthCm_     *string         `json:"avg_snow_depth_cm"`    // optional, read-only
 }
 
 func (o *WeatherObject) Id() (uint, os.Error) {
