@@ -95,9 +95,11 @@ func (p *NoteObjectPtrVector) UnmarshalJSON(b []byte) os.Error {
 				return err
 			}
 		}
+		
 		if arr[0] == nil {
 			arr = arr[0:0]
 		}
+		
 	}
 	p.Cut(0, p.Len())
 	for _, v := range arr {

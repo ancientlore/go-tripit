@@ -4,15 +4,15 @@
 </head>
 <body>
 	<h1>TripIt Sample</h1>
-	{.section NotAuthorized}
+	{{if .NotAuthorized}}
 	<div><a href="/auth">Authorize</a></div>
-	{.end}
-	{.section Authorized}
+	{{end}}
+	{{if .Authorized}}
 	<div>
 	<a href="/trips">Trips</a>&nbsp;|&nbsp;
 	<a href="/list?t=points_program">My Points (TripIt Pro)</a>&nbsp;|&nbsp;
 	<a href="/edit?t=trip">New Trip</a>
 	</div>
-	{.end}
+	{{end}}
 </body>
 </html>

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"log"
-	"old/template"
+	"template"
 	"http"
 	"fmt"
 	"strconv"
@@ -19,12 +19,12 @@ var oauthConsumerKey = flag.String("key", "", "OAuth Consumer Key from TripIt")
 var oauthConsumerSecret = flag.String("secret", "", "OAuth Consumer Secret from TripIt")
 var url_ = flag.String("url", tripit.ApiUrl, "TripIt API URL")
 
-var indexT = template.MustParseFile("index.html", nil)
-var tripsT = template.MustParseFile("trips.html", nil)
-var detailsT = template.MustParseFile("details.html", nil)
-var editT = template.MustParseFile("edit.html", nil)
-var errorT = template.MustParseFile("error.html", nil)
-var apierrorT = template.MustParseFile("apierror.html", nil)
+var indexT = template.Must(template.ParseFile("index.html"))
+var tripsT = template.Must(template.ParseFile("trips.html"))
+var detailsT = template.Must(template.ParseFile("details.html"))
+var editT = template.Must(template.ParseFile("edit.html"))
+var errorT = template.Must(template.ParseFile("error.html"))
+var apierrorT = template.Must(template.ParseFile("apierror.html"))
 
 type getsess struct {
 	id    int

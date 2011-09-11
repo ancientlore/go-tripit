@@ -1,7 +1,7 @@
 package main
 
 import (
-	"old/template"
+	"template"
 	"os"
 	"flag"
 	"log"
@@ -41,9 +41,8 @@ func main() {
 		info["IsPtr"] = "yes"
 	}
 
-	template := template.New(nil)
-	template.SetDelims("{{{", "}}}")
-	err := template.Parse(getTemplate())
+	templ := template.New("vect")
+	_, err := templ.Parse(getTemplate())
 	if err != nil {
 		panic("Cannot parse template")
 	}
@@ -55,5 +54,5 @@ func main() {
 		os.Exit(2)
 	}
 	defer file.Close()
-	template.Execute(file, info)
+	templ.Execute(file, info)
 }

@@ -95,6 +95,7 @@ func (p *PointsProgramVector) UnmarshalJSON(b []byte) os.Error {
 				return err
 			}
 		}
+		
 	}
 	p.Cut(0, p.Len())
 	for _, v := range arr {

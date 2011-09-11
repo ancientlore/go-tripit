@@ -5,19 +5,19 @@
 <body>
 	<h1>TripIt Sample</h1>
 	<a href="/">Home</a>
-	{.section Trip}
+	{{with .Trip}}
 	<div>
 	<h2>Edit Trip</h2>
 	<form action="/save" method="post">
 	<label for="DisplayName">Display Name: </label>
-	<input type="text" value="{DisplayName}" name="DisplayName" id="DisplayName"/><br>
+	<input type="text" value="{{.DisplayName}}" name="DisplayName" id="DisplayName"/><br>
 	<label for="Description">Description: </label>
-	<input type="text" value="{Description}" name="Description" id="Description"/><br>
-	<input type="hidden" value="{*Id_}" name="id"/>
+	<input type="text" value="{{.Description}}" name="Description" id="Description"/><br>
+	<input type="hidden" value="{{.Id_}}" name="id"/>
 	<input type="hidden" value="trip" name="t"/>
 	<input type="submit" value="Submit"/>
 	</form>
 	</div>
-	{.end}
+	{{end}}
 </body>
 </html>

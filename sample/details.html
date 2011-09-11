@@ -5,12 +5,12 @@
 <body>
 	<h1>TripIt Sample</h1>
 	<a href="/">Home</a>
-	{.section Result}
-	<div>Size: {NumBytes_} bytes</div>
-	<div>Timestamp: {Timestamp_}</div>
-	{.end}
+	{{with .Result}}
+	<div>Size: {{.NumBytes_}} bytes</div>
+	<div>Timestamp: {{.Timestamp_}}</div>
+	{{end}}
 	<pre>
-	{JSON}
+	{{.JSON}}
 	</pre>
 </body>
 </html>
