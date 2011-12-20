@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"os"
 	"json"
-	"container/vector"
 	"../_obj/tripit"
 	"url"
 )
@@ -34,16 +33,16 @@ type getsess struct {
 var session chan getsess
 
 func sessionManager() {
-	var sessions vector.Vector
+	var sessions []map[string]string
 	for {
 		select {
 		case r := <-session:
-			if r.id >= 0 && r.id < sessions.Len() {
-				r.reply <- sessions.At(r.id).(map[string]string)
+			if r.id >= 0 && r.id < len(sessions) {
+				r.reply <- sessions[r.id]
 			} else {
 				s := make(map[string]string)
-				sessions.Push(s)
-				s["id"] = strconv.Itoa(sessions.Len() - 1)
+				sessions = append(sessions, s)
+				s["id"] = strconv.Itoa(len(sessions) - 1)
 				r.reply <- s
 			}
 		}
@@ -147,7 +146,7 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
 	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
-	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "true", tripit.FilterPast: "false"})
+	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "false", tripit.FilterPast: "false"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -155,17 +154,17 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 		if resp.Warning != nil {
-			m["Warning"] = resp.Warning.Data()
+			m["Warning"] = resp.Warning
 		}
 		if resp.Error != nil {
-			m["Error"] = resp.Error.Data()
+			m["Error"] = resp.Error
 		}
 		apierrorT.Execute(w, m)
 		return
 	}
-	m["Trip"] = resp.Trip.Data()
+	m["Trip"] = resp.Trip
 	b, _ := json.MarshalIndent(resp, "", "\t")
 	m["JSON"] = string(b)
 	tripsT.Execute(w, m)
@@ -197,12 +196,12 @@ func Details(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 		if resp.Warning != nil {
-			m["Warning"] = resp.Warning.Data()
+			m["Warning"] = resp.Warning
 		}
 		if resp.Error != nil {
-			m["Error"] = resp.Error.Data()
+			m["Error"] = resp.Error
 		}
 		apierrorT.Execute(w, m)
 		return
@@ -239,12 +238,12 @@ func List(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 		if resp.Warning != nil {
-			m["Warning"] = resp.Warning.Data()
+			m["Warning"] = resp.Warning
 		}
 		if resp.Error != nil {
-			m["Error"] = resp.Error.Data()
+			m["Error"] = resp.Error
 		}
 		apierrorT.Execute(w, m)
 		return
@@ -285,18 +284,18 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 			if resp.Warning != nil {
-				m["Warning"] = resp.Warning.Data()
+				m["Warning"] = resp.Warning
 			}
 			if resp.Error != nil {
-				m["Error"] = resp.Error.Data()
+				m["Error"] = resp.Error
 			}
 			apierrorT.Execute(w, m)
 			return
 		}
 		m["Result"] = resp
-		trip = resp.Trip.At(0)
+		trip = (*resp.Trip)[0]
 	} else {
 		trip = new(tripit.Trip)
 		trip.Id_ = new(string)
@@ -337,17 +336,17 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 			if resp.Warning != nil {
-				m["Warning"] = resp.Warning.Data()
+				m["Warning"] = resp.Warning
 			}
 			if resp.Error != nil {
-				m["Error"] = resp.Error.Data()
+				m["Error"] = resp.Error
 			}
 			apierrorT.Execute(w, m)
 			return
 		}
-		trip = *resp.Trip.At(0)
+		trip = *(*resp.Trip)[0]
 		trip.DisplayName = req.Form["DisplayName"][0]
 		trip.Description = req.Form["Description"][0]
 		request := new(tripit.Request)
@@ -358,12 +357,12 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 			if resp.Warning != nil {
-				m["Warning"] = resp.Warning.Data()
+				m["Warning"] = resp.Warning
 			}
 			if resp.Error != nil {
-				m["Error"] = resp.Error.Data()
+				m["Error"] = resp.Error
 			}
 			apierrorT.Execute(w, m)
 			return
@@ -381,12 +380,12 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && resp.Warning.Len() > 0) || (resp.Error != nil && resp.Error.Len() > 0) {
+		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
 			if resp.Warning != nil {
-				m["Warning"] = resp.Warning.Data()
+				m["Warning"] = resp.Warning
 			}
 			if resp.Error != nil {
-				m["Error"] = resp.Error.Data()
+				m["Error"] = resp.Error
 			}
 			apierrorT.Execute(w, m)
 			return

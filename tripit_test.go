@@ -24,7 +24,7 @@ func TestJsonWrite(t *testing.T) {
 	var r Response
 	log.Print("Marshal JSON")
 	r.Error = new(ErrorVector)
-	r.Error.Push(Error{Code_: "304", Description: "WTF"})
+	*r.Error = append(*r.Error, Error{Code_: "304", Description: "WTF"})
 	b, _ := json.Marshal(r)
 	os.Stdout.Write(b)
 	fmt.Fprintf(os.Stdout, "\n")

@@ -72,9 +72,9 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	b := bytes.Replace(buf.Bytes(), []byte("\"@attributes\""), []byte("\"_attributes\""), -1)
 
 	// debug logging
-	//f, _ := os.Create("output.json")
-	//defer f.Close()
-	//f.Write(b)
+	f, _ := os.Create("output.json")
+	defer f.Close()
+	f.Write(b)
 
 	result := new(Response)
 	err = json.Unmarshal(b, result)

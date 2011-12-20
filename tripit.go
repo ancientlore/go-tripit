@@ -30,19 +30,19 @@ const (
 
 // Request contains the objects that can be sent to TripIt in a request
 type Request struct {
-	Invitation       []Invitation      `json:"Invitation"`       // optional
-	Trip             *Trip             `json:"Trip"`             // optional
-	ActivityObject   *ActivityObject   `json:"ActivityObject"`   // optional
-	AirObject        *AirObject        `json:"AirObject"`        // optional
-	CarObject        *CarObject        `json:"CarObject"`        // optional
-	CruiseObject     *CruiseObject     `json:"CruiseObject"`     // optional
-	DirectionsObject *DirectionsObject `json:"DirectionsObject"` // optional
-	LodgingObject    *LodgingObject    `json:"LodgingObject"`    // optional
-	MapObject        *MapObject        `json:"MapObject"`        // optional
-	NoteObject       *NoteObject       `json:"NoteObject"`       // optional
-	RailObject       *RailObject       `json:"RailObject"`       // optional
-	RestaurantObject *RestaurantObject `json:"RestaurantObject"` // optional
-	TransportObject  *TransportObject  `json:"TransportObject"`  // optional
+	Invitation       []Invitation      `json:"Invitation,omitempty"`       // optional
+	Trip             *Trip             `json:"Trip,omitempty"`             // optional
+	ActivityObject   *ActivityObject   `json:"ActivityObject,omitempty"`   // optional
+	AirObject        *AirObject        `json:"AirObject,omitempty"`        // optional
+	CarObject        *CarObject        `json:"CarObject,omitempty"`        // optional
+	CruiseObject     *CruiseObject     `json:"CruiseObject,omitempty"`     // optional
+	DirectionsObject *DirectionsObject `json:"DirectionsObject,omitempty"` // optional
+	LodgingObject    *LodgingObject    `json:"LodgingObject,omitempty"`    // optional
+	MapObject        *MapObject        `json:"MapObject,omitempty"`        // optional
+	NoteObject       *NoteObject       `json:"NoteObject,omitempty"`       // optional
+	RailObject       *RailObject       `json:"RailObject,omitempty"`       // optional
+	RestaurantObject *RestaurantObject `json:"RestaurantObject,omitempty"` // optional
+	TransportObject  *TransportObject  `json:"TransportObject,omitempty"`  // optional
 }
 
 // Error is returned from TripIt on error conditions
@@ -51,7 +51,7 @@ type Error struct {
 	DetailedErrorCode_ *string `json:"detailed_error_code"` // optional, read-only
 	Description        string  `json:"description"`         // read-only
 	EntityType         string  `json:"entity_type"`         // read-only
-	Timestamp_         string  `json:"timestamp"`           // read-only, xs:datetime
+	Timestamp          string  `json:"timestamp"`           // read-only, xs:datetime
 }
 
 // Returns error code
@@ -68,8 +68,8 @@ func (e *Error) DetailedErrorCode() (float64, os.Error) {
 }
 
 // returns a time.Time object for the Timestamp
-func (e *Error) Timestamp() (*time.Time, os.Error) {
-	return time.Parse(time.RFC3339, e.Timestamp_)
+func (e *Error) Time() (*time.Time, os.Error) {
+	return time.Parse(time.RFC3339, e.Timestamp)
 }
 
 // Returns a string containing the error information
@@ -100,23 +100,23 @@ func (w *Warning) String() string {
 type Response struct {
 	Timestamp_       string                     `json:"timestamp"`
 	NumBytes_        string                     `json:"num_bytes"`
-	Error            *ErrorVector               `json:"Error"`            // optional
-	Warning          *WarningVector             `json:"Warning"`          // optional
-	Trip             *TripPtrVector             `json:"Trip"`             // optional
-	ActivityObject   *ActivityObjectPtrVector   `json:"ActivityObject"`   // optional
-	AirObject        *AirObjectPtrVector        `json:"AirObject"`        // optional
-	CarObject        *CarObjectPtrVector        `json:"CarObject"`        // optional
-	CruiseObject     *CruiseObjectPtrVector     `json:"CruiseObject"`     // optional
-	DirectionsObject *DirectionsObjectPtrVector `json:"DirectionsObject"` // optional
-	LodgingObject    *LodgingObjectPtrVector    `json:"LodgingObject"`    // optional
-	MapObject        *MapObjectPtrVector        `json:"MapObject"`        // optional
-	NoteObject       *NoteObjectPtrVector       `json:"NoteObject"`       // optional
-	RailObject       *RailObjectPtrVector       `json:"RailObject"`       // optional
-	RestaurantObject *RestaurantObjectPtrVector `json:"RestaurantObject"` // optional
-	TransportObject  *TransportObjectPtrVector  `json:"TransportObject"`  // optional
-	WeatherObject    *WeatherObjectVector       `json:"WeatherObject"`    // optional
-	PointsProgram    *PointsProgramVector       `json:"PointsProgram"`    // optional
-	Profile          *ProfileVector             `json:"Profile"`          // optional
+	Error            *ErrorVector               `json:"Error,omitempty"`            // optional
+	Warning          *WarningVector             `json:"Warning,omitempty"`          // optional
+	Trip             *TripPtrVector             `json:"Trip,omitempty"`             // optional
+	ActivityObject   *ActivityObjectPtrVector   `json:"ActivityObject,omitempty"`   // optional
+	AirObject        *AirObjectPtrVector        `json:"AirObject,omitempty"`        // optional
+	CarObject        *CarObjectPtrVector        `json:"CarObject,omitempty"`        // optional
+	CruiseObject     *CruiseObjectPtrVector     `json:"CruiseObject,omitempty"`     // optional
+	DirectionsObject *DirectionsObjectPtrVector `json:"DirectionsObject,omitempty"` // optional
+	LodgingObject    *LodgingObjectPtrVector    `json:"LodgingObject,omitempty"`    // optional
+	MapObject        *MapObjectPtrVector        `json:"MapObject,omitempty"`        // optional
+	NoteObject       *NoteObjectPtrVector       `json:"NoteObject,omitempty"`       // optional
+	RailObject       *RailObjectPtrVector       `json:"RailObject,omitempty"`       // optional
+	RestaurantObject *RestaurantObjectPtrVector `json:"RestaurantObject,omitempty"` // optional
+	TransportObject  *TransportObjectPtrVector  `json:"TransportObject,omitempty"`  // optional
+	WeatherObject    *WeatherObjectVector       `json:"WeatherObject,omitempty"`    // optional
+	PointsProgram    *PointsProgramVector       `json:"PointsProgram,omitempty"`    // optional
+	Profile          *ProfileVector             `json:"Profile,omitempty"`          // optional
 	// @TODO need to add invitee stuff
 }
 
@@ -178,7 +178,7 @@ type Traveler struct {
 	FrequentTravelerSupplier string `json:"frequent_traveler_supplier"` // optional
 	MealPreference           string `json:"meal_preference"`            // optional
 	SeatPreference           string `json:"seat_preference"`            // optional
-	TicketNum                string `json:"ticket_num"` //optional
+	TicketNum                string `json:"ticket_num"`                 //optional
 }
 
 // Flight status values
@@ -279,7 +279,7 @@ func (dt *DateTime) SetDateTime(t *time.Time) {
 // All PointsProgram elements are read-only
 type PointsProgram struct {
 	Id_                  string                         `json:"id"`                    // read-only
-	Name                 string                         `json:"name"`         // optional, read-only
+	Name                 string                         `json:"name"`                  // optional, read-only
 	AccountNumber        string                         `json:"account_number"`        // optional, read-only
 	AccountLogin         string                         `json:"account_login"`         // optional, read-only
 	Balance              string                         `json:"balance"`               // optional, read-only
