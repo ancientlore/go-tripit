@@ -146,7 +146,7 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	cred := tripit.NewOAuth3LeggedCredential(*oauthConsumerKey, *oauthConsumerSecret, sess["oauth_token"], sess["oauth_token_secret"])
 	var client http.Client
 	t := tripit.New(*url_, tripit.ApiVersion, &client, cred)
-	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "false", tripit.FilterPast: "false"})
+	resp, err := t.List(tripit.ObjectTypeTrip, map[string]string{tripit.FilterTraveler: "true", tripit.FilterPast: "true"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -154,7 +154,7 @@ func Trips(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 		if resp.Warning != nil {
 			m["Warning"] = resp.Warning
 		}
@@ -196,7 +196,7 @@ func Details(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 		if resp.Warning != nil {
 			m["Warning"] = resp.Warning
 		}
@@ -238,7 +238,7 @@ func List(w http.ResponseWriter, req *http.Request) {
 	}
 	m := make(map[string]interface{})
 	m["Result"] = resp
-	if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+	if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 		if resp.Warning != nil {
 			m["Warning"] = resp.Warning
 		}
@@ -284,7 +284,7 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+		if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 			if resp.Warning != nil {
 				m["Warning"] = resp.Warning
 			}
@@ -295,10 +295,9 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		m["Result"] = resp
-		trip = (*resp.Trip)[0]
+		trip = (resp.Trip)[0]
 	} else {
 		trip = new(tripit.Trip)
-		trip.Id_ = new(string)
 	}
 	m["Trip"] = trip
 	editT.Execute(w, m)
@@ -336,7 +335,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+		if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 			if resp.Warning != nil {
 				m["Warning"] = resp.Warning
 			}
@@ -346,7 +345,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			apierrorT.Execute(w, m)
 			return
 		}
-		trip = *(*resp.Trip)[0]
+		trip = *(resp.Trip)[0]
 		trip.DisplayName = req.Form["DisplayName"][0]
 		trip.Description = req.Form["Description"][0]
 		request := new(tripit.Request)
@@ -357,7 +356,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+		if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 			if resp.Warning != nil {
 				m["Warning"] = resp.Warning
 			}
@@ -380,7 +379,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 			errorT.Execute(w, err)
 			return
 		}
-		if (resp.Warning != nil && len(*resp.Warning) > 0) || (resp.Error != nil && len(*resp.Error) > 0) {
+		if (resp.Warning != nil && len(resp.Warning) > 0) || (resp.Error != nil && len(resp.Error) > 0) {
 			if resp.Warning != nil {
 				m["Warning"] = resp.Warning
 			}

@@ -72,15 +72,19 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 	b := bytes.Replace(buf.Bytes(), []byte("\"@attributes\""), []byte("\"_attributes\""), -1)
 
 	// debug logging
-	f, _ := os.Create("output.json")
-	defer f.Close()
-	f.Write(b)
+	// f, _ := os.Create("output.json")
+	// defer f.Close()
+	// f.Write(b)
 
 	result := new(Response)
 	err = json.Unmarshal(b, result)
 	if err != nil {
 		return nil, err
 	}
+
+	// debug logging
+	// log.Print(result)
+
 	return result, nil
 }
 
@@ -155,7 +159,7 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/replace/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), b)
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/replace/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), b)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +171,7 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 // from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/delete/%s/id/%u/format/json", t.baseUrl, t.version, objectType, objectId), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/delete/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
 	if err != nil {
 		return nil, err
 	}
