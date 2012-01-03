@@ -1,16 +1,15 @@
 package main
 
 import (
-	"flag"
-	"log"
-	"template"
-	"http"
-	"fmt"
-	"strconv"
-	"os"
-	"json"
 	"../_obj/tripit"
-	"url"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+	"strconv"
+	"text/template"
 )
 
 var addr = flag.String("addr", "localhost:8080", "HTTP Service Address")
@@ -18,12 +17,12 @@ var oauthConsumerKey = flag.String("key", "", "OAuth Consumer Key from TripIt")
 var oauthConsumerSecret = flag.String("secret", "", "OAuth Consumer Secret from TripIt")
 var url_ = flag.String("url", tripit.ApiUrl, "TripIt API URL")
 
-var indexT = template.Must(template.ParseFile("index.html"))
-var tripsT = template.Must(template.ParseFile("trips.html"))
-var detailsT = template.Must(template.ParseFile("details.html"))
-var editT = template.Must(template.ParseFile("edit.html"))
-var errorT = template.Must(template.ParseFile("error.html"))
-var apierrorT = template.Must(template.ParseFile("apierror.html"))
+var indexT = template.Must(template.ParseFiles("index.html"))
+var tripsT = template.Must(template.ParseFiles("trips.html"))
+var detailsT = template.Must(template.ParseFiles("details.html"))
+var editT = template.Must(template.ParseFiles("edit.html"))
+var errorT = template.Must(template.ParseFiles("error.html"))
+var apierrorT = template.Must(template.ParseFiles("apierror.html"))
 
 type getsess struct {
 	id    int
@@ -52,7 +51,7 @@ func sessionManager() {
 func getSession(w http.ResponseWriter, req *http.Request) map[string]string {
 	var gs getsess
 	gs.id = -1
-	var err os.Error
+	var err error
 	for _, c := range req.Cookies() {
 		if c.Name == "samplesession" {
 			gs.id, err = strconv.Atoi(c.Value)
@@ -182,13 +181,13 @@ func Details(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	objType := q["t"][0]
-	objId, err := strconv.Atoui(q["id"][0])
+	objId, err := strconv.ParseUint(q["id"][0], 10, 0)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
 		return
 	}
-	resp, err := t.Get(objType, objId)
+	resp, err := t.Get(objType, uint(objId))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorT.Execute(w, err)
@@ -265,10 +264,10 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	objType := q["t"][0]
-	var objId uint = 0
+	var objId uint64 = 0
 	tmp, ok := q["id"]
 	if ok {
-		objId, err = strconv.Atoui(tmp[0])
+		objId, err = strconv.ParseUint(tmp[0], 10, 0)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errorT.Execute(w, err)
@@ -278,7 +277,7 @@ func Edit(w http.ResponseWriter, req *http.Request) {
 	var trip *tripit.Trip
 	m := make(map[string]interface{})
 	if objId > 0 {
-		resp, err := t.Get(objType, objId)
+		resp, err := t.Get(objType, uint(objId))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errorT.Execute(w, err)
@@ -316,10 +315,10 @@ func Save(w http.ResponseWriter, req *http.Request) {
 
 	}
 	objType := req.Form["t"][0]
-	var objId uint = 0
+	var objId uint64 = 0
 	tmp, ok := req.Form["id"]
 	if ok && tmp[0] != "" && tmp[0] != "<nil>" {
-		objId, err = strconv.Atoui(tmp[0])
+		objId, err = strconv.ParseUint(tmp[0], 10, 0)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errorT.Execute(w, err)
@@ -329,7 +328,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 	var trip tripit.Trip
 	m := make(map[string]interface{})
 	if objId > 0 {
-		resp, err := t.Get(objType, objId)
+		resp, err := t.Get(objType, uint(objId))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errorT.Execute(w, err)
@@ -350,7 +349,7 @@ func Save(w http.ResponseWriter, req *http.Request) {
 		trip.Description = req.Form["Description"][0]
 		request := new(tripit.Request)
 		request.Trip = &trip
-		resp, err = t.Replace(objType, objId, request)
+		resp, err = t.Replace(objType, uint(objId), request)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errorT.Execute(w, err)

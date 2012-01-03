@@ -6,10 +6,9 @@
 package tripit
 
 import (
-	"time"
 	"fmt"
-	"os"
 	"strconv"
+	"time"
 )
 
 // TripIt Object Types
@@ -55,7 +54,7 @@ type Error struct {
 }
 
 // returns a time.Time object for the Timestamp
-func (e *Error) Time() (*time.Time, os.Error) {
+func (e *Error) Time() (time.Time, error) {
 	return time.Parse(time.RFC3339, e.Timestamp)
 }
 
@@ -72,7 +71,7 @@ type Warning struct {
 }
 
 // returns a time.Time object for the Timestamp
-func (w *Warning) Time() (*time.Time, os.Error) {
+func (w *Warning) Time() (time.Time, error) {
 	return time.Parse(time.RFC3339, w.Timestamp)
 }
 
@@ -108,12 +107,12 @@ type Response struct {
 }
 
 // returns a time.Time object for the Timestamp
-func (r *Response) Time() (*time.Time, os.Error) {
-	t, err := strconv.Atoi64(r.Timestamp)
+func (r *Response) Time() (time.Time, error) {
+	t, err := strconv.ParseInt(r.Timestamp, 10, 64)
 	if err != nil {
-		return nil, err
+		return time.Unix(0, 0), err
 	}
-	return time.SecondsToUTC(t), nil
+	return time.Unix(t, 0).UTC(), nil
 }
 
 /*
@@ -181,12 +180,12 @@ type FlightStatus struct {
 }
 
 // returns a time.Time object for LastModified
-func (fs *FlightStatus) LastModifiedTime() (*time.Time, os.Error) {
-	l, err := strconv.Atoi64(fs.LastModified)
+func (fs *FlightStatus) LastModifiedTime() (time.Time, error) {
+	l, err := strconv.ParseInt(fs.LastModified, 10, 64)
 	if err != nil {
-		return nil, err
+		return time.Unix(0, 0), err
 	}
-	return time.SecondsToUTC(l), nil
+	return time.Unix(l, 0).UTC(), nil
 }
 
 // Information about images
@@ -210,7 +209,7 @@ type DateTime struct {
 }
 
 // Convert to a time.Time
-func (dt DateTime) GetTime() (*time.Time, os.Error) {
+func (dt DateTime) GetTime() (time.Time, error) {
 	if dt.UtcOffset == "" {
 		return time.Parse(time.RFC3339, fmt.Sprintf("%sT%sZ", dt.Date, dt.Time))
 	}
@@ -218,7 +217,7 @@ func (dt DateTime) GetTime() (*time.Time, os.Error) {
 }
 
 // Sets the values of the DateTime strucure from a time.Time
-func (dt *DateTime) SetTime(t *time.Time) {
+func (dt *DateTime) SetTime(t time.Time) {
 	dt.Date = t.Format("2006-01-02")
 	dt.Time = t.Format("15:04:05")
 	dt.UtcOffset = t.Format("-07:00")
@@ -246,12 +245,12 @@ type PointsProgram struct {
 }
 
 // returns a time.Time object for LastModified
-func (pp *PointsProgram) LastModifiedTime() (*time.Time, os.Error) {
-	v, err := strconv.Atoi64(pp.LastModified)
+func (pp *PointsProgram) LastModifiedTime() (time.Time, error) {
+	v, err := strconv.ParseInt(pp.LastModified, 10, 64)
 	if err != nil {
-		return nil, err
+		return time.Unix(0, 0), err
 	}
-	return time.SecondsToUTC(v), nil
+	return time.Unix(v, 0).UTC(), nil
 }
 
 // PointsProgramActivity contains program transactions
@@ -266,7 +265,7 @@ type PointsProgramActivity struct {
 
 // returns a time.Time object for Date
 // Note: This won't have proper time zone information
-func (pa *PointsProgramActivity) Time() (*time.Time, os.Error) {
+func (pa *PointsProgramActivity) Time() (time.Time, error) {
 	return time.Parse("2006-01-02", pa.Date)
 }
 
@@ -278,7 +277,7 @@ type PointsProgramExpiration struct {
 
 // returns a time.Time object for Date
 // Note: This won't have proper time zone information
-func (pe *PointsProgramExpiration) Time() (*time.Time, os.Error) {
+func (pe *PointsProgramExpiration) Time() (time.Time, error) {
 	return time.Parse("2006-01-02", pe.Date)
 }
 
@@ -292,7 +291,6 @@ type TripShare struct {
 
 // Connection request
 type ConnectionRequest struct {
-
 }
 
 // Invitation contains a list of users invited to see the trip
@@ -419,13 +417,13 @@ type TripCrsRemarks struct {
 
 // returns a time.Time object for StartDate
 // Note: This won't have proper time zone information
-func (t *Trip) StartTime() (*time.Time, os.Error) {
+func (t *Trip) StartTime() (time.Time, error) {
 	return time.Parse("2006-01-02", t.StartDate)
 }
 
 // returns a time.Time object for EndDate
 // Note: This won't have proper time zone information
-func (t *Trip) EndTime() (*time.Time, os.Error) {
+func (t *Trip) EndTime() (time.Time, error) {
 	return time.Parse("2006-01-02", t.EndDate)
 }
 
@@ -461,7 +459,7 @@ type AirObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *AirObject) BookingTime() (*time.Time, os.Error) {
+func (r *AirObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -547,7 +545,7 @@ type LodgingObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *LodgingObject) BookingTime() (*time.Time, os.Error) {
+func (r *LodgingObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -598,7 +596,7 @@ type CarObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *CarObject) BookingTime() (*time.Time, os.Error) {
+func (r *CarObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -634,7 +632,7 @@ type RailObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *RailObject) BookingTime() (*time.Time, os.Error) {
+func (r *RailObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -694,7 +692,7 @@ type TransportObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *TransportObject) BookingTime() (*time.Time, os.Error) {
+func (r *TransportObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -755,7 +753,7 @@ type CruiseObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *CruiseObject) BookingTime() (*time.Time, os.Error) {
+func (r *CruiseObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -809,7 +807,7 @@ type RestaurantObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *RestaurantObject) BookingTime() (*time.Time, os.Error) {
+func (r *RestaurantObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -857,7 +855,7 @@ type ActivityObject struct {
 
 // returns a time.Time object for BookingDate
 // Note: This won't have proper time zone information
-func (r *ActivityObject) BookingTime() (*time.Time, os.Error) {
+func (r *ActivityObject) BookingTime() (time.Time, error) {
 	return time.Parse("2006-01-02", r.BookingDate)
 }
 
@@ -928,6 +926,6 @@ type WeatherObject struct {
 
 // returns a time.Time object for StartDate
 // Note: This won't have proper time zone information
-func (w *WeatherObject) Time() (*time.Time, os.Error) {
+func (w *WeatherObject) Time() (time.Time, error) {
 	return time.Parse("2006-01-02", w.Date)
 }

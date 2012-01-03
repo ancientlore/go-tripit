@@ -1,12 +1,12 @@
 package main
 
 import (
-	"template"
-	"os"
 	"flag"
-	"log"
 	"fmt"
+	"log"
+	"os"
 	"strings"
+	"text/template"
 )
 
 var pkg = flag.String("package", "tripit", "Package for vector class")

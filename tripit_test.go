@@ -1,22 +1,22 @@
 package tripit
 
 import (
-	"json"
-	"testing"
-	"strings"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+	"strings"
+	"testing"
 	"time"
 )
 
 func TestWarning(t *testing.T) {
-	x := func() os.Error { return &Warning{"Something went wrong", "trip", "2011-05-27T13:38:33"} }()
+	x := func() error { return &Warning{"Something went wrong", "trip", "2011-05-27T13:38:33"} }()
 	t.Log(x)
 }
 
 func TestError(t *testing.T) {
-	x := func() os.Error { return &Error{"500", nil, "Something else went wrong", "trip", "2011-05-27T13:38:34"} }()
+	x := func() error { return &Error{"500", nil, "Something else went wrong", "trip", "2011-05-27T13:38:34"} }()
 	t.Log(x)
 }
 
@@ -70,8 +70,8 @@ func TestDateTime(t *testing.T) {
 	s, err := d.DateTime()
 	log.Print("Parsed time: ", s, " err: ", err)
 
-	log.Print(time.LocalTime().Format(time.RFC3339))
-	d.SetDateTime(time.LocalTime())
+	log.Print(time.Now().Format(time.RFC3339))
+	d.SetDateTime(time.Now())
 
 	log.Print("Assigned time: ", d)
 }

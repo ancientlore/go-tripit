@@ -1,9 +1,9 @@
 package tripit
 
 import (
-	"http"
-	"fmt"
 	"encoding/base64"
+	"fmt"
+	"net/http"
 )
 
 // Credential used for web authorization. Web authorization is for testing

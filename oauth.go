@@ -1,19 +1,19 @@
 package tripit
 
 import (
-	"http"
-	"json"
-	"time"
-	"strings"
-	"rand"
-	"fmt"
-	"sort"
-	"strconv"
+	"crypto/hmac"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
-	"crypto/hmac"
-	"url"
+	"encoding/json"
+	"fmt"
+	"math/rand"
+	"net/http"
+	"net/url"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // TripIt API URLs for OAuth
@@ -147,7 +147,7 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 	p := map[string]string{
 		"oauth_consumer_key":     a.oauthConsumerKey,
 		"oauth_nonce":            generateNonce(),
-		"oauth_timestamp":        strconv.Itoa64(time.LocalTime().Seconds()),
+		"oauth_timestamp":        strconv.FormatInt(time.Now().Unix(), 10),
 		"oauth_signature_method": OAUTH_SIGNATURE_METHOD,
 		"oauth_version":          OAUTH_VERSION,
 	}
@@ -172,7 +172,7 @@ func (a *OAuthConsumerCredential) generateOAuthParameters(httpMethod string, htt
 
 // Generates the OAuth signature for a given URL
 func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl string, params map[string]string) string {
-	params["oauth_signature"] = "", false
+	delete(params, "oauth_signature")
 	arr := make([]string, len(params))
 	i := 0
 	for k, v := range params {
@@ -184,7 +184,7 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
 	h := hmac.NewSHA1([]byte(key))
 	h.Write([]byte(sigBaseString))
-	b := h.Sum()
+	b := h.Sum(nil)
 	dst := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
 	base64.StdEncoding.Encode(dst, b)
 	return string(dst)
@@ -196,8 +196,8 @@ func generateNonce() string {
 	for i := 0; i < 40; i++ {
 		arr[i] = string(rand.Int31n(10))
 	}
-	s := string(time.Nanoseconds()) + strings.Join(arr, "")
+	s := string(time.Now().Unix()) + strings.Join(arr, "")
 	h := md5.New()
 	fmt.Fprintf(h, "%s", s)
-	return hex.EncodeToString(h.Sum())
+	return hex.EncodeToString(h.Sum(nil))
 }

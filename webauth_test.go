@@ -1,8 +1,8 @@
 package tripit
 
 import (
+	"net/http"
 	"testing"
-	"http"
 )
 
 func TestWebAuth(t *testing.T) {

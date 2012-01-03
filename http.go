@@ -1,16 +1,16 @@
 package tripit
 
 import (
-	"http"
-	"os"
-	"fmt"
-	"json"
-	"io"
 	"bytes"
-	"strings"
+	"encoding/json"
+	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
+	"net/url"
+	"errors"
 	"strconv"
-	"url"
+	"strings"
 )
 
 // TripIt API information
@@ -56,14 +56,14 @@ func New(apiUrl string, apiVersion string, client *http.Client, creds Authorizab
 }
 
 // Makes an HTTP request to the TripIt API and returns the response.
-func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
+func (t *TripIt) makeRequest(req *http.Request) (*Response, error) {
 	resp, err := t.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return nil, os.NewError(resp.Status)
+		return nil, errors.New(resp.Status)
 	}
 
 	// Copy buffer and change @attributes to _attributes since json package doesn't support @
@@ -90,7 +90,7 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, os.Error) {
 
 // Gets an Object of the given type and ID, and returns the Response object from TripIt
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
+func (t *TripIt) Get(objectType string, objectId uint) (*Response, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (t *TripIt) Get(objectType string, objectId uint) (*Response, os.Error) {
 // the response object from TripIt. To understand filter parameters and which filters
 // can be combined, see the TripIt API documenation.
 // supports: trip, object, points_program
-func (t *TripIt) List(objectType string, filterParms map[string]string) (*Response, os.Error) {
+func (t *TripIt) List(objectType string, filterParms map[string]string) (*Response, error) {
 	var x string
 	for p, v := range filterParms {
 		x += fmt.Sprintf("/%s/%s", p, v)
@@ -117,7 +117,7 @@ func (t *TripIt) List(objectType string, filterParms map[string]string) (*Respon
 }
 
 // encodeForm encodes form arguments to send to TripIt
-func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
+func encodeForm(r *Request) (*bytes.Buffer, map[string]string, error) {
 	b, err := json.Marshal(r)
 	if err != nil {
 		return nil, nil, err
@@ -133,7 +133,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, os.Error) {
 
 // Creates an object in TripIt based on the given Request, returning the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-func (t *TripIt) Create(r *Request) (*Response, os.Error) {
+func (t *TripIt) Create(r *Request) (*Response, error) {
 	buf, args, err := encodeForm(r)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (t *TripIt) Create(r *Request) (*Response, os.Error) {
 // Replaces the object of the given type and ID with the new object in the Request. Returns
 // the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Response, os.Error) {
+func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Response, error) {
 	b := new(bytes.Buffer)
 	json := json.NewEncoder(b)
 	err := json.Encode(r)
@@ -170,7 +170,7 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 // Deletes the object of the given type and ID from TripIt, and returns the Response object
 // from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
-func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) {
+func (t *TripIt) Delete(objectType string, objectId uint) (*Response, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/delete/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
 	if err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func (t *TripIt) Delete(objectType string, objectId uint) (*Response, os.Error) 
 // from TripIt that is used in subsequent authentication requests. This token and secret
 // is not the permanent one - if the user aborts the authentication process, these can
 // be discarded.
-func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
+func (t *TripIt) GetRequestToken() (map[string]string, error) {
 	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainRequestToken, nil)
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return nil, os.NewError(resp.Status)
+		return nil, errors.New(resp.Status)
 	}
 	return parseQS(resp.Body)
 }
@@ -203,7 +203,7 @@ func (t *TripIt) GetRequestToken() (map[string]string, os.Error) {
 // GetAccesssToken gets the final OAuth token and token secret for an
 // authenticated user. These should be saved with the user's ID for
 // future used of the API on the user's behalf.
-func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
+func (t *TripIt) GetAccessToken() (map[string]string, error) {
 	req, err := http.NewRequest("GET", t.baseUrl+UrlObtainAccessToken, nil)
 	if err != nil {
 		return nil, err
@@ -215,13 +215,13 @@ func (t *TripIt) GetAccessToken() (map[string]string, os.Error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return nil, os.NewError(resp.Status)
+		return nil, errors.New(resp.Status)
 	}
 	return parseQS(resp.Body)
 }
 
 // parseQS parses the query string in the body and returns a simple map of the values.
-func parseQS(body io.Reader) (map[string]string, os.Error) {
+func parseQS(body io.Reader) (map[string]string, error) {
 	buf := make([]byte, 1024) // assume oauth token response won't be larger
 	l, err := body.Read(buf)
 	if err != nil {

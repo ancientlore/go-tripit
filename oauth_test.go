@@ -1,9 +1,9 @@
 package tripit
 
 import (
-	"testing"
-	"http"
+	"net/http"
 	"strings"
+	"testing"
 )
 
 func TestOAuth(t *testing.T) {
