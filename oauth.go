@@ -3,6 +3,7 @@ package tripit
 import (
 	"crypto/hmac"
 	"crypto/md5"
+	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -182,7 +183,7 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 	sort.Sort(sort.StringSlice(arr))
 	sigBaseString := strings.Join([]string{httpMethod, url.QueryEscape(baseUrl), url.QueryEscape(strings.Join(arr, "&"))}, "&")
 	key := a.oauthConsumerSecret + "&" + a.oauthTokenSecret
-	h := hmac.NewSHA1([]byte(key))
+	h := hmac.New(sha1.New, []byte(key))
 	h.Write([]byte(sigBaseString))
 	b := h.Sum(nil)
 	dst := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
