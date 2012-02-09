@@ -1,7 +1,7 @@
 package main
 
 import (
-	"../_obj/tripit"
+	"github.com/ancientlore/go-tripit"
 	"encoding/json"
 	"flag"
 	"fmt"
