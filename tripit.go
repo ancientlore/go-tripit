@@ -60,6 +60,11 @@ func (e *Error) Time() (time.Time, error) {
 
 // Returns a string containing the error information
 func (e *Error) String() string {
+	return e.Error()
+}
+
+// Returns a string containing the error information
+func (e *Error) Error() string {
 	return fmt.Sprintf("TripIt Error %s: %s", e.Code, e.Description)
 }
 
@@ -77,6 +82,11 @@ func (w *Warning) Time() (time.Time, error) {
 
 // Returns a string containing the warning information
 func (w *Warning) String() string {
+	return w.Error()
+}
+
+// Returns a string containing the warning information
+func (w *Warning) Error() string {
 	return fmt.Sprintf("TripIt Warning: %s", w.Description)
 }
 
