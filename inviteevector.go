@@ -24,7 +24,7 @@ func (p *InviteeVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

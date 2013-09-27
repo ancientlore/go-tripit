@@ -24,7 +24,7 @@ func (p *ErrorVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

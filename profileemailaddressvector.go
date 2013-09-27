@@ -24,7 +24,7 @@ func (p *ProfileEmailAddressVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

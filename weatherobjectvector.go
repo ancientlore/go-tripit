@@ -24,7 +24,7 @@ func (p *WeatherObjectVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

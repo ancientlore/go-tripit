@@ -24,7 +24,7 @@ func (p *PointsProgramVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

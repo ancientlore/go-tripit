@@ -24,7 +24,7 @@ func (p *GroupVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

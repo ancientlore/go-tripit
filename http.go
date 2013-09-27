@@ -3,12 +3,12 @@ package tripit
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"errors"
 	"strconv"
 	"strings"
 )

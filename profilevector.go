@@ -24,7 +24,7 @@ func (p *ProfileVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }

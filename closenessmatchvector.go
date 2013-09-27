@@ -24,7 +24,7 @@ func (p *ClosenessMatchVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-		
+
 	}
 	return nil
 }
