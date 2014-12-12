@@ -13,3 +13,4 @@ Current Status:
 OAuth and the Get/List functions are basically operational. Adding, replacing, and deleting objects has not beed tested.
 
 [![GoDoc](http://godoc.org/github.com/ancientlore/go-tripit?status.png)](http://godoc.org/github.com/ancientlore/go-tripit)
+[![status](https://sourcegraph.com/api/repos/github.com/ancientlore/go-tripit/.badges/status.png)](https://sourcegraph.com/github.com/ancientlore/go-tripit)
