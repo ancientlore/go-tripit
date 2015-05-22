@@ -9,7 +9,8 @@ go-tripit is an API library written in go for accessing the TripIt service.
 
 For more information about the TripIt API, see:
 
-http://www.tripit.com/developer
+* http://www.tripit.com/developer
+* http://tripit.github.io/api/doc/v1/index.html
 
 For more information about Go, see:
 
