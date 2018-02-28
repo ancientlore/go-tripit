@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for PointsProgramActivity objects
+// PointsProgramActivityVector is a specialization of Vector for PointsProgramActivity objects.
 type PointsProgramActivityVector []PointsProgramActivity
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *PointsProgramActivityVector) UnmarshalJSON(b []byte) error {
 	var arr *[]PointsProgramActivity
 	arr = (*[]PointsProgramActivity)(p)
@@ -24,7 +25,7 @@ func (p *PointsProgramActivityVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

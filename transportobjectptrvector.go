@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *TransportObject objects
+// TransportObjectPtrVector is a specialization of Vector for *TransportObject objects.
 type TransportObjectPtrVector []*TransportObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *TransportObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*TransportObject
 	arr = (*[]*TransportObject)(p)
@@ -24,11 +25,11 @@ func (p *TransportObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

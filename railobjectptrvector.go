@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *RailObject objects
+// RailObjectPtrVector is a specialization of Vector for *RailObject objects.
 type RailObjectPtrVector []*RailObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *RailObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*RailObject
 	arr = (*[]*RailObject)(p)
@@ -24,11 +25,11 @@ func (p *RailObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

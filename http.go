@@ -37,12 +37,12 @@ const (
 	FilterType           = "type"            // valid on object. Values: all object types
 )
 
-// Interface for authorization objects
+// Authorizable is the interface for authorization objects.
 type Authorizable interface {
 	Authorize(request *http.Request, args map[string]string)
 }
 
-// TripIt class to used to communicate with the API
+// TripIt class to used to communicate with the API.
 type TripIt struct {
 	baseUrl     string
 	version     string
@@ -50,7 +50,7 @@ type TripIt struct {
 	credentials Authorizable
 }
 
-// Creates a new TripIt object using the given HTTP client and authorization object
+// New creates a new TripIt object using the given HTTP client and authorization object.
 func New(apiUrl string, apiVersion string, client *http.Client, creds Authorizable) *TripIt {
 	return &TripIt{apiUrl, apiVersion, client, creds}
 }
@@ -88,7 +88,7 @@ func (t *TripIt) makeRequest(req *http.Request) (*Response, error) {
 	return result, nil
 }
 
-// Gets an Object of the given type and ID, and returns the Response object from TripIt
+// Get gets an Object of the given type and ID, and returns the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Get(objectType string, objectId uint) (*Response, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/get/%s/id/%d/format/json", t.baseUrl, t.version, objectType, objectId), nil)
@@ -99,9 +99,9 @@ func (t *TripIt) Get(objectType string, objectId uint) (*Response, error) {
 	return t.makeRequest(req)
 }
 
-// Lists objects of the given type, filtered by the given filter parameters. Returns
+// List lists objects of the given type, filtered by the given filter parameters. Returns
 // the response object from TripIt. To understand filter parameters and which filters
-// can be combined, see the TripIt API documenation.
+// can be combined, see the TripIt API documentation.
 // supports: trip, object, points_program
 func (t *TripIt) List(objectType string, filterParms map[string]string) (*Response, error) {
 	var x string
@@ -131,7 +131,7 @@ func encodeForm(r *Request) (*bytes.Buffer, map[string]string, error) {
 	return bytes.NewBuffer([]byte(url.Values(m).Encode())), args, nil
 }
 
-// Creates an object in TripIt based on the given Request, returning the Response object from TripIt.
+// Create creates an object in TripIt based on the given Request, returning the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Create(r *Request) (*Response, error) {
 	buf, args, err := encodeForm(r)
@@ -149,7 +149,7 @@ func (t *TripIt) Create(r *Request) (*Response, error) {
 	return t.makeRequest(req)
 }
 
-// Replaces the object of the given type and ID with the new object in the Request. Returns
+// Replace replaces the object of the given type and ID with the new object in the Request. Returns
 // the Response object from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Response, error) {
@@ -167,7 +167,7 @@ func (t *TripIt) Replace(objectType string, objectId uint, r *Request) (*Respons
 	return t.makeRequest(req)
 }
 
-// Deletes the object of the given type and ID from TripIt, and returns the Response object
+// Delete deletes the object of the given type and ID from TripIt, and returns the Response object
 // from TripIt.
 // supports: air, activity, car, cruise, directions, lodging, map, note, rail, restaurant, transport, trip
 func (t *TripIt) Delete(objectType string, objectId uint) (*Response, error) {
@@ -200,7 +200,7 @@ func (t *TripIt) GetRequestToken() (map[string]string, error) {
 	return parseQS(resp.Body)
 }
 
-// GetAccesssToken gets the final OAuth token and token secret for an
+// GetAccessToken gets the final OAuth token and token secret for an
 // authenticated user. These should be saved with the user's ID for
 // future used of the API on the user's behalf.
 func (t *TripIt) GetAccessToken() (map[string]string, error) {

@@ -31,7 +31,7 @@ const (
 	OAUTH_VERSION          = "1.0"
 )
 
-// OAuth consumer credential for use with TripIt API
+// OAuthConsumerCredential is the OAuth consumer credential for use with TripIt API.
 type OAuthConsumerCredential struct {
 	oauthConsumerKey    string // Consumer key provided by TripIt
 	oauthConsumerSecret string // Consumer secret provided by TripIt
@@ -40,7 +40,7 @@ type OAuthConsumerCredential struct {
 	oauthRequestorId    string // Requestor ID
 }
 
-// Get a credential with no token (to get a request token)
+// NewOAuthRequestCredential gets a credential with no token (to get a request token).
 func NewOAuthRequestCredential(consumerKey string, consumerSecret string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
@@ -48,7 +48,7 @@ func NewOAuthRequestCredential(consumerKey string, consumerSecret string) *OAuth
 	return a
 }
 
-// Get a 3 legged OAuth credential (request or authorized token)
+// NewOAuth3LeggedCredential gets a 3 legged OAuth credential (request or authorized token).
 func NewOAuth3LeggedCredential(consumerKey string, consumerSecret string, token string, tokenSecret string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
@@ -58,7 +58,7 @@ func NewOAuth3LeggedCredential(consumerKey string, consumerSecret string, token 
 	return a
 }
 
-// Get a 2 legged OAuth credential
+// NewOAuth2LeggedCredential gets a 2 legged OAuth credential.
 func NewOAuth2LeggedCredential(consumerKey string, consumerSecret string, requestorId string) *OAuthConsumerCredential {
 	a := new(OAuthConsumerCredential)
 	a.oauthConsumerKey = consumerKey
@@ -67,38 +67,38 @@ func NewOAuth2LeggedCredential(consumerKey string, consumerSecret string, reques
 	return a
 }
 
-// Returns the consumer key
+// OAuthConsumerKey returns the consumer key.
 func (a *OAuthConsumerCredential) OAuthConsumerKey() string {
 	return a.oauthConsumerKey
 }
 
-// Returns the consumer secret
+// OAuthConsumerSecret returnss the consumer secret.
 func (a *OAuthConsumerCredential) OAuthConsumerSecret() string {
 	return a.oauthConsumerSecret
 }
 
-// Returns the OAuth token
+// OAuthOAuthToken returns the OAuth token.
 func (a *OAuthConsumerCredential) OAuthOAuthToken() string {
 	return a.oauthOauthToken
 }
 
-// Returns the consumer credential
+// OAuthTokenSecret returns the OAuth token secret.
 func (a *OAuthConsumerCredential) OAuthTokenSecret() string {
 	return a.oauthTokenSecret
 }
 
-// Returns the requestor ID
+// OAuthRequestorId returns the requestor ID.
 func (a *OAuthConsumerCredential) OAuthRequestorId() string {
 	return a.oauthRequestorId
 }
 
-// Adds the authorization header for OAuth to the request, including any additional arguments.
+// Authorize adds the authorization header for OAuth to the request, including any additional arguments.
 // Additional arguments are used in signature generation.
 func (a *OAuthConsumerCredential) Authorize(request *http.Request, args map[string]string) {
 	request.Header.Set("Authorization", a.generateAuthorizationHeader(request, args))
 }
 
-// Validates the URL's OAuth signature in the given url
+// ValidateSignature validates the URL's OAuth signature in the given url.
 func (a *OAuthConsumerCredential) ValidateSignature(url_ string) bool {
 	u, err := url.Parse(url_)
 	if err != nil {
@@ -117,7 +117,7 @@ func (a *OAuthConsumerCredential) ValidateSignature(url_ string) bool {
 	return q["oauth_signature"][0] == a.generateSignature("GET", u.String(), args)
 }
 
-// Returns the OAuth parameters for a given session
+// GetSessionParameters returns the OAuth parameters for a given session.
 func (a *OAuthConsumerCredential) GetSessionParameters(redirectUrl string, action string) string {
 	params := a.generateOAuthParameters("GET", action, map[string]string{"redirect_url": redirectUrl})
 	params["redirect_url"] = redirectUrl

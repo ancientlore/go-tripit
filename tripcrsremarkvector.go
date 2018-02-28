@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for TripCrsRemark objects
+// TripCrsRemarkVector is a specialization of Vector for TripCrsRemark objects.
 type TripCrsRemarkVector []TripCrsRemark
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *TripCrsRemarkVector) UnmarshalJSON(b []byte) error {
 	var arr *[]TripCrsRemark
 	arr = (*[]TripCrsRemark)(p)
@@ -24,7 +25,7 @@ func (p *TripCrsRemarkVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

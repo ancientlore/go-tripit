@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for ProfileEmailAddress objects
+// ProfileEmailAddressVector is a specialization of Vector for ProfileEmailAddress objects.
 type ProfileEmailAddressVector []ProfileEmailAddress
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ProfileEmailAddressVector) UnmarshalJSON(b []byte) error {
 	var arr *[]ProfileEmailAddress
 	arr = (*[]ProfileEmailAddress)(p)
@@ -24,7 +25,7 @@ func (p *ProfileEmailAddressVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

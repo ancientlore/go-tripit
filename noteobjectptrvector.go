@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *NoteObject objects
+// NoteObjectPtrVector is a specialization of Vector for *NoteObject objects.
 type NoteObjectPtrVector []*NoteObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *NoteObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*NoteObject
 	arr = (*[]*NoteObject)(p)
@@ -24,11 +25,11 @@ func (p *NoteObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

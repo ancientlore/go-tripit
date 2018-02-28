@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *MapObject objects
+// MapObjectPtrVector is a specialization of Vector for *MapObject objects.
 type MapObjectPtrVector []*MapObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *MapObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*MapObject
 	arr = (*[]*MapObject)(p)
@@ -24,11 +25,11 @@ func (p *MapObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

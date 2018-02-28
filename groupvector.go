@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for Group objects
+// GroupVector is a specialization of Vector for Group objects.
 type GroupVector []Group
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *GroupVector) UnmarshalJSON(b []byte) error {
 	var arr *[]Group
 	arr = (*[]Group)(p)
@@ -24,7 +25,7 @@ func (p *GroupVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

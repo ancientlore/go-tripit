@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *LodgingObject objects
+// LodgingObjectPtrVector is a specialization of Vector for *LodgingObject objects.
 type LodgingObjectPtrVector []*LodgingObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *LodgingObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*LodgingObject
 	arr = (*[]*LodgingObject)(p)
@@ -24,11 +25,11 @@ func (p *LodgingObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

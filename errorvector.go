@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for Error objects
+// ErrorVector is a specialization of Vector for Error objects.
 type ErrorVector []Error
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ErrorVector) UnmarshalJSON(b []byte) error {
 	var arr *[]Error
 	arr = (*[]Error)(p)
@@ -24,7 +25,7 @@ func (p *ErrorVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

@@ -6,24 +6,24 @@ import (
 	"net/http"
 )
 
-// Credential used for web authorization. Web authorization is for testing
+// WebAuthCredential us used for web authorization. Web authorization is for testing
 // and needs to be enabled on your TripIt account.
 type WebAuthCredential struct {
 	username string // Account user name
 	password string // Account password
 }
 
-// Returns the user name
+// Username returns the user name.
 func (a *WebAuthCredential) Username() string {
 	return a.username
 }
 
-// Returns the password
+// Password returns the password.
 func (a *WebAuthCredential) Password() string {
 	return a.password
 }
 
-// Add the authorization header to the HTTP request, including any additional arguments.
+// Authorize adds the authorization header to the HTTP request, including any additional arguments.
 // Note that web authorization ignores extra arguments.
 func (a *WebAuthCredential) Authorize(request *http.Request, args map[string]string) {
 	pair := fmt.Sprintf("%s:%s", a.username, a.password)

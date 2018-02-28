@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *DirectionsObject objects
+// DirectionsObjectPtrVector is a specialization of Vector for *DirectionsObject objects.
 type DirectionsObjectPtrVector []*DirectionsObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *DirectionsObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*DirectionsObject
 	arr = (*[]*DirectionsObject)(p)
@@ -24,11 +25,11 @@ func (p *DirectionsObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for ClosenessMatch objects
+// ClosenessMatchVector is a specialization of Vector for ClosenessMatch objects.
 type ClosenessMatchVector []ClosenessMatch
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ClosenessMatchVector) UnmarshalJSON(b []byte) error {
 	var arr *[]ClosenessMatch
 	arr = (*[]ClosenessMatch)(p)
@@ -24,7 +25,7 @@ func (p *ClosenessMatchVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *CarObject objects
+// CarObjectPtrVector is a specialization of Vector for *CarObject objects.
 type CarObjectPtrVector []*CarObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *CarObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*CarObject
 	arr = (*[]*CarObject)(p)
@@ -24,11 +25,11 @@ func (p *CarObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

@@ -9,9 +9,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for {{.Type}} objects
+// {{.Name}}Vector is a specialization of Vector for {{.Type}} objects.
 type {{.Name}}Vector []{{.Type}}
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *{{.Name}}Vector) UnmarshalJSON(b []byte) error {
 	var arr *[]{{.Type}}
 	arr = (*[]{{.Type}})(p)

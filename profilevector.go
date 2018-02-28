@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for Profile objects
+// ProfileVector is a specialization of Vector for Profile objects.
 type ProfileVector []Profile
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ProfileVector) UnmarshalJSON(b []byte) error {
 	var arr *[]Profile
 	arr = (*[]Profile)(p)
@@ -24,7 +25,7 @@ func (p *ProfileVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

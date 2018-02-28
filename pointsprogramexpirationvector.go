@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for PointsProgramExpiration objects
+// PointsProgramExpirationVector is a specialization of Vector for PointsProgramExpiration objects.
 type PointsProgramExpirationVector []PointsProgramExpiration
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *PointsProgramExpirationVector) UnmarshalJSON(b []byte) error {
 	var arr *[]PointsProgramExpiration
 	arr = (*[]PointsProgramExpiration)(p)
@@ -24,7 +25,7 @@ func (p *PointsProgramExpirationVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

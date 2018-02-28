@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for Invitee objects
+// InviteeVector is a specialization of Vector for Invitee objects.
 type InviteeVector []Invitee
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *InviteeVector) UnmarshalJSON(b []byte) error {
 	var arr *[]Invitee
 	arr = (*[]Invitee)(p)
@@ -24,7 +25,7 @@ func (p *InviteeVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

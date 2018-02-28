@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *RailSegment objects
+// RailSegmentPtrVector is a specialization of Vector for *RailSegment objects.
 type RailSegmentPtrVector []*RailSegment
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *RailSegmentPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*RailSegment
 	arr = (*[]*RailSegment)(p)
@@ -24,11 +25,11 @@ func (p *RailSegmentPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

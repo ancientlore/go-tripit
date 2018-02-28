@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *AirSegment objects
+// AirSegmentPtrVector is a specialization of Vector for *AirSegment objects.
 type AirSegmentPtrVector []*AirSegment
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *AirSegmentPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*AirSegment
 	arr = (*[]*AirSegment)(p)
@@ -24,11 +25,11 @@ func (p *AirSegmentPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

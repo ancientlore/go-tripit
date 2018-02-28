@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *ActivityObject objects
+// ActivityObjectPtrVector is a specialization of Vector for *ActivityObject objects.
 type ActivityObjectPtrVector []*ActivityObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ActivityObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*ActivityObject
 	arr = (*[]*ActivityObject)(p)
@@ -24,11 +25,11 @@ func (p *ActivityObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

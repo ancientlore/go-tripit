@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *Image objects
+// ImagePtrVector is a specialization of Vector for *Image objects.
 type ImagePtrVector []*Image
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *ImagePtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*Image
 	arr = (*[]*Image)(p)
@@ -24,11 +25,11 @@ func (p *ImagePtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

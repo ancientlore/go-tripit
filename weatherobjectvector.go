@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for WeatherObject objects
+// WeatherObjectVector is a specialization of Vector for WeatherObject objects.
 type WeatherObjectVector []WeatherObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *WeatherObjectVector) UnmarshalJSON(b []byte) error {
 	var arr *[]WeatherObject
 	arr = (*[]WeatherObject)(p)
@@ -24,7 +25,7 @@ func (p *WeatherObjectVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

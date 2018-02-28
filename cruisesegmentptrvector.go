@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *CruiseSegment objects
+// CruiseSegmentPtrVector is a specialization of Vector for *CruiseSegment objects.
 type CruiseSegmentPtrVector []*CruiseSegment
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *CruiseSegmentPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*CruiseSegment
 	arr = (*[]*CruiseSegment)(p)
@@ -24,11 +25,11 @@ func (p *CruiseSegmentPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

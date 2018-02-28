@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for Warning objects
+// WarningVector is a specialization of Vector for Warning objects.
 type WarningVector []Warning
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *WarningVector) UnmarshalJSON(b []byte) error {
 	var arr *[]Warning
 	arr = (*[]Warning)(p)
@@ -24,7 +25,7 @@ func (p *WarningVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 	}
 	return nil
 }

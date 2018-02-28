@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *CruiseObject objects
+// CruiseObjectPtrVector is a specialization of Vector for *CruiseObject objects.
 type CruiseObjectPtrVector []*CruiseObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *CruiseObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*CruiseObject
 	arr = (*[]*CruiseObject)(p)
@@ -24,11 +25,11 @@ func (p *CruiseObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }

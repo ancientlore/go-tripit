@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 )
 
-// A specialization of Vector for *RestaurantObject objects
+// RestaurantObjectPtrVector is a specialization of Vector for *RestaurantObject objects.
 type RestaurantObjectPtrVector []*RestaurantObject
 
+// UnmarshalJSON builds the vector from the JSON in b.
 func (p *RestaurantObjectPtrVector) UnmarshalJSON(b []byte) error {
 	var arr *[]*RestaurantObject
 	arr = (*[]*RestaurantObject)(p)
@@ -24,11 +25,11 @@ func (p *RestaurantObjectPtrVector) UnmarshalJSON(b []byte) error {
 				return err
 			}
 		}
-
+		
 		if (*arr)[0] == nil {
 			*arr = (*arr)[0:0]
 		}
-
+		
 	}
 	return nil
 }
