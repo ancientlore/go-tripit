@@ -35,6 +35,8 @@ const (
 	FilterIncludeObjects = "include_objects" // valid on trip. Values: true, false
 	FilterTripId         = "trip_id"         // valid on object. Values: integer trip id
 	FilterType           = "type"            // valid on object. Values: all object types
+	FilterPageNum        = "page_num"        // valid on trip, object. Integer, page number to retrieve
+	FilterPageSize       = "page_size"       // valid on trip, object. Integer, number of items per page
 )
 
 // Authorizable is the interface for authorization objects.
