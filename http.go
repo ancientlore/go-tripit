@@ -222,14 +222,13 @@ func (t *TripIt) GetAccessToken() (map[string]string, error) {
 
 // parseQS parses the query string in the body and returns a simple map of the values.
 func parseQS(body io.Reader) (map[string]string, error) {
-	buf := make([]byte, 1024) // assume oauth token response won't be larger
-	l, err := body.Read(buf)
+	b, err := ioutil.ReadAll(body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("reading http body: %v", err)
 	}
-	qm, err := url.ParseQuery(string(buf[0:l]))
+	qm, err := url.ParseQuery(string(b))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing body query: %v", err)
 	}
 	result := make(map[string]string)
 	for k, v := range qm {
