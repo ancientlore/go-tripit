@@ -6,6 +6,7 @@
 package tripit
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -113,6 +114,11 @@ type Response struct {
 	WeatherObject    WeatherObjectVector       `json:"WeatherObject,omitempty" xml:"WeatherObject"`       // optional
 	PointsProgram    PointsProgramVector       `json:"PointsProgram,omitempty" xml:"PointsProgram"`       // optional
 	Profile          ProfileVector             `json:"Profile,omitempty" xml:"Profile"`                   // optional
+
+	PageNumber json.Number `json:"page_num,omitempty" xml:"page_num"`   // when pagination is activated
+	PageSize   json.Number `json:"page_size,omitempty" xml:"page_size"` // when pagination is activated
+	MaxPage    json.Number `json:"max_page,omitempty" xml:"max_page"`   // when pagination is activated
+
 	// @TODO need to add invitee stuff
 }
 
