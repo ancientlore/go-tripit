@@ -2,13 +2,13 @@ package tripit
 
 import (
 	"crypto/hmac"
-	"crypto/md5"
+	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math/rand"
+	"io"
 	"net/http"
 	"net/url"
 	"sort"
@@ -193,12 +193,7 @@ func (a *OAuthConsumerCredential) generateSignature(httpMethod string, baseUrl s
 
 // Generates a unique one-time-use value
 func generateNonce() string {
-	arr := make([]string, 40)
-	for i := 0; i < 40; i++ {
-		arr[i] = string(rand.Int31n(10))
-	}
-	s := string(time.Now().Unix()) + strings.Join(arr, "")
-	h := md5.New()
-	fmt.Fprintf(h, "%s", s)
-	return hex.EncodeToString(h.Sum(nil))
+	arr := make([]byte, 16)
+	io.ReadFull(rand.Reader, arr)
+	return hex.EncodeToString(arr)
 }
