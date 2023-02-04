@@ -1,7 +1,6 @@
 go-tripit
 =========
 
-[![Build Status](https://travis-ci.org/ancientlore/go-tripit.svg?branch=master)](https://travis-ci.org/ancientlore/go-tripit)
 [![GoDoc](http://godoc.org/github.com/ancientlore/go-tripit?status.png)](http://godoc.org/github.com/ancientlore/go-tripit)
 
 go-tripit is an API library written in go for accessing the TripIt service.
